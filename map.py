@@ -9,4 +9,8 @@ class Map :
         
         self.first_px_pos = 100, 100
         
-        self.px_infected = []
+        self.pixels_infected_pos = []
+        
+    def update_infection(self) : 
+        for px_infected in self.pixels_infected_pos :
+            self.pixels_infected_pos.append((px_infected[0], px_infected[1] + 1))
