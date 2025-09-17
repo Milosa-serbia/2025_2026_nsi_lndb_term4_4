@@ -21,15 +21,14 @@ class Simulation:
         first_px_x = self.map.first_px_pos[0]
         first_px_y = self.map.first_px_pos[1]
         
-        rect = pygame.Rect(first_px_x, first_px_y, cell_size, cell_size)
-        self.map.px_infected.append(rect)
-        for px in self.map.px_infected :
-            pygame.draw.rect(self.screen, (255, 0, 0), px)
+        self.map.pixels_infected_pos.append((first_px_x, first_px_y))
+        for px_pos in self.map.pixels_infected_pos :
+            pygame.draw.rect(self.screen, (255, 0, 0), pygame.Rect(px_pos[0], px_pos[1], cell_size, cell_size))
         
         
     def run(self) :
         while True:
-            self.clock.tick(60)
+            self.clock.tick(1)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -37,6 +36,7 @@ class Simulation:
 
             self.screen.fill("black")
             self.draw_map()
+            self.map.update_infection()
             pygame.display.update()
 
 
