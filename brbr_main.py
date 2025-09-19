@@ -19,8 +19,8 @@ class Simulation:
             
         for pos in self.infection.infected_pixels_pos :
             pygame.draw.rect(self.screen, (255, 0, 0), pygame.Rect(pos[0], pos[1], cell_size, cell_size))
-        # for p in self.infection.dead_pixels_pos :
-        #     pygame.draw.rect(self.screen, (128, 128, 128), pygame.Rect(p[0], p[1], cell_size, cell_size))
+        for p in self.infection.dead_pixels_pos :
+            pygame.draw.rect(self.screen, (128, 128, 128), pygame.Rect(p[0], p[1], cell_size, cell_size))
         
         
     def run(self) :

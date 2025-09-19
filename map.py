@@ -6,7 +6,7 @@ class Infection :
         self.screen = pygame.display.get_surface()
         
         self.width, self.height = self.screen.get_size()
-        self.cell_size = 2
+        self.cell_size = 1
         self.time_last_infection = 0
         self.air_transmission_is_active = True
         
@@ -18,9 +18,9 @@ class Infection :
         new_infected = set()
         for x, y in self.infected_pixels_pos :
             if (x, y) not in [self.dead_pixels_pos, self.infected_pixels_pos] :
-                for dx, dy in [(2,0), (-2,0), (0,2), (0,-2), (2, 2), (-2, -2), (2, -2), (-2, 2)] :
-                    if (x + dx <= 1400) and \
-                        (y + dy <= 800) and \
+                for dx, dy in [(self.cell_size, 0), (-self.cell_size, 0), (0,self.cell_size) , (0,-self.cell_size) , (self.cell_size,  self.cell_size) , (-self.cell_size,  -self.cell_size) , (self.cell_size,  -self.cell_size) , (-self.cell_size,  self.cell_size) ] :
+                    if (0-dx <= x + dx <= 1400) and \
+                        (0-dx <= y + dy <= 800) and \
                         ((x+dx, y+dy) not in self.infected_pixels_pos) and \
                         ((x+dx, y+dy) not in self.dead_pixels_pos) :
                             if random.randint(1, 15) in [1, 2] :
@@ -33,7 +33,7 @@ class Infection :
             new_pixel_infected_x = 700
             new_pixel_infected_y = 400
             while (new_pixel_infected_x, new_pixel_infected_y) in self.infected_pixels_pos or \
-            (new_pixel_infected_x, new_pixel_infected_y) in self.dead_pixels_pos :
+            (new_pixel_infected_x, new_pixel_infected_y) in self.dead_pixels_pos : # pk la 2eme verif?
                 reference_pixel = list(self.infected_pixels_pos)[random.randint(0, len(self.infected_pixels_pos) - 1)]
                 new_pixel_infected_x = reference_pixel[0] + random.randint(-400, 400)
                 new_pixel_infected_y = reference_pixel[1] + random.randint(-400, 400)
