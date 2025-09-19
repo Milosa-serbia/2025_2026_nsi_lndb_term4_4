@@ -14,13 +14,13 @@ class Infection :
         self.dead_pixels_pos = set()
 
 
-    def contact_transmission(self) :
+    def contact_transmission(self) : # ça marche pas trop 
         new_infected = set()
         for x, y in self.infected_pixels_pos :
             if (x, y) not in [self.dead_pixels_pos, self.infected_pixels_pos] :
                 for dx, dy in [(2,0), (-2,0), (0,2), (0,-2), (2, 2), (-2, -2), (2, -2), (-2, 2)] :
-                    if (x + dx <= 1600) and \
-                        (y + dy <= 900) and \
+                    if (x + dx <= 1400) and \
+                        (y + dy <= 800) and \
                         ((x+dx, y+dy) not in self.infected_pixels_pos) and \
                         ((x+dx, y+dy) not in self.dead_pixels_pos) :
                             if random.randint(1, 15) in [1, 2] :
@@ -55,7 +55,7 @@ class Infection :
 
     def update_infection(self) :
         current_time = pygame.time.get_ticks()
-        if current_time - self.time_last_infection >= 1000 :
+        if current_time - self.time_last_infection >= 10 :
             self.time_last_infection = pygame.time.get_ticks()
             
             self.update_infected_number()
