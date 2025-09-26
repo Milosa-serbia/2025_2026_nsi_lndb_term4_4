@@ -35,7 +35,7 @@ def main() :
         
         if drawing : 
             x, y = pygame.mouse.get_pos()
-            if 0 <= x <= WIDTH + 1 and 0 <= y <= HEIGHT + 1 :
+            if 0 - 1<= x <= WIDTH - 1 and 0 - 1<= y <= HEIGHT - 1 :
                 grid[y, x] = 255
 
         surf = grid_to_surf(grid, surf)
