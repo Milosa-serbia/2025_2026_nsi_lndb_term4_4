@@ -5,7 +5,7 @@ WIDTH = 1400
 HEIGHT = 800
 
 
-def grid_to_surf(gray_2d: np.ndarray, surf:pygame.Surface) -> pygame.Surface :
+def grid_to_surf(gray_2d, surf) :
     # Étend (H,W) -> (H,W,1) -> (H,W,3)
     rgb = np.repeat(gray_2d[:, :, None], 3, axis=2)      # (H, W, 3)
     rgb = np.transpose(rgb, (1, 0, 2))                   # (W, H, 3) pour Pygame
@@ -37,6 +37,14 @@ def main() :
             x, y = pygame.mouse.get_pos()
             if 0 - 1<= x <= WIDTH - 1 and 0 - 1<= y <= HEIGHT - 1 :
                 grid[y, x] = 255
+                grid[y + 1, x] = 255
+                grid[y, x + 1] = 255
+                grid[y + 1, x + 1] = 255
+                grid[y + 2, x] = 255
+                grid[y, x + 2] = 255
+                grid[y + 2, x + 2] = 255
+                grid[y + 1, x + 2] = 255
+                grid[y + 2, x + 1] = 255
 
         surf = grid_to_surf(grid, surf)
         screen.blit(surf, (0, 0))
