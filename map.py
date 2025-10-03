@@ -5,23 +5,23 @@ import random
 
 class Infection:
     def __init__(self):
-        # Screen & grid
+        # Screen and grid
         self.screen = pygame.display.get_surface()
         self.width, self.height = self.screen.get_size()
-        # State grid: 0 = safe, 1 = infected
-        self.state = np.zeros((self.height, self.width), dtype=np.uint8)  # (H, W)
+        # State_grid : 0 = safe, 1 = infected, 2 = dead
+        self.state_grid = np.zeros((self.height, self.width), dtype=np.uint8)
         # Separate "dead" mask to keep same behavior as before (not drawn by default)
-        self.dead = np.zeros_like(self.state, dtype=bool)
+        self.dead = np.zeros_like(self.state_grid, dtype=bool)
 
-        # Seed infection at center
-        cy, cx = self.height // 2, self.width // 2
-        self.state[cy, cx] = 1
+        # Premier pixel infecté au centre
+        y, x = self.height // 2, self.width // 2
+        self.state_grid[y, x] = 1
 
         # Timing/probas
         self.time_last_infection = 0
         self.dt_ms = 10
-        self.contact_infect_p = 2 / 15.0   # per-neighbor prob (same ballpark as your loop)
-        self.death_p = 1 / 15.0
+        self.contact_infect_probability = 2 / 15.0   # per-neighbor prob (same ballpark as your loop)
+        self.death_probability = 1 / 15.0
         self.air_transmission_is_active = True
         self.air_event_chance = 1 / 100.0
         self.air_jump_radius = 400
@@ -55,11 +55,11 @@ class Infection:
     # ===== Transmission rules =====
     def contact_transmission(self):
         # Compute number of infected neighbors for every pixel
-        infected = (self.state == 1)
+        infected = (self.state_grid == 1)
         neigh = self._neighbor_count(infected.astype(np.uint8))
 
         # Candidates: safe & not dead & has ≥1 infected neighbor
-        candidates = (self.state == 0) & (~self.dead) & (neigh > 0)
+        candidates = (self.state_grid == 0) & (~self.dead) & (neigh > 0)
 
         if not np.any(candidates):
             return
@@ -67,7 +67,7 @@ class Infection:
         # For each candidate with n neighbors, infection probability = 1 - (1-p)^n
         # Draw uniform randoms and infect where rand < prob
         n = neigh[candidates].astype(np.float32)
-        p = 1.0 - (1.0 - self.contact_infect_p) ** n
+        p = 1.0 - (1.0 - self.contact_infect_probability) ** n
 
         r = self._rng.random(p.shape, dtype=np.float32)
         will_infect = (r < p)
@@ -77,14 +77,14 @@ class Infection:
         if idxs.size:
             chosen = idxs[will_infect]
             if chosen.size:
-                self.state[chosen[:, 0], chosen[:, 1]] = 1
+                self.state_grid[chosen[:, 0], chosen[:, 1]] = 1
 
     def air_transmission(self):
         if not self.air_transmission_is_active:
             return
 
         if self._rng.random() < self.air_event_chance:
-            infected_positions = np.argwhere((self.state == 1) & (~self.dead))
+            infected_positions = np.argwhere((self.state_grid == 1) & (~self.dead))
             if infected_positions.size == 0:
                 return
 
@@ -96,24 +96,24 @@ class Infection:
                 dx = self._rng.integers(-self.air_jump_radius, self.air_jump_radius + 1)
                 ny, nx = ref_y + dy, ref_x + dx
                 if 0 <= ny < self.height and 0 <= nx < self.width:
-                    if (self.state[ny, nx] == 0) and (not self.dead[ny, nx]):
-                        self.state[ny, nx] = 1
+                    if (self.state_grid[ny, nx] == 0) and (not self.dead[ny, nx]):
+                        self.state_grid[ny, nx] = 1
                         break
 
     def update_infected_number(self):
         self.contact_transmission()
         self.air_transmission()
 
-    def update_dead_number(self):
-        infected = (self.state == 1) & (~self.dead)
-        if not np.any(infected):
+    def update_dead_number(self) :
+        infected = (self.state_grid == 1)
+        if not np.any(infected) :
             return
         # Randomly kill some infected
         kill_draw = self._rng.random(infected.shape, dtype=np.float32)
-        will_die = infected & (kill_draw < self.death_p)
+        will_die = infected & (kill_draw < self.death_probability)
         if np.any(will_die):
             self.dead[will_die] = True
-            self.state[will_die] = 0  # remove from infected
+            self.state_grid[will_die] = 0  # remove from infected
 
     def update_infection(self):
         current_time = pygame.time.get_ticks()
@@ -123,18 +123,21 @@ class Infection:
             self.update_dead_number()
 
     # ===== Rendering =====
-    def draw(self, surf):
-        # Fast blit using surfarray; white background, red for infected, optional gray for dead.
-        H, W = self.state.shape
-        # Start with white
-        rgb = np.full((H, W, 3), 255, dtype=np.uint8)
+    def draw(self, screen):
+        # Blanc pour les pixels
+        rgb = np.full((self.height, self.width, 3), (255, 255, 255), dtype=np.uint8)
 
-        infected = (self.state == 1)
-        # Red for infected
+        # Rouge pour les infectés
+        infected = (self.state_grid == 1)
         rgb[infected] = (255, 0, 0)
-
+        
+        # Gris pour les pixels morts
+        dead = (self.state_grid == 2)
+        rgb[dead] = (128, 128, 128)
+        
         # Uncomment if you want to show "dead" pixels in gray:
         # rgb[self.dead] = (128, 128, 128)
 
-        # Pygame expects (W, H, 3) for blit_array with 24-bit surfaces
-        pygame.surfarray.blit_array(surf, np.transpose(rgb, (1, 0, 2)))
+        # np transpose parce que tableau numpy -> hauteur, largeur et fenetre pygame -> largeur, hauteur
+        color_grid = np.transpose(rgb, (1, 0, 2))
+        pygame.surfarray.blit_array(screen, color_grid)
