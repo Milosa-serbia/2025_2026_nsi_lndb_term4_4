@@ -9,6 +9,7 @@ class Simulation:
         pygame.display.set_caption("Infection NumPy — 0 = safe, 1 = infected")
         self.clock = pygame.time.Clock()
         self.infection = Infection()
+        self.pause = False
 
     def run(self):
         while True:
@@ -18,7 +19,15 @@ class Simulation:
                     pygame.quit()
                     sys.exit()
 
-            self.infection.update_infection()
+                if event.type == pygame.KEYDOWN :
+                    if event.key == pygame.K_SPACE :
+                        if self.pause == False :
+                            self.pause = True
+                        else : 
+                            self.pause = False
+
+            if self.pause == False :
+                self.infection.update_infection()
 
             # Draw
             self.infection.draw(self.screen)

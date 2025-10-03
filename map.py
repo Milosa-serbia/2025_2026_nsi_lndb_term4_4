@@ -134,7 +134,7 @@ class Infection:
         rgb[infected] = (255, 0, 0)
 
         # Uncomment if you want to show "dead" pixels in gray:
-        # rgb[self.dead] = (128, 128, 128)
+        rgb[self.dead] = (128, 128, 128)
 
         # Pygame expects (W, H, 3) for blit_array with 24-bit surfaces
         pygame.surfarray.blit_array(surf, np.transpose(rgb, (1, 0, 2)))
