@@ -21,7 +21,11 @@ def save_grid(grid, filename="dessin.npy"):
 def main():
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    grid  = np.load('dessin.npy')
+    try :
+        grid  = np.load('dessin.npy')
+    except :
+        grid = np.zeros((HEIGHT, WIDTH), dtype=np.uint8)
+    
     clock = pygame.time.Clock()
     surf = pygame.Surface((WIDTH, HEIGHT))
     drawing = False
