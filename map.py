@@ -23,8 +23,10 @@ class Infection:
         self.contact_infect_probability = 2 / 15
         self.air_transmission_is_active = True
         self.air_infect_probability = 1 / 100
-        self.air_jump_radius = 400
+        self.air_jump_radius = 300
         self.death_probability = 1 / 15
+
+        self.invalid_statue_for_contamination = [1, 2] # le statut des pixels invalides pour la containation (donc deja mort, deja infectes...)
 
         # On cree un generateur d'aleatoire avec numpy
         self.rng = np.random.default_rng()
@@ -80,25 +82,25 @@ class Infection:
                 self.state_grid[chosen[:, 0], chosen[:, 1]] = 1
 
     def air_transmission(self):
-        if not self.air_transmission_is_active:
-            return
+        if self.air_transmission_is_active :
 
-        if self.rng.random() < self.air_infect_probability:
-            infected_positions = np.argwhere((self.state_grid == 1) & (~self.dead))
-            if infected_positions.size == 0:
-                return
+            if self.rng.random(dtype=np.float32) < self.air_infect_probability :
+                infected_positions = np.argwhere(self.state_grid == 1) # les pixels deja infectés (servent de reference pour la contamination par air) -> sous la forme [(y, x), (y, x)...]
+                
+                if np.any(infected_positions) :
+                    # On choisi aleatoirement un pixel infecté qui servira de reference pour la contamination par air (centre du rayon de contamination) -> coordonnées renvoyées sous forme y, x
+                    infected_ref_y, infected_ref_x = infected_positions[self.rng.integers(0, len(infected_positions))]
+                    
+                    # Si la 1ere contamination n'a pas marche on en refait une (jusqu'a 16 essais)
+                    for _ in range(16):
+                        additional_y = self.rng.integers(-self.air_jump_radius, self.air_jump_radius + 1) # distannce sur l'axe des ordonnées du pixel infecté de reference
+                        additional_x = self.rng.integers(-self.air_jump_radius, self.air_jump_radius + 1) # distannce sur l'axe des abscisses du pixel infecté de reference
+                        air_contamination_y, air_contamination_x = infected_ref_y + additional_y, infected_ref_x + additional_x # calcul de la position du nouveau foyer de contamination -> coordonnées renvoyées sous forme y, x
+                        if (0 <= air_contamination_y < self.height) and (0 <= air_contamination_x < self.width) : # on verifie que le nouveau foyer n'apparaisse pas hors de la fenetre
+                            if self.state_grid[air_contamination_y, air_contamination_x] not in self.invalid_statue_for_contamination : 
+                                self.state_grid[air_contamination_y, air_contamination_x] = 1
+                                break
 
-            # Pick a random infected "reference" then jump within a radius box
-            ref_y, ref_x = infected_positions[self.rng.integers(0, len(infected_positions))]
-            # Retry a few times to land somewhere valid
-            for _ in range(16):
-                dy = self.rng.integers(-self.air_jump_radius, self.air_jump_radius + 1)
-                dx = self.rng.integers(-self.air_jump_radius, self.air_jump_radius + 1)
-                ny, nx = ref_y + dy, ref_x + dx
-                if 0 <= ny < self.height and 0 <= nx < self.width:
-                    if (self.state_grid[ny, nx] == 0) and (not self.dead[ny, nx]):
-                        self.state_grid[ny, nx] = 1
-                        break
 
     def update_infected_number(self):
         self.contact_transmission()
@@ -106,28 +108,27 @@ class Infection:
 
 
     def update_dead_number(self) :
-        infected_px_coords = np.column_stack(np.where(self.state_grid == 1)) # stockage des coords infectés -> sous forme [(x, y), (x, y)...]
+        infected_px_coords = np.argwhere(self.state_grid == 1) # stockage des coords infectés -> sous forme [(y, x), (y, x)...]
         # Si aucun pixel infecté on arrete la fonction
-        if not np.any(infected_px_coords) :
-            return
         
-        # On tue aleatoirement certains pixels infectés
-        random_selection = self.rng.integers(0, 16, size=len(infected_px_coords), dtype=np.uint8) # on donne a chaque position de pixel infecté un nombre aleatoire stocké dans le tableau random_selection
-        px_to_kill = infected_px_coords[(random_selection == 1)] # on stock dans le tableau px_to_kill les positions des pixels infectés qui ont eu le nombre 1 et qui vont donc mourir -> sous forme [(x, y), (x, y)...]
-        
-        xs, ys = np.transpose(px_to_kill) # on est obliger grace a np.transpose de redecouper [(x, y), (x, y)...] en deux tableau [x, x, x...], [y, y, y...] car c'est comme ca que numpy geres les positions (a l'etape d'apres)
-        self.state_grid[xs, ys] = 2  # on passe la valeur des pixels morts a 2 dans le tableau numpy qui stock l'etat de chaque pixel
+        if np.any(infected_px_coords) :
+            # On tue aleatoirement certains pixels infectés
+            random_selection = self.rng.random(size=len(infected_px_coords), dtype=np.float32) # on donne a chaque position de pixel infecté un nombre aleatoire entre 0 et 1 stocké dans le tableau random_selection
+            px_to_kill = infected_px_coords[(random_selection < self.death_probability)] # on stock dans le tableau px_to_kill les positions des pixels infectés qui ont eu un nombre inferieur a la proba de mort -> sous forme [(y, x), (y, x)...]
+            
+            xs, ys = np.transpose(px_to_kill) # on est obliger grace a np.transpose de redecouper [(y, x), (y, x)...] en deux tableau [x, x, x...], [y, y, y...] car c'est comme ca que numpy geres les positions (a l'etape d'apres)
+            self.state_grid[xs, ys] = 2  # on passe la valeur des pixels morts a 2 dans le tableau numpy qui stock l'etat de chaque pixel
 
 
     def update_infection(self) :
         current_time = pygame.time.get_ticks()
-        if current_time - self.time_last_infection >= self.time_between_infections:
+        if current_time - self.time_last_infection >= self.time_between_infections :
             self.time_last_infection = current_time
             self.update_infected_number()
             self.update_dead_number()
 
 
-    # ===== AFFICHAGE =====
+    # ----- AFFICHAGE -----
     def draw(self, screen):
         # Blanc pour les pixels
         rgb = np.full((self.height, self.width, 3), (255, 255, 255), dtype=np.uint8)

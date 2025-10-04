@@ -6,7 +6,7 @@ class Simulation:
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode((1400, 800))
-        pygame.display.set_caption("Infection NumPy — 0 = safe, 1 = infected")
+        pygame.display.set_caption("Infection NumPy")
         self.clock = pygame.time.Clock()
         self.infection = Infection()
         self.pause = False
