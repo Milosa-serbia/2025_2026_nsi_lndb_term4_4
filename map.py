@@ -1,11 +1,10 @@
-
 import pygame
 import numpy as np
 import random
 
 class Infection:
     def __init__(self):
-        # Screen and grid
+        # Screen et grid
         self.screen = pygame.display.get_surface()
         self.width, self.height = self.screen.get_size()
         # State_grid : 0 = safe, 1 = infected, 2 = dead
@@ -81,6 +80,7 @@ class Infection:
             if chosen.size:
                 self.state_grid[chosen[:, 0], chosen[:, 1]] = 1
 
+
     def air_transmission(self):
         if self.air_transmission_is_active :
 
@@ -93,8 +93,8 @@ class Infection:
                     
                     # Si la 1ere contamination n'a pas marche on en refait une (jusqu'a 16 essais)
                     for _ in range(16):
-                        additional_y = self.rng.integers(-self.air_jump_radius, self.air_jump_radius + 1) # distannce sur l'axe des ordonnées du pixel infecté de reference
-                        additional_x = self.rng.integers(-self.air_jump_radius, self.air_jump_radius + 1) # distannce sur l'axe des abscisses du pixel infecté de reference
+                        additional_y = self.rng.integers(-self.air_jump_radius, self.air_jump_radius + 1) # distance sur l'axe des ordonnées du pixel infecté de reference
+                        additional_x = self.rng.integers(-self.air_jump_radius, self.air_jump_radius + 1) # distance sur l'axe des abscisses du pixel infecté de reference
                         air_contamination_y, air_contamination_x = infected_ref_y + additional_y, infected_ref_x + additional_x # calcul de la position du nouveau foyer de contamination -> coordonnées renvoyées sous forme y, x
                         if (0 <= air_contamination_y < self.height) and (0 <= air_contamination_x < self.width) : # on verifie que le nouveau foyer n'apparaisse pas hors de la fenetre
                             if self.state_grid[air_contamination_y, air_contamination_x] not in self.invalid_statue_for_contamination : 
@@ -129,7 +129,7 @@ class Infection:
 
 
     # ----- AFFICHAGE -----
-    def draw(self, screen):
+    def draw(self, screen) :
         # Blanc pour les pixels
         rgb = np.full((self.height, self.width, 3), (255, 255, 255), dtype=np.uint8)
 
