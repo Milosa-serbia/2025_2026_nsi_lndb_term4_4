@@ -106,15 +106,17 @@ class Infection:
 
 
     def update_dead_number(self) :
-        infected_ys, infected_xs = np.where(self.state_grid == 1)
+        infected_px_coords = np.column_stack(np.where(self.state_grid == 1)) # stockage des coords infectés -> sous forme [(x, y), (x, y)...]
         # Si aucun pixel infecté on arrete la fonction
-        if not np.any(infected_ys) :
+        if not np.any(infected_px_coords) :
             return
+        
         # On tue aleatoirement certains pixels infectés
-        random_selection = self.rng.integers(0, 16, size=infected_ys.shape, dtype=np.uint8) # on donne a chaque indice de pixel infecté un nombre aleatoire stocké dans le tableau random_selection
-        index_of_the_deads = (random_selection == 1) # on stock dans le tableau will_die les indices des positions des pixels qui ont eu le nombre 1 et qui vont donc mourir
-        if np.any(index_of_the_deads) :
-            self.state_grid[infected_ys[index_of_the_deads], infected_xs[index_of_the_deads]] = 2  # on passe la valeur des pixels mort a 2 dans le tableau numpy qui stock l'etat de chaque pixel
+        random_selection = self.rng.integers(0, 16, size=len(infected_px_coords), dtype=np.uint8) # on donne a chaque position de pixel infecté un nombre aleatoire stocké dans le tableau random_selection
+        px_to_kill = infected_px_coords[(random_selection == 1)] # on stock dans le tableau px_to_kill les positions des pixels infectés qui ont eu le nombre 1 et qui vont donc mourir -> sous forme [(x, y), (x, y)...]
+        
+        x, y = np.transpose(px_to_kill) # on est obliger grace a np.transpose de redecouper [(x, y), (x, y)...] en deux tableau [x, x, x...], [y, y, y...] car c'est comme ca que numpy geres les positions (a l'etape d'apres)
+        self.state_grid[x, y] = 2  # on passe la valeur des pixels morts a 2 dans le tableau numpy qui stock l'etat de chaque pixel
 
 
     def update_infection(self) :
