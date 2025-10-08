@@ -12,6 +12,7 @@ Chaque simulation sera différente grâce à diverses variables aléatoires.
         - Rendre la map utilisable avec le virus
     - Virus :
         - Barre de progression
+        - Régler le problème des survivants
     - Menu :
         - Boutton play
         - Différentes difficultés
