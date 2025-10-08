@@ -7,9 +7,33 @@ On doit prendre des décisions pour limiter sa propagation tout en maintenant l'
 Chaque simulation sera différente grâce à diverses variables aléatoires.
 
 # To-do list
-    - Refaire map.py
-    - Trouver un moyen d'implémenter la map des USA
-        - Utiliser numpy_test pour sauvegarder la map
-    - 
-My granny called, she said, "Travvy, you work too hard
-I'm worried you forget about me"
+    - Map :
+        - Sauvegarder Map USA
+        - Rendre la map utilisable avec le virus
+    - Virus :
+        - Barre de progression
+    - Menu :
+        - Boutton play
+        - Différentes difficultés
+        - Tutoriel sur le jeu
+    - Gameplay :
+        - Barre de stabilité politique
+        - Choix aléatoires affectant le jeu
+        - Fin du jeu (défaite)
+        - Fin du jeu (victoire)
+        
+
+
+# Did list
+    - Map :
+        - Sauvegarder un dessin grâce à numpy
+        - Trouver une map USA
+    - Virus :
+        - Propagation du virus
+        - Propagation sans lag
+        - Cellules mortes
+        - Transmission aérienne
+    - Menu :
+        NONE
+    - Gameplay :
+        NONE
