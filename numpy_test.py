@@ -1,9 +1,8 @@
 import numpy as np
 import pygame
 
-WIDTH = 1400
-HEIGHT = 800
-
+WIDTH = 1500
+HEIGHT = 850
 
 def grid_to_surf(gray_2d, surf):
     # Étend (H,W) -> (H,W,1) -> (H,W,3)
