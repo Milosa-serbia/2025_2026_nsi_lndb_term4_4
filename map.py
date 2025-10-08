@@ -116,8 +116,8 @@ class Infection:
             random_selection = self.rng.random(size=len(infected_px_coords), dtype=np.float32) # on donne a chaque position de pixel infecté un nombre aleatoire entre 0 et 1 stocké dans le tableau random_selection
             px_to_kill = infected_px_coords[(random_selection < self.death_probability)] # on stock dans le tableau px_to_kill les positions des pixels infectés qui ont eu un nombre inferieur a la proba de mort -> sous forme [(y, x), (y, x)...]
             
-            xs, ys = np.transpose(px_to_kill) # on est obliger grace a np.transpose de redecouper [(y, x), (y, x)...] en deux tableau [x, x, x...], [y, y, y...] car c'est comme ca que numpy geres les positions (a l'etape d'apres)
-            self.state_grid[xs, ys] = 2  # on passe la valeur des pixels morts a 2 dans le tableau numpy qui stock l'etat de chaque pixel
+            ys, xs = np.transpose(px_to_kill) # on est obliger grace a np.transpose de redecouper [(y, x), (y, x)...] en deux tableau [y, y, y...], [x, x, x...] car c'est comme ca que numpy geres les positions (a l'etape d'apres)
+            self.state_grid[ys, xs] = 2  # on passe la valeur des pixels morts a 2 dans le tableau numpy qui stock l'etat de chaque pixel
 
 
     def update_infection(self) :
