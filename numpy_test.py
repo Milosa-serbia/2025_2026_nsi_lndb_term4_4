@@ -49,7 +49,7 @@ def main():
         if drawing: 
             x, y = pygame.mouse.get_pos()
             if 0 <= x < WIDTH - 2 and 0 <= y < HEIGHT - 2:
-                grid[y:y+3, x:x+3] = 255
+                grid[y:y+3, x:x+3] = 0
 
         surf = grid_to_surf(grid, surf)
         screen.blit(surf, (0, 0))
