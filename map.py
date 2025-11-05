@@ -8,7 +8,7 @@ class Infection:
         self.screen = pygame.display.get_surface()
         self.width, self.height = self.screen.get_size()
         # State_grid : 0 = safe, 1 = infected, 2 = dead
-        self.state_grid = np.zeros((self.height, self.width), dtype=np.uint8)
+        self.state_grid = np.load('dessin.npy')
         # Separate "dead" mask to keep same behavior as before (not drawn by default)
         self.dead = np.zeros_like(self.state_grid, dtype=bool)
 
@@ -19,9 +19,9 @@ class Infection:
         # Timing et probabilitées
         self.time_last_infection = 0
         self.time_between_infections = 10 # ms
-        self.contact_infect_probability = 2 / 15
+        self.contact_infect_probability = 8 / 15
         self.air_transmission_is_active = True
-        self.air_infect_probability = 1 / 100
+        self.air_infect_probability = 1 / 1
         self.air_jump_radius = 300
         self.death_probability = 1 / 15
 
@@ -132,6 +132,10 @@ class Infection:
     def draw(self, screen) :
         # Blanc pour les pixels
         rgb = np.full((self.height, self.width, 3), (255, 255, 255), dtype=np.uint8)
+
+        # NIGGER pour les frontieres
+        border = (self.state_grid == 255)
+        rgb[border] = (0, 0, 0)
 
         # Rouge pour les infectés
         infected = (self.state_grid == 1)

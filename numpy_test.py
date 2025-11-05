@@ -49,7 +49,7 @@ def main():
         if drawing: 
             x, y = pygame.mouse.get_pos()
             if 0 <= x < WIDTH - 2 and 0 <= y < HEIGHT - 2:
-                grid[y:y+3, x:x+3] = 0
+                grid[y:y+15, x:x+15] = 100
 
         surf = grid_to_surf(grid, surf)
         screen.blit(surf, (0, 0))
@@ -57,5 +57,6 @@ def main():
         clock.tick(1000)  
     
     pygame.quit()
+    print(grid)
                 
 main()

@@ -1,11 +1,10 @@
-
 import pygame, sys
 from map import Infection
 
 class Simulation:
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode((1400, 800))
+        self.screen = pygame.display.set_mode((1500, 850))
         pygame.display.set_caption("Infection NumPy")
         self.clock = pygame.time.Clock()
         self.infection = Infection()
