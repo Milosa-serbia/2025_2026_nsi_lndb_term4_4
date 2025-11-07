@@ -18,14 +18,14 @@ class Infection:
 
         # Timing et probabilitées
         self.time_last_infection = 0
-        self.time_between_infections = 10 # ms
-        self.contact_infect_probability = 8 / 15
+        self.time_between_infections = 1000 # ms
+        self.contact_infect_probability = 2 / 15
         self.air_transmission_is_active = True
-        self.air_infect_probability = 1 / 1
+        self.air_infect_probability = 1 / 100
         self.air_jump_radius = 300
         self.death_probability = 1 / 15
 
-        self.invalid_statue_for_contamination = [1, 2] # le statut des pixels invalides pour la containation (donc deja mort, deja infectes...)
+        self.invalid_statue_for_contamination = [1, 2, 255] # le statut des pixels invalides pour la containation (donc deja mort, deja infectes...)
 
         # On cree un generateur d'aleatoire avec numpy
         self.rng = np.random.default_rng()
