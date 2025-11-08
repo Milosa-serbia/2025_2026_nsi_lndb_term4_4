@@ -7,10 +7,8 @@ class Infection:
         # Screen et grid
         self.screen = pygame.display.get_surface()
         self.width, self.height = self.screen.get_size()
-        # State_grid : 0 = safe, 1 = infected, 2 = dead
+        # State_grid : 0 = safe, 1 = infected, 2 = dead, 255 = border
         self.state_grid = np.load('dessin.npy')
-        # Separate "dead" mask to keep same behavior as before (not drawn by default)
-        self.dead = np.zeros_like(self.state_grid, dtype=bool)
 
         # Premier pixel infecté au centre
         y, x = self.height // 2, self.width // 2
@@ -18,7 +16,7 @@ class Infection:
 
         # Timing et probabilitées
         self.time_last_infection = 0
-        self.time_between_infections = 1000 # ms
+        self.time_between_infections = 100 # ms
         self.contact_infect_probability = 2 / 15
         self.air_transmission_is_active = True
         self.air_infect_probability = 1 / 100
@@ -30,57 +28,61 @@ class Infection:
         # On cree un generateur d'aleatoire avec numpy
         self.rng = np.random.default_rng()
 
+
     # ===== Helpers for neighborhood logic (8-neighborhood via array rolls) =====
-    def _neighbor_count(self, grid):
-        # Sum infected neighbors from 8 directions using wrap=False style by padding with zeros.
-        g = grid
-        H, W = g.shape
-        # Pad to avoid wrap-around when rolling
-        pad = np.pad(g, pad_width=1, mode='constant', constant_values=0)
+    def neighbor_count(self, infected_positions) :
+        """
+        À partir d'une liste de positions infectées [(y, x), ...],
+        renvoie la liste des cases candidates à infecter :
+        - les 8 voisins autour des infectés
+        - si un voisin est un border (255), saute par-dessus (distance 2)
+        """
+        neighbors_candidates = []
 
-        # Extract shifted views (avoids multiple rolls)
-        # Using slicing on the padded grid is faster and avoids wrap issues.
-        n  = pad[0:H,   0:W]   # up-left
-        ne = pad[0:H,   1:W+1] # up
-        e  = pad[0:H,   2:W+2] # up-right
-        w  = pad[1:H+1, 0:W]   # left
-        c  = pad[1:H+1, 1:W+1] # center (unused directly)
-        er = pad[1:H+1, 2:W+2] # right
-        sw = pad[2:H+2, 0:W]   # down-left
-        se = pad[2:H+2, 1:W+1] # down
-        s  = pad[2:H+2, 2:W+2] # down-right
+        # Directions autour d'un px infecté
+        directions = [
+            (-1, -1), (-1, 0), (-1, 1),
+            ( 0, -1),          ( 0, 1),
+            ( 1, -1), ( 1, 0), ( 1, 1),
+        ]
 
-        # Sum all except center
-        return (n + ne + e + w + er + sw + se + s)
+        for y, x in infected_positions :
+            for dy, dx in directions :
+                ny, nx = y + dy, x + dx
 
-    # ===== Transmission rules =====
+                # Vérifie que la case est dans la grille
+                if 0 <= ny < self.height and 0 <= nx < self.width :
+                    cell = self.state_grid[ny, nx]
+
+                    if cell == 0 : # si le px est safe (sa position pointe sur 0 dans state_grid) alors il est candidats a l'infection
+                        neighbors_candidates.append((ny, nx))
+
+                    elif cell == 255 : # # si le px est une frontiere (sa position pointe sur 255 dans state_grid) alors on le saute et les pixels safe derriere lui sont candidats a l'infection
+                        # tentative de "saut" par-dessus le border
+                        jy, jx = y + 4*dy, x + 4*dx
+                        if 0 <= jy < self.height and 0 <= jx < self.width :
+                            if self.state_grid[jy, jx] == 0 :
+                                neighbors_candidates.append((jy, jx))
+
+        return neighbors_candidates
+
+            
+    # ===== Transmission par contact =====
     def contact_transmission(self):
         # Compute number of infected neighbors for every pixel
-        infected = (self.state_grid == 1)
-        neigh = self._neighbor_count(infected.astype(np.uint8))
+        infected_positions = np.argwhere(self.state_grid == 1) # stockage des coords infectés -> sous forme [(y, x), (y, x)...]
+        neighbors_candidates = self.neighbor_count(infected_positions) # On stock dans une liste les positions des voisins des infectés candidats a l'infection en cours : deja infectés ou morts -> sous forme [(y, x), (y, x)...]
+        neighbors_candidates = np.asarray(neighbors_candidates, dtype=np.int32) # On transforme notre liste en object numpy -> sous forme [(y, x), (y, x)...]
 
-        # Candidates: safe & not dead & has ≥1 infected neighbor
-        candidates = (self.state_grid == 0) & (~self.dead) & (neigh > 0)
-
-        if not np.any(candidates):
-            return
-
-        # For each candidate with n neighbors, infection probability = 1 - (1-p)^n
-        # Draw uniform randoms and infect where rand < prob
-        n = neigh[candidates].astype(np.float32)
-        p = 1.0 - (1.0 - self.contact_infect_probability) ** n
-
-        r = self.rng.random(p.shape, dtype=np.float32)
-        will_infect = (r < p)
-
-        # Apply
-        idxs = np.argwhere(candidates)
-        if idxs.size:
-            chosen = idxs[will_infect]
-            if chosen.size:
-                self.state_grid[chosen[:, 0], chosen[:, 1]] = 1
+        if np.any(neighbors_candidates):
+            random_selection = self.rng.random(size=len(neighbors_candidates), dtype=np.float32) # on donne a chaque position de pixel candidat a l'infection un nombre aleatoire entre 0 et 1 stocké dans le tableau random_selection
+            px_to_infect = neighbors_candidates[(random_selection < self.contact_infect_probability)] # on stock dans le tableau px_to_infect les positions des pixels candidats a l'infection qui ont eu un nombre inferieur a la proba d'infection par contact -> sous forme [(y, x), (y, x)...]
+            
+            ys, xs = np.transpose(px_to_infect) # on est obliger grace a np.transpose de redecouper [(y, x), (y, x)...] en deux tableau [y, y, y...], [x, x, x...] car c'est comme ca que numpy geres les positions (a l'etape d'apres)
+            self.state_grid[ys, xs] = 1  # on passe la valeur des pixels infectés a 1 dans le tableau numpy qui stock l'etat de chaque pixel
 
 
+    # ===== Transmission par air =====
     def air_transmission(self):
         if self.air_transmission_is_active :
 
@@ -102,6 +104,7 @@ class Infection:
                                 break
 
 
+    # ===== Mise a jour des mort / infectés =====
     def update_infected_number(self):
         self.contact_transmission()
         self.air_transmission()
@@ -128,7 +131,7 @@ class Infection:
             self.update_dead_number()
 
 
-    # ----- AFFICHAGE -----
+    # ===== AFFICHAGE =====
     def draw(self, screen) :
         # Blanc pour les pixels
         rgb = np.full((self.height, self.width, 3), (255, 255, 255), dtype=np.uint8)
@@ -136,6 +139,10 @@ class Infection:
         # NIGGER pour les frontieres
         border = (self.state_grid == 255)
         rgb[border] = (0, 0, 0)
+        
+        # Bleu pour la mer
+        border = (self.state_grid == 100)
+        rgb[border] = (135, 206, 235)
 
         # Rouge pour les infectés
         infected = (self.state_grid == 1)
