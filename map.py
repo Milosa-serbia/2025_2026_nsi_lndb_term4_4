@@ -55,9 +55,15 @@ class Infection:
 
                 elif self.state_grid[new_y, new_x] == 255 : # # si le px est une frontiere (sa position pointe sur 255 dans state_grid) alors on le saute et les pixels safe derriere lui sont candidats a l'infection
                     # tentative de "saut" par-dessus le border
-                    new_y, new_x = y + 5 * add_y, x + 5 * add_x
-                    if self.state_grid[new_y, new_x] == 0 :
-                        neighbors_candidates.append((new_y, new_x))
+                    if new_x == x :
+                        new_y = y + 5 * add_y
+                        if self.state_grid[new_y, new_x] == 0 :
+                            neighbors_candidates.append((new_y, new_x))
+                    if new_y == y :
+                        new_x = x + 5 * add_x
+                        if self.state_grid[new_y, new_x] == 0 :
+                            neighbors_candidates.append((new_y, new_x))
+                    
 
         return neighbors_candidates
 
