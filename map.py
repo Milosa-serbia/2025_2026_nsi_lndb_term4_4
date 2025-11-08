@@ -16,7 +16,7 @@ class Infection:
 
         # Timing et probabilitées
         self.time_last_infection = 0
-        self.time_between_infections = 100 # ms
+        self.time_between_infections = 10 # ms
         self.contact_infect_probability = 2 / 15
         self.air_transmission_is_active = True
         self.air_infect_probability = 1 / 100
@@ -47,22 +47,17 @@ class Infection:
         ]
 
         for y, x in infected_positions :
-            for dy, dx in directions :
-                ny, nx = y + dy, x + dx
+            for add_y, add_x in directions :
+                new_y, new_x = y + add_y, x + add_x
+                
+                if self.state_grid[new_y, new_x] == 0 : # si le px est safe (sa position pointe sur 0 dans state_grid) alors il est candidats a l'infection
+                    neighbors_candidates.append((new_y, new_x))
 
-                # Vérifie que la case est dans la grille
-                if 0 <= ny < self.height and 0 <= nx < self.width :
-                    cell = self.state_grid[ny, nx]
-
-                    if cell == 0 : # si le px est safe (sa position pointe sur 0 dans state_grid) alors il est candidats a l'infection
-                        neighbors_candidates.append((ny, nx))
-
-                    elif cell == 255 : # # si le px est une frontiere (sa position pointe sur 255 dans state_grid) alors on le saute et les pixels safe derriere lui sont candidats a l'infection
-                        # tentative de "saut" par-dessus le border
-                        jy, jx = y + 4*dy, x + 4*dx
-                        if 0 <= jy < self.height and 0 <= jx < self.width :
-                            if self.state_grid[jy, jx] == 0 :
-                                neighbors_candidates.append((jy, jx))
+                elif self.state_grid[new_y, new_x] == 255 : # # si le px est une frontiere (sa position pointe sur 255 dans state_grid) alors on le saute et les pixels safe derriere lui sont candidats a l'infection
+                    # tentative de "saut" par-dessus le border
+                    new_y, new_x = y + 5 * add_y, x + 5 * add_x
+                    if self.state_grid[new_y, new_x] == 0 :
+                        neighbors_candidates.append((new_y, new_x))
 
         return neighbors_candidates
 

@@ -11,7 +11,7 @@ class Simulation:
         self.pause = False
 
     def run(self):
-        while True:
+        while True :
             self.clock.tick(360)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
