@@ -23,13 +23,13 @@ class Infection:
         self.air_jump_radius = 300
         self.death_probability = 1 / 15
 
-        self.invalid_statue_for_contamination = [1, 2, 255] # le statut des pixels invalides pour la containation (donc deja mort, deja infectes...)
+        self.invalid_statue_for_contamination = [1, 2, 100, 255] # le statut des pixels invalides pour la containation (mer, deja mort, deja infectes...)
 
         # On cree un generateur d'aleatoire avec numpy
         self.rng = np.random.default_rng()
 
 
-    # ===== Helpers for neighborhood logic (8-neighborhood via array rolls) =====
+    # ===== Voisins des pixels infectés pouvant etre infecté =====
     def neighbor_count(self, infected_positions) :
         """
         À partir d'une liste de positions infectées [(y, x), ...],
@@ -50,21 +50,20 @@ class Infection:
             for add_y, add_x in directions :
                 new_y, new_x = y + add_y, x + add_x
                 
-                if self.state_grid[new_y, new_x] == 0 : # si le px est safe (sa position pointe sur 0 dans state_grid) alors il est candidats a l'infection
+                if self.state_grid[new_y, new_x] not in self.invalid_statue_for_contamination : # si le px est safe alors il est candidats a l'infection
                     neighbors_candidates.append((new_y, new_x))
 
                 elif self.state_grid[new_y, new_x] == 255 : # # si le px est une frontiere (sa position pointe sur 255 dans state_grid) alors on le saute et les pixels safe derriere lui sont candidats a l'infection
                     # tentative de "saut" par-dessus le border
                     if new_x == x :
                         new_y = y + 5 * add_y
-                        if self.state_grid[new_y, new_x] == 0 :
+                        if self.state_grid[new_y, new_x] not in self.invalid_statue_for_contamination :
                             neighbors_candidates.append((new_y, new_x))
                     if new_y == y :
                         new_x = x + 5 * add_x
-                        if self.state_grid[new_y, new_x] == 0 :
+                        if self.state_grid[new_y, new_x] not in self.invalid_statue_for_contamination :
                             neighbors_candidates.append((new_y, new_x))
                     
-
         return neighbors_candidates
 
             
@@ -142,8 +141,8 @@ class Infection:
         rgb[border] = (0, 0, 0)
         
         # Bleu pour la mer
-        border = (self.state_grid == 100)
-        rgb[border] = (135, 206, 235)
+        sea = (self.state_grid == 100)
+        rgb[sea] = (135, 206, 235)
 
         # Rouge pour les infectés
         infected = (self.state_grid == 1)
