@@ -2,7 +2,7 @@ import pygame, sys
 from brbr_infection import *
 from brbr_ui import *
 
-class Simulation:
+class Simulation :
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode((1500, 850))

@@ -10,11 +10,6 @@ class Infection :
         # Status_grid : 0 = safe, 1 = infected, 2 = dead, 255 = border
         self.status_grid = np.load('dessin.npy')
         self.state_grid = self.status_grid.copy()
-        
-        self.state_pixels = {} # Dictionnaire qui rend le changement de couleur (lorque la souris passe su un etat) plus rapide
-        for id in range(101, 148):
-            ys, xs = np.where(self.state_grid == id)
-            self.state_pixels[id] = (ys, xs)
 
         # Premier pixel infecté au centre
         y, x = self.height // 2, self.width // 2
@@ -48,43 +43,80 @@ class Infection :
 
 
     # ===== Voisins des pixels infectés pouvant etre infecté =====
-    def neighbor_count(self, infected_positions) :
+    def neighbor_count(self, infected_positions):
         """
-        À partir d'une liste de positions infectées [(y, x), ...],
-        renvoie la liste des cases candidates à infecter :
-        - les 8 voisins autour des infectés
-        - si un voisin est un border (255), saute par-dessus (distance 2)
+        Vectorisée: on traite toutes les positions infectées d'un coup, avec
+        une petite boucle sur les 8 directions (constante).
+        Renvoie une liste [(y, x), ...] des candidats, doublons conservés.
+        Règles:
+        - voisin direct ajouté si valeur NOT IN invalid_statue_for_contamination
+        - si voisin == 255 et direction cardinale (haut/bas/gauche/droite),
+            on saute de 5 px dans la même direction; cible ajoutée si NOT IN invalids
         """
-        neighbors_candidates = []
+        if infected_positions is None or len(infected_positions) == 0:
+            return []
 
-        # Directions autour d'un px infecté
-        directions = [
-            (-1, -1), (-1, 0), (-1, 1),
-            ( 0, -1),          ( 0, 1),
-            ( 1, -1), ( 1, 0), ( 1, 1),
-        ]
+        H, W = self.status_grid.shape
+        ys_all = infected_positions[:, 0]
+        xs_all = infected_positions[:, 1]
 
-        for y, x in infected_positions :
-            for add_y, add_x in directions :
-                new_y, new_x = y + add_y, x + add_x
-                
-                if self.status_grid[new_y, new_x] not in self.invalid_statue_for_contamination : # si le px est safe alors il est candidats a l'infection
-                    neighbors_candidates.append((new_y, new_x))
+        # 8 directions (dy, dx)
+        directions = [(-1, -1), (-1, 0), (-1, 1),
+                    ( 0, -1),           ( 0, 1),
+                    ( 1, -1), ( 1, 0),  ( 1, 1)]
 
-                elif self.status_grid[new_y, new_x] == 255 : # # si le px est une frontiere (sa position pointe sur 255 dans status_grid) alors on le saute et les pixels safe derriere lui sont candidats a l'infection
-                    # tentative de "saut" par-dessus le border
-                    if new_x == x :
-                        new_y = y + 5 * add_y
-                        if self.status_grid[new_y, new_x] not in self.invalid_statue_for_contamination :
-                            neighbors_candidates.append((new_y, new_x))
-                    if new_y == y :
-                        new_x = x + 5 * add_x
-                        if self.status_grid[new_y, new_x] not in self.invalid_statue_for_contamination :
-                            neighbors_candidates.append((new_y, new_x))
-                    
-        return neighbors_candidates
+        cand_y_chunks = []
+        cand_x_chunks = []
 
-            
+        invalid = np.array(self.invalid_statue_for_contamination, dtype=np.uint8)
+
+        for dy, dx in directions:
+            ny = ys_all + dy
+            nx = xs_all + dx
+
+            # in-bounds
+            inb = (ny >= 0) & (ny < H) & (nx >= 0) & (nx < W)
+            if not np.any(inb):
+                continue
+
+            ny = ny[inb]
+            nx = nx[inb]
+
+            vals = self.status_grid[ny, nx]
+
+            # 1) voisins directs "safe" -> candidats
+            safe = ~np.isin(vals, invalid)
+            if np.any(safe):
+                cand_y_chunks.append(ny[safe])
+                cand_x_chunks.append(nx[safe])
+
+            # 2) saut au-dessus d'un border (255) uniquement en directions cardinales
+            if (dy == 0) ^ (dx == 0):  # True si cardinal (et non diagonale)
+                border = (vals == 255)
+                if np.any(border):
+                    ty = (ys_all[inb][border] + 5 * dy)
+                    tx = (xs_all[inb][border] + 5 * dx)
+
+                    inb2 = (ty >= 0) & (ty < H) & (tx >= 0) & (tx < W)
+                    if np.any(inb2):
+                        ty = ty[inb2]
+                        tx = tx[inb2]
+                        tvals = self.status_grid[ty, tx]
+                        ok = ~np.isin(tvals, invalid)
+                        if np.any(ok):
+                            cand_y_chunks.append(ty[ok])
+                            cand_x_chunks.append(tx[ok])
+
+        if not cand_y_chunks:
+            return []
+
+        cy = np.concatenate(cand_y_chunks).astype(np.int32, copy=False)
+        cx = np.concatenate(cand_x_chunks).astype(np.int32, copy=False)
+
+        # On conserve les doublons comme la version d'origine
+        return list(map(tuple, np.stack((cy, cx), axis=1)))
+
+
     # ===== Transmission par contact =====
     def contact_transmission(self) :
         # Compute number of infected neighbors for every pixel
@@ -157,8 +189,7 @@ class Infection :
         if not menu_open :
             state_id = self.state_grid[mouse_y, mouse_x]
             if 101 <= state_id <= 147 :
-                ys, xs = self.state_pixels[state_id]
-                rgb[ys, xs] = (rgb[ys, xs] * 0.8).astype(np.uint8)
+                rgb[self.state_grid == state_id] = (rgb[self.state_grid == state_id] * 0.8).astype(np.uint8)
         rgb = np.transpose(rgb, (1, 0, 2))     
         pygame.surfarray.blit_array(screen, rgb)
 
