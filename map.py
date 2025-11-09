@@ -23,10 +23,31 @@ class Infection:
         self.air_jump_radius = 300
         self.death_probability = 1 / 15
 
-        self.invalid_statue_for_contamination = [1, 2, 100, 255] # le statut des pixels invalides pour la containation (mer, deja mort, deja infectes...)
+        # le statut des pixels invalides pour la containation (mer, deja mort, deja infectes...)
+        self.invalid_statue_for_contamination = [1, 2, 100, 255] 
 
         # On cree un generateur d'aleatoire avec numpy
         self.rng = np.random.default_rng()
+        
+        # ---------------- PALETTE DE COULEUR ----------------
+        self.palette = np.zeros((256, 3), dtype=np.uint8)
+
+        # Couleurs fixes
+        self.palette[255] = (0, 0, 0)            # frontières 
+        self.palette[100] = (135, 206, 235)      # mer 
+        self.palette[1]   = (255, 0, 0)          # infectés 
+        self.palette[2]   = (120, 120, 120)      # morts 
+
+        # ------- Dégradé jaune pour population 101 → 147 -------
+        start = np.array([225, 210, 100], dtype=np.float32)    # jaune foncé mais pas trop
+        end   = np.array([255, 255, 175], dtype=np.float32)    # jaune clair mais pas blanc
+        steps = 147 - 101 + 1
+
+        gradient = start + (np.linspace(0, 1, steps)[:, None] * (end - start))
+        gradient = gradient.astype(np.uint8)
+
+        self.palette[101:148] = gradient
+        # -------------------------------------------------------
 
 
     # ===== Voisins des pixels infectés pouvant etre infecté =====
@@ -132,26 +153,9 @@ class Infection:
 
 
     # ===== AFFICHAGE =====
-    def draw(self, screen) :
-        # Blanc pour les pixels
-        rgb = np.full((self.height, self.width, 3), (255, 255, 255), dtype=np.uint8)
+    def draw(self, screen):
+        rgb = self.palette[self.state_grid]   
+        rgb = np.transpose(rgb, (1, 0, 2))     
+        pygame.surfarray.blit_array(screen, rgb)
 
-        # NIGGER pour les frontieres
-        border = (self.state_grid == 255)
-        rgb[border] = (0, 0, 0)
-        
-        # Bleu pour la mer
-        sea = (self.state_grid == 100)
-        rgb[sea] = (135, 206, 235)
 
-        # Rouge pour les infectés
-        infected = (self.state_grid == 1)
-        rgb[infected] = (255, 0, 0)
-        
-        # Gris pour les pixels morts
-        dead = (self.state_grid == 2)
-        rgb[dead] = (128, 128, 128)
-
-        # np.transpose parce que tableau numpy -> hauteur, largeur et fenetre pygame -> largeur, hauteur
-        color_grid = np.transpose(rgb, (1, 0, 2))
-        pygame.surfarray.blit_array(screen, color_grid)
