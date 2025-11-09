@@ -1,5 +1,6 @@
 import pygame, sys
-from brbr_infection import Infection
+from brbr_infection import *
+from brbr_ui import *
 
 class Simulation:
     def __init__(self):
@@ -8,28 +9,31 @@ class Simulation:
         pygame.display.set_caption("Infection NumPy")
         self.clock = pygame.time.Clock()
         self.infection = Infection()
-        self.pause = False
+        self.ui = UI()
 
     def run(self):
         while True :
             self.clock.tick(360)
+            x, y = pygame.mouse.get_pos()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-
-                if event.type == pygame.KEYDOWN :
-                    if event.key == pygame.K_SPACE :
-                        if self.pause == False :
-                            self.pause = True
-                        else : 
-                            self.pause = False
-
-            if self.pause == False :
-                self.infection.update_infection()
+                            
+                if event.type == pygame.MOUSEBUTTONDOWN :
+                    if not self.ui.menu_open :
+                        self.ui.px_id = self.infection.state_grid[int(y), int(x)]
+                        self.ui.menu_open = True
+                    else :
+                        if not self.ui.status_rect.collidepoint(x, y) :
+                            self.ui.menu_open = False
+                        
+            # Update
+            self.infection.update_infection()
 
             # Draw
-            self.infection.draw(self.screen)
+            self.infection.draw(self.screen, self.ui.menu_open)
+            self.ui.draw(self.screen)
             pygame.display.update()
 
 if __name__ == "__main__":

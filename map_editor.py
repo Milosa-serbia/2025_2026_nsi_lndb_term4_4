@@ -14,7 +14,7 @@ def save_grid(grid, filename="dessin.npy"):
     np.save(filename, grid)
     print(f"Tableau NumPy sauvegardé sous {filename}")
 
-def main():
+def main() :
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     try:

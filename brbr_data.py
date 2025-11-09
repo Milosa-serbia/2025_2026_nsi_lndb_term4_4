@@ -31,3 +31,4 @@ def create_virus(difficulty, name) :
                 "cure_resistance" : randint(1, difficulty),
                 "survival_rate" : randint(1, difficulty),
                 "mutations" : False}
+        
