@@ -89,7 +89,7 @@ class Infection:
 
             
     # ===== Transmission par contact =====
-    def contact_transmission(self):
+    def contact_transmission(self) :
         # Compute number of infected neighbors for every pixel
         infected_positions = np.argwhere(self.state_grid == 1) # stockage des coords infectés -> sous forme [(y, x), (y, x)...]
         neighbors_candidates = self.neighbor_count(infected_positions) # On stock dans une liste les positions des voisins des infectés candidats a l'infection en cours : deja infectés ou morts -> sous forme [(y, x), (y, x)...]
@@ -104,7 +104,7 @@ class Infection:
 
 
     # ===== Transmission par air =====
-    def air_transmission(self):
+    def air_transmission(self) :
         if self.air_transmission_is_active :
 
             if self.rng.random(dtype=np.float32) < self.air_infect_probability :
@@ -126,7 +126,7 @@ class Infection:
 
 
     # ===== Mise a jour des mort / infectés =====
-    def update_infected_number(self):
+    def update_infected_number(self) :
         self.contact_transmission()
         self.air_transmission()
 
@@ -153,7 +153,7 @@ class Infection:
 
 
     # ===== AFFICHAGE =====
-    def draw(self, screen):
+    def draw(self, screen) :
         rgb = self.palette[self.state_grid]   
         rgb = np.transpose(rgb, (1, 0, 2))     
         pygame.surfarray.blit_array(screen, rgb)

@@ -1,5 +1,5 @@
 import pygame, sys
-from map import Infection
+from brbr_infection import Infection
 
 class Simulation:
     def __init__(self):
