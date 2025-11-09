@@ -9,7 +9,6 @@ Chaque simulation sera différente grâce à diverses variables aléatoires.
 # To-do list
     - Map :
         - Sauvegarder Map USA
-        - Rendre la map utilisable avec le virus
     - Virus :
         - Barre de progression
         - Régler le problème des survivants
@@ -29,6 +28,7 @@ Chaque simulation sera différente grâce à diverses variables aléatoires.
     - Map :
         - Sauvegarder un dessin grâce à numpy
         - Trouver une map USA
+        - Rendre la map utilisable avec le virus
     - Virus :
         - Propagation du virus
         - Propagation sans lag
