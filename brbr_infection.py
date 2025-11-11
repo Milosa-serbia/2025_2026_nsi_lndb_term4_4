@@ -25,7 +25,7 @@ class Infection :
         self.death_probability = 1 / 15
 
         # le statut des pixels invalides pour la containation (mer, deja mort, deja infectes...)
-        self.invalid_statue_for_contamination = [1, 2, 100, 255] 
+        self.invalid_statues_for_contamination = [1, 2, 100, 255] 
 
         # On cree un generateur d'aleatoire avec numpy
         self.rng = np.random.default_rng()
@@ -43,75 +43,58 @@ class Infection :
 
 
     # ===== Voisins des pixels infectés pouvant etre infecté =====
-    def neighbor_count(self, infected_positions):
+    def neighbor_count(self, infected_positions) :
         """
-        Vectorisée: on traite toutes les positions infectées d'un coup, avec
-        une petite boucle sur les 8 directions (constante).
         Renvoie une liste [(y, x), ...] des candidats, doublons conservés.
         Règles:
-        - voisin direct ajouté si valeur NOT IN invalid_statue_for_contamination
+        - voisin direct ajouté si valeur NOT IN invalid_statues_for_contamination
         - si voisin == 255 et direction cardinale (haut/bas/gauche/droite),
-            on saute de 5 px dans la même direction; cible ajoutée si NOT IN invalids
+            on saute de 5 px dans la même direction; cible ajoutée si NOT IN invalid_statues_for_contamination
         """
-        if infected_positions is None or len(infected_positions) == 0:
+        if infected_positions is None or len(infected_positions) == 0 :
             return []
 
-        H, W = self.status_grid.shape
-        ys_all = infected_positions[:, 0]
-        xs_all = infected_positions[:, 1]
+        ys = infected_positions[:, 0] # stockage de tous les y des infected_positions -> sous forme [y, y, y...] (tableau 1D)
+        xs = infected_positions[:, 1] # stockage de tous les x des infected_positions -> sous forme [x, x, x...] (tableau 1D)
 
         # 8 directions (dy, dx)
         directions = [(-1, -1), (-1, 0), (-1, 1),
                     ( 0, -1),           ( 0, 1),
                     ( 1, -1), ( 1, 0),  ( 1, 1)]
 
-        cand_y_chunks = []
-        cand_x_chunks = []
+        candidates_ys = [] # y de tous les candidats vont etre stockés
+        candidates_xs = [] # x de tous les candidats vont etre stockés
 
-        invalid = np.array(self.invalid_statue_for_contamination, dtype=np.uint8)
+        invalid_statues = np.array(self.invalid_statues_for_contamination, dtype=np.uint8)
 
-        for dy, dx in directions:
-            ny = ys_all + dy
-            nx = xs_all + dx
+        for dy, dx in directions :
+            neigh_ys = ys + dy # on rajoute dy a chaque elements de ys par ex [20, 28, 32] -> [21, 29, 33]
+            neigh_xs = xs + dx # on rajoute dx a chaque elements de xs par ex [20, 28, 32] -> [21, 29, 33]
 
-            # in-bounds
-            inb = (ny >= 0) & (ny < H) & (nx >= 0) & (nx < W)
-            if not np.any(inb):
-                continue
-
-            ny = ny[inb]
-            nx = nx[inb]
-
-            vals = self.status_grid[ny, nx]
+            neighbors_values = self.status_grid[neigh_ys, neigh_xs] # stockage de toutes les valeurs dans status_grid des voisins des infectés -> [self.status_grid[neigh_ys[0], neigh_xs[0]], self.status_grid[neigh_ys[1], neigh_xs[1]]...]
 
             # 1) voisins directs "safe" -> candidats
-            safe = ~np.isin(vals, invalid)
-            if np.any(safe):
-                cand_y_chunks.append(ny[safe])
-                cand_x_chunks.append(nx[safe])
+            safe_neighbors_values = ~np.isin(neighbors_values, invalid_statues) # on donne a chaque valeures de neighbors_values le bool True si elle n'est PAS dans invalid_statues -> sous forme [True, False, True...]
+            candidates_ys.append(neigh_ys[safe_neighbors_values]) # stockage des y des neighbors_values qui sont safe -> sous forme [y, y, y...]
+            candidates_xs.append(neigh_xs[safe_neighbors_values]) # stockage des x des neighbors_values qui sont safe -> sous forme [x, x, x...]
 
-            # 2) saut au-dessus d'un border (255) uniquement en directions cardinales
-            if (dy == 0) ^ (dx == 0):  # True si cardinal (et non diagonale)
-                border = (vals == 255)
-                if np.any(border):
-                    ty = (ys_all[inb][border] + 5 * dy)
-                    tx = (xs_all[inb][border] + 5 * dx)
+            # 2) saut au-dessus d'un border (255) uniquement haut, bas, gauche, droite (pour eviter une propagation trop rapide en diagonale)
+            if (dy == 0) or (dx == 0) :  # True si haut, bas, gauche, droite
+                border = (neighbors_values == 255)
+                if np.any(border) :
+                    neigh_ys = (ys[border] + 5 * dy)
+                    neigh_xs = (xs[border] + 5 * dx)
 
-                    inb2 = (ty >= 0) & (ty < H) & (tx >= 0) & (tx < W)
-                    if np.any(inb2):
-                        ty = ty[inb2]
-                        tx = tx[inb2]
-                        tvals = self.status_grid[ty, tx]
-                        ok = ~np.isin(tvals, invalid)
-                        if np.any(ok):
-                            cand_y_chunks.append(ty[ok])
-                            cand_x_chunks.append(tx[ok])
+                    neighbors_values = self.status_grid[neigh_ys, neigh_xs]
+                    safe_neighbors_values = ~np.isin(neighbors_values, invalid_statues)
+                    candidates_ys.append(neigh_ys[safe_neighbors_values])
+                    candidates_xs.append(neigh_xs[safe_neighbors_values])
 
-        if not cand_y_chunks:
+        if not candidates_ys :
             return []
 
-        cy = np.concatenate(cand_y_chunks).astype(np.int32, copy=False)
-        cx = np.concatenate(cand_x_chunks).astype(np.int32, copy=False)
+        cy = np.concatenate(candidates_ys).astype(np.int32, copy=False)
+        cx = np.concatenate(candidates_xs).astype(np.int32, copy=False)
 
         # On conserve les doublons comme la version d'origine
         return list(map(tuple, np.stack((cy, cx), axis=1)))
@@ -149,7 +132,7 @@ class Infection :
                         additional_x = self.rng.integers(-self.air_jump_radius, self.air_jump_radius + 1) # distance sur l'axe des abscisses du pixel infecté de reference
                         air_contamination_y, air_contamination_x = infected_ref_y + additional_y, infected_ref_x + additional_x # calcul de la position du nouveau foyer de contamination -> coordonnées renvoyées sous forme y, x
                         if (0 <= air_contamination_y < self.height) and (0 <= air_contamination_x < self.width) : # on verifie que le nouveau foyer n'apparaisse pas hors de la fenetre
-                            if self.status_grid[air_contamination_y, air_contamination_x] not in self.invalid_statue_for_contamination : 
+                            if self.status_grid[air_contamination_y, air_contamination_x] not in self.invalid_statues_for_contamination : 
                                 self.status_grid[air_contamination_y, air_contamination_x] = 1
                                 break
 

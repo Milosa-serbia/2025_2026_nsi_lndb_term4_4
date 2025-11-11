@@ -11,12 +11,12 @@ class Simulation :
         self.infection = Infection()
         self.ui = UI()
 
-    def run(self):
+    def run(self) :
         while True :
             self.clock.tick(360)
             x, y = pygame.mouse.get_pos()
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+                if event.type == pygame.QUIT :
                     pygame.quit()
                     sys.exit()
                             
