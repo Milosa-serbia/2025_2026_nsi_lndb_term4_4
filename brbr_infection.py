@@ -17,7 +17,7 @@ class Infection :
 
         # Timing et probabilitées
         self.time_last_infection = 0
-        self.time_between_infections = 10 # ms
+        self.time_between_infections = 100 # ms
         self.contact_infect_probability = 2 / 15
         self.air_transmission_is_active = True
         self.air_infect_probability = 1 / 100
@@ -129,7 +129,7 @@ class Infection :
                     infected_ref_y, infected_ref_x = infected_positions[self.rng.integers(0, len(infected_positions))]
                     
                     # Si la 1ere contamination n'a pas marche on en refait une (jusqu'a 16 essais)
-                    for _ in range(16):
+                    for _ in range(16) :
                         additional_y = self.rng.integers(-self.air_jump_radius, self.air_jump_radius + 1) # distance sur l'axe des ordonnées du pixel infecté de reference
                         additional_x = self.rng.integers(-self.air_jump_radius, self.air_jump_radius + 1) # distance sur l'axe des abscisses du pixel infecté de reference
                         air_contamination_y, air_contamination_x = infected_ref_y + additional_y, infected_ref_x + additional_x # calcul de la position du nouveau foyer de contamination -> coordonnées renvoyées sous forme y, x
