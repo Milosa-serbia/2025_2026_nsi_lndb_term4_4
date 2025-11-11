@@ -68,12 +68,12 @@ class Infection :
         invalid_statues = np.array(self.invalid_statues_for_contamination, dtype=np.uint8)
 
         for dy, dx in directions :
+            # 1) voisins directs "safe" -> candidats
             neigh_ys = ys + dy # on rajoute dy a chaque elements de ys par ex [20, 28, 32] -> [21, 29, 33]
             neigh_xs = xs + dx # on rajoute dx a chaque elements de xs par ex [20, 28, 32] -> [21, 29, 33]
 
             neighbors_values = self.status_grid[neigh_ys, neigh_xs] # stockage de toutes les valeurs dans status_grid des voisins des infectés -> [self.status_grid[neigh_ys[0], neigh_xs[0]], self.status_grid[neigh_ys[1], neigh_xs[1]]...]
 
-            # 1) voisins directs "safe" -> candidats
             safe_neighbors_values = ~np.isin(neighbors_values, invalid_statues) # on donne a chaque valeures de neighbors_values le bool True si elle n'est PAS dans invalid_statues -> sous forme [True, False, True...]
             candidates_ys.append(neigh_ys[safe_neighbors_values]) # stockage des y des neighbors_values qui sont safe -> sous forme [y, y, y...]
             candidates_xs.append(neigh_xs[safe_neighbors_values]) # stockage des x des neighbors_values qui sont safe -> sous forme [x, x, x...]
@@ -82,10 +82,12 @@ class Infection :
             if (dy == 0) or (dx == 0) :  # True si haut, bas, gauche, droite
                 border = (neighbors_values == 255)
                 if np.any(border) :
+                    # meme fonctionnement que le debut de la fonction mais les voisins sont a 5px de distance (saut des frontieres)
                     neigh_ys = (ys[border] + 5 * dy)
                     neigh_xs = (xs[border] + 5 * dx)
 
                     neighbors_values = self.status_grid[neigh_ys, neigh_xs]
+                    
                     safe_neighbors_values = ~np.isin(neighbors_values, invalid_statues)
                     candidates_ys.append(neigh_ys[safe_neighbors_values])
                     candidates_xs.append(neigh_xs[safe_neighbors_values])
