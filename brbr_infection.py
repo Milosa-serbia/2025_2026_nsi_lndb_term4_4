@@ -98,7 +98,7 @@ class Infection :
         cy = np.concatenate(candidates_ys).astype(np.int32, copy=False)
         cx = np.concatenate(candidates_xs).astype(np.int32, copy=False)
 
-        # On conserve les doublons comme la version d'origine
+        # On conserve les doublons
         return list(map(tuple, np.stack((cy, cx), axis=1)))
 
 
