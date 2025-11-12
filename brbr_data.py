@@ -16,7 +16,8 @@ class KinderState :
 STATES = {
     101 : {
         'name' : 'Washington',
-        'population' : None,
+        'population' : 8115100,
+        'population_per_px' : 575.171,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -25,7 +26,8 @@ STATES = {
     
     102 : {
         'name' : 'Oregon',
-        'population' : None,
+        'population' : 4291090,
+        'population_per_px' : 213.614,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -34,7 +36,8 @@ STATES = {
 
     103 : {
         'name' : 'Californie',
-        'population' : None,
+        'population' : 39431000,
+        'population_per_px' : 1328.672,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -43,7 +46,8 @@ STATES = {
 
     104 : {
         'name' : 'Idaho',
-        'population' : None,
+        'population' : 1967000,
+        'population_per_px' : 114.473,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -52,7 +56,8 @@ STATES = {
 
     105 : {
         'name' : 'Nevada',
-        'population' : None,
+        'population' : 3265000,
+        'population_per_px' : 146.301,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -61,7 +66,8 @@ STATES = {
 
     106 : {
         'name' : 'Montana',
-        'population' : None,
+        'population' : 1153000,
+        'population_per_px' : 36.590,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -70,7 +76,8 @@ STATES = {
 
     107 : {
         'name' : 'Wyoming',
-        'population' : None,
+        'population' : 584000,
+        'population_per_px' : 30.187,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -79,7 +86,8 @@ STATES = {
 
     108 : {
         'name' : 'Utah',
-        'population' : None,
+        'population' : 3427000,
+        'population_per_px' : 213.135,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -88,7 +96,8 @@ STATES = {
 
     109 : {
         'name' : 'Arizona',
-        'population' : None,
+        'population' : 7600000,
+        'population_per_px' : 358.017,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -97,7 +106,8 @@ STATES = {
 
     110 : {
         'name' : 'Colorado',
-        'population' : None,
+        'population' : 6023000,
+        'population_per_px' : 302.313,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -106,7 +116,8 @@ STATES = {
 
     111 : {
         'name' : 'Nouveau-Mexique',
-        'population' : None,
+        'population' : 2110000,
+        'population_per_px' : 100.744,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -115,7 +126,8 @@ STATES = {
 
     112 : {
         'name' : 'Dakota du Nord',
-        'population' : None,
+        'population' : 783000,
+        'population_per_px' : 51.496,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -124,7 +136,8 @@ STATES = {
 
     113 : {
         'name' : 'Dakota du Sud',
-        'population' : None,
+        'population' : 919000,
+        'population_per_px' : 57.959,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -133,7 +146,8 @@ STATES = {
 
     114 : {
         'name' : 'Nebraska',
-        'population' : None,
+        'population' : 1973000,
+        'population_per_px' : 126.110,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -142,7 +156,8 @@ STATES = {
 
     115 : {
         'name' : 'Kansas',
-        'population' : None,
+        'population' : 2943000,
+        'population_per_px' : 193.325,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -151,7 +166,8 @@ STATES = {
 
     116 : {
         'name' : 'Oklahoma',
-        'population' : None,
+        'population' : 4060000,
+        'population_per_px' : 376.065,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -160,7 +176,8 @@ STATES = {
 
     117 : {
         'name' : 'Texas',
-        'population' : None,
+        'population' : 31290000,
+        'population_per_px' : 657.187,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -169,7 +186,8 @@ STATES = {
 
     118 : {
         'name' : 'Minnesota',
-        'population' : None,
+        'population' : 5787000,
+        'population_per_px' : 326.524,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -178,7 +196,8 @@ STATES = {
 
     119 : {
         'name' : 'Iowa',
-        'population' : None,
+        'population' : 3200000,
+        'population_per_px' : 293.604,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -187,7 +206,8 @@ STATES = {
 
     120 : {
         'name' : 'Missouri',
-        'population' : None,
+        'population' : 6217000,
+        'population_per_px' : 466.076,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -196,7 +216,8 @@ STATES = {
 
     121 : {
         'name' : 'Arkansas',
-        'population' : None,
+        'population' : 3080000,
+        'population_per_px' : 340.783,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -205,7 +226,8 @@ STATES = {
 
     122 : {
         'name' : 'Louisiane',
-        'population' : None,
+        'population' : 4540000,
+        'population_per_px' : 577.755,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -214,7 +236,8 @@ STATES = {
 
     123 : {
         'name' : 'Maine',
-        'population' : None,
+        'population' : 1380000,
+        'population_per_px' : 216.063,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -223,7 +246,8 @@ STATES = {
 
     124 : {
         'name' : 'Wisconsin',
-        'population' : None,
+        'population' : 5890000,
+        'population_per_px' : 513.155,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -232,7 +256,8 @@ STATES = {
 
     125 : {
         'name' : 'Illinois',
-        'population' : None,
+        'population' : 12710000,
+        'population_per_px' : 1178.816,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -241,7 +266,8 @@ STATES = {
 
     126 : {
         'name' : 'Mississippi',
-        'population' : None,
+        'population' : 2940000,
+        'population_per_px' : 363.681,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -250,7 +276,8 @@ STATES = {
 
     127 : {
         'name' : 'Michigan',
-        'population' : None,
+        'population' : 10077000,
+        'population_per_px' : 1013.986,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -259,7 +286,8 @@ STATES = {
 
     128 : {
         'name' : 'Indiana',
-        'population' : None,
+        'population' : 6890000,
+        'population_per_px' : 1011.301,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -268,7 +296,8 @@ STATES = {
 
     129 : {
         'name' : 'Kentucky',
-        'population' : None,
+        'population' : 4530000,
+        'population_per_px' : 568.167,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -277,7 +306,8 @@ STATES = {
 
     130 : {
         'name' : 'Tennessee',
-        'population' : None,
+        'population' : 7190000,
+        'population_per_px' : 1014.820,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -286,7 +316,8 @@ STATES = {
 
     131 : {
         'name' : 'Alabama',
-        'population' : None,
+        'population' : 5080000,
+        'population_per_px' : 546.295,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -295,7 +326,8 @@ STATES = {
 
     132 : {
         'name' : 'Floride',
-        'population' : None,
+        'population' : 23370000,
+        'population_per_px' : 2862.216,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -304,7 +336,8 @@ STATES = {
 
     133 : {
         'name' : 'Ohio',
-        'population' : None,
+        'population' : 11880000,
+        'population_per_px' : 1531.717,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -313,7 +346,8 @@ STATES = {
 
     134 : {
         'name' : 'Virginie-Occidentale',
-        'population' : None,
+        'population' : 1760000,
+        'population_per_px' : 404.504,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -322,7 +356,8 @@ STATES = {
 
     135 : {
         'name' : 'Virginie',
-        'population' : None,
+        'population' : 8870000,
+        'population_per_px' : 1049.331,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -331,7 +366,8 @@ STATES = {
 
     136 : {
         'name' : 'Caroline du Nord',
-        'population' : None,
+        'population' : 11046000,
+        'population_per_px' : 1259.377,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -340,7 +376,8 @@ STATES = {
 
     137 : {
         'name' : 'Caroline du Sud',
-        'population' : None,
+        'population' : 5420000,
+        'population_per_px' : 1061.704,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -349,7 +386,8 @@ STATES = {
 
     138 : {
         'name' : 'Géorgie',
-        'population' : None,
+        'population' : 11180000,
+        'population_per_px' : 1069.140,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -358,7 +396,8 @@ STATES = {
 
     139 : {
         'name' : 'Pennsylvanie',
-        'population' : None,
+        'population' : 13080000,
+        'population_per_px' : 1759.956,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -367,7 +406,8 @@ STATES = {
 
     140 : {
         'name' : 'Maryland',
-        'population' : None,
+        'population' : 6230000,
+        'population_per_px' : 3557.966,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -376,7 +416,8 @@ STATES = {
 
     141 : {
         'name' : 'New Jersey & Delaware',
-        'population' : None,
+        'population' : 10020000,
+        'population_per_px' : 7362.233,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -385,7 +426,8 @@ STATES = {
 
     142 : {
         'name' : 'New York',
-        'population' : None,
+        'population' : 19870000,
+        'population_per_px' : 2097.983,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -394,7 +436,8 @@ STATES = {
 
     143 : {
         'name' : 'Vermont',
-        'population' : None,
+        'population' : 650000,
+        'population_per_px' : 379.229,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -403,7 +446,8 @@ STATES = {
 
     144 : {
         'name' : 'Connecticut',
-        'population' : None,
+        'population' : 3640000,
+        'population_per_px' : 4417.475,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -412,7 +456,8 @@ STATES = {
 
     145 : {
         'name' : 'New Hampshire',
-        'population' : None,
+        'population' : 1390000,
+        'population_per_px' : 880.303,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
@@ -421,7 +466,8 @@ STATES = {
 
     146 : {
         'name' : 'Massachusetts & Rhode Island',
-        'population' : None,
+        'population' : 7650000,
+        'population_per_px' : 4757.462,
         'vegetable_production' : None,
         'obesity_rate' : None,
         'importations' : [],
