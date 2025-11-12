@@ -23,7 +23,8 @@ class Simulation :
                 if event.type == pygame.MOUSEBUTTONDOWN :
                     if not self.ui.menu_open :
                         self.ui.px_id = self.infection.state_grid[int(y), int(x)]
-                        self.ui.menu_open = True
+                        if self.ui.px_id not in self.infection.invalid_statues_for_contamination :   
+                            self.ui.menu_open = True
                     else :
                         if not self.ui.status_rect.collidepoint(x, y) :
                             self.ui.menu_open = False

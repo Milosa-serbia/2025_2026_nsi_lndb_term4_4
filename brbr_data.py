@@ -1,34 +1,17 @@
-from random import*
-
-deaths = 0
-infected = 0
-population = 340000000
-trust_meter = 100
-
-
-def create_virus(difficulty, name) :
-
-    if difficulty == 10 :
-        return {"name" : name,
-                "propagation_rate" : 10,
-                "death_rate" : 10,
-                "curing_resistence" : 10,
-                "survival_rate" : 10,
-                "mutations" : True}
-    
-    if difficulty > 2 :
-        return {"name" : name,
-                "propagation_rate" : randint(1, difficulty),
-                "death_rate" : randint(1, difficulty),
-                "cure_resistance" : randint(1, difficulty),
-                "survival_rate" : randint(1, difficulty),
-                "mutations" : True}
-    
-    else :
-        return {"name" : name,
-                "propagation_rate" : randint(1, difficulty),
-                "death_rate" : randint(1, difficulty),
-                "cure_resistance" : randint(1, difficulty),
-                "survival_rate" : randint(1, difficulty),
-                "mutations" : False}
+class KinderState :
+    def __init__(self, name, population, vegetable_production, obesity_rate, importations, exportations) :
+        self.name = name
+        self.alive_population = population
+        self.dead_or_infected_population = 0
+        self.open_frontiere = True
+        self.lockdown = False
+        self.vegetable_production = vegetable_production
+        self.food_ressources = 0
+        self.obesity_rate = obesity_rate
+        self.exportations = exportations
         
+        
+
+STATES = {
+    
+}

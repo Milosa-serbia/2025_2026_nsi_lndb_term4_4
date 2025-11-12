@@ -5,6 +5,7 @@ class UI :
         self.menu_open = False
         self.px_id = None
         self.status_rect = pygame.rect.Rect(20, 20, 500, 810)
+        self.infos = None
     
     def draw(self, screen) :
         if self.menu_open :
