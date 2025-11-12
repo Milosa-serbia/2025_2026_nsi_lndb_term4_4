@@ -7,7 +7,7 @@ class UI :
         self.px_id = None
         self.status_rect = pygame.rect.Rect(20, 20, 500, 810)
         self.infos = {}
-        for id in range(101, 149) :
+        for id in STATES.keys() :
             self.infos[id] = KinderState( \
                 STATES[id]['name'], \
                 STATES[id]['population'], \

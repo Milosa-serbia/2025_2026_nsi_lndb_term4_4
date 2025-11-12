@@ -186,7 +186,7 @@ STATES = {
     },
 
     120 : {
-        'name' : None,
+        'name' : 'Missouri',
         'population' : None,
         'vegetable_production' : None,
         'obesity_rate' : None,
@@ -195,7 +195,7 @@ STATES = {
     },
 
     121 : {
-        'name' : None,
+        'name' : 'Arkansas',
         'population' : None,
         'vegetable_production' : None,
         'obesity_rate' : None,
@@ -204,7 +204,7 @@ STATES = {
     },
 
     122 : {
-        'name' : None,
+        'name' : 'Louisiane',
         'population' : None,
         'vegetable_production' : None,
         'obesity_rate' : None,
@@ -213,7 +213,7 @@ STATES = {
     },
 
     123 : {
-        'name' : None,
+        'name' : 'Maine',
         'population' : None,
         'vegetable_production' : None,
         'obesity_rate' : None,
@@ -222,7 +222,7 @@ STATES = {
     },
 
     124 : {
-        'name' : None,
+        'name' : 'Wisconsin',
         'population' : None,
         'vegetable_production' : None,
         'obesity_rate' : None,
@@ -231,7 +231,7 @@ STATES = {
     },
 
     125 : {
-        'name' : None,
+        'name' : 'Illinois',
         'population' : None,
         'vegetable_production' : None,
         'obesity_rate' : None,
@@ -240,7 +240,7 @@ STATES = {
     },
 
     126 : {
-        'name' : None,
+        'name' : 'Mississippi',
         'population' : None,
         'vegetable_production' : None,
         'obesity_rate' : None,
@@ -249,7 +249,7 @@ STATES = {
     },
 
     127 : {
-        'name' : None,
+        'name' : 'Michigan',
         'population' : None,
         'vegetable_production' : None,
         'obesity_rate' : None,
@@ -258,7 +258,7 @@ STATES = {
     },
 
     128 : {
-        'name' : None,
+        'name' : 'Indiana',
         'population' : None,
         'vegetable_production' : None,
         'obesity_rate' : None,
@@ -267,7 +267,7 @@ STATES = {
     },
 
     129 : {
-        'name' : None,
+        'name' : 'Kentucky',
         'population' : None,
         'vegetable_production' : None,
         'obesity_rate' : None,
@@ -276,7 +276,7 @@ STATES = {
     },
 
     130 : {
-        'name' : None,
+        'name' : 'Tennessee',
         'population' : None,
         'vegetable_production' : None,
         'obesity_rate' : None,
@@ -285,7 +285,7 @@ STATES = {
     },
 
     131 : {
-        'name' : None,
+        'name' : 'Alabama',
         'population' : None,
         'vegetable_production' : None,
         'obesity_rate' : None,
@@ -294,7 +294,7 @@ STATES = {
     },
 
     132 : {
-        'name' : None,
+        'name' : 'Floride',
         'population' : None,
         'vegetable_production' : None,
         'obesity_rate' : None,
@@ -303,7 +303,7 @@ STATES = {
     },
 
     133 : {
-        'name' : None,
+        'name' : 'Ohio',
         'population' : None,
         'vegetable_production' : None,
         'obesity_rate' : None,
@@ -312,7 +312,7 @@ STATES = {
     },
 
     134 : {
-        'name' : None,
+        'name' : 'Virginie-Occidentale',
         'population' : None,
         'vegetable_production' : None,
         'obesity_rate' : None,
@@ -321,7 +321,7 @@ STATES = {
     },
 
     135 : {
-        'name' : None,
+        'name' : 'Virginie',
         'population' : None,
         'vegetable_production' : None,
         'obesity_rate' : None,
@@ -330,7 +330,7 @@ STATES = {
     },
 
     136 : {
-        'name' : None,
+        'name' : 'Caroline du Nord',
         'population' : None,
         'vegetable_production' : None,
         'obesity_rate' : None,
@@ -339,7 +339,7 @@ STATES = {
     },
 
     137 : {
-        'name' : None,
+        'name' : 'Caroline du Sud',
         'population' : None,
         'vegetable_production' : None,
         'obesity_rate' : None,
@@ -348,7 +348,7 @@ STATES = {
     },
 
     138 : {
-        'name' : None,
+        'name' : 'Géorgie',
         'population' : None,
         'vegetable_production' : None,
         'obesity_rate' : None,
@@ -357,7 +357,7 @@ STATES = {
     },
 
     139 : {
-        'name' : None,
+        'name' : 'Pennsylvanie',
         'population' : None,
         'vegetable_production' : None,
         'obesity_rate' : None,
@@ -366,7 +366,7 @@ STATES = {
     },
 
     140 : {
-        'name' : None,
+        'name' : 'Maryland',
         'population' : None,
         'vegetable_production' : None,
         'obesity_rate' : None,
@@ -375,7 +375,7 @@ STATES = {
     },
 
     141 : {
-        'name' : None,
+        'name' : 'New Jersey & Delaware',
         'population' : None,
         'vegetable_production' : None,
         'obesity_rate' : None,
@@ -384,7 +384,7 @@ STATES = {
     },
 
     142 : {
-        'name' : None,
+        'name' : 'New York',
         'population' : None,
         'vegetable_production' : None,
         'obesity_rate' : None,
@@ -393,7 +393,7 @@ STATES = {
     },
 
     143 : {
-        'name' : None,
+        'name' : 'Vermont',
         'population' : None,
         'vegetable_production' : None,
         'obesity_rate' : None,
@@ -402,7 +402,7 @@ STATES = {
     },
 
     144 : {
-        'name' : None,
+        'name' : 'Connecticut',
         'population' : None,
         'vegetable_production' : None,
         'obesity_rate' : None,
@@ -411,7 +411,7 @@ STATES = {
     },
 
     145 : {
-        'name' : None,
+        'name' : 'New Hampshire',
         'population' : None,
         'vegetable_production' : None,
         'obesity_rate' : None,
@@ -420,6 +420,24 @@ STATES = {
     },
 
     146 : {
+        'name' : 'Massachusetts & Rhode Island',
+        'population' : None,
+        'vegetable_production' : None,
+        'obesity_rate' : None,
+        'importations' : [],
+        'exportations' : [],
+    },
+    
+    100 : {
+        'name' : None,
+        'population' : None,
+        'vegetable_production' : None,
+        'obesity_rate' : None,
+        'importations' : [],
+        'exportations' : [],
+    },
+        
+    255 : {
         'name' : None,
         'population' : None,
         'vegetable_production' : None,
@@ -428,21 +446,4 @@ STATES = {
         'exportations' : [],
     },
 
-    147 : {
-        'name' : None,
-        'population' : None,
-        'vegetable_production' : None,
-        'obesity_rate' : None,
-        'importations' : [],
-        'exportations' : [],
-    },
-
-    148 : {
-        'name' : None,
-        'population' : None,
-        'vegetable_production' : None,
-        'obesity_rate' : None,
-        'importations' : [],
-        'exportations' : [],
-    }
 }

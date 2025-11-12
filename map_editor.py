@@ -45,8 +45,8 @@ def main() :
             x, y = pygame.mouse.get_pos()
             if 0 <= x < WIDTH - 15 and 0 <= y < HEIGHT - 15:
                 # on ne change à 100 que les pixels qui valent 0
-                zone = grid[y:y+20, x:x+20]
-                zone[zone == 0] = 147
+                zone = grid[y:y+50, x:x+50]
+                zone[zone == 127] = 123
 
         surf = grid_to_surf(grid, surf)
         screen.blit(surf, (0, 0))

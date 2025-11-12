@@ -15,7 +15,7 @@ class Simulation :
         while True :
             self.clock.tick(60)
             x, y = pygame.mouse.get_pos()
-            print(self.infection.state_grid[int(y), int(x)])       
+            print(self.ui.infos[self.infection.state_grid[int(y), int(x)]].name)       
             for event in pygame.event.get() :
                 if event.type == pygame.QUIT :
                     pygame.quit()
