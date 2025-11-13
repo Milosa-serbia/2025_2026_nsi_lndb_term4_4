@@ -6,6 +6,7 @@ class UI :
         self.menu_open = False
         self.px_id = None
         self.status_rect = pygame.rect.Rect(20, 20, 500, 810)
+        self.font = pygame.font.Font(None, 32)
         self.infos = {}
         for id in STATES.keys() :
             self.infos[id] = KinderState( \
@@ -20,4 +21,6 @@ class UI :
     def draw(self, screen) :
         if self.menu_open :
             pygame.draw.rect(screen, (240, 240, 240), self.status_rect)
+            text = self.font.render(self.infos[self.px_id].name, True, (0, 0, 0)) 
+            screen.blit(text, (40, 40))
             
