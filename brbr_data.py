@@ -1,7 +1,8 @@
 class KinderState :
-    def __init__(self, name, population, vegetable_production, obesity_rate, importations, exportations) :
+    def __init__(self, name, population, population_per_px, vegetable_production, obesity_rate, importations, exportations) :
         self.name = name
         self.alive_population = population
+        self.population_per_px = population_per_px
         self.dead_or_infected_population = 0
         self.open_frontiere = True
         self.lockdown = False
@@ -477,6 +478,7 @@ STATES = {
     100 : {
         'name' : None,
         'population' : 0,
+        'population_per_px' : 0,
         'vegetable_production' : 0,
         'obesity_rate' : 0,
         'importations' : [],
@@ -486,6 +488,7 @@ STATES = {
     255 : {
         'name' : None,
         'population' : 0,
+        'population_per_px' : 0,
         'vegetable_production' : 0,
         'obesity_rate' : 0,
         'importations' : [],

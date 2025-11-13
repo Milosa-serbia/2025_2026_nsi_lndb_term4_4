@@ -20,6 +20,7 @@ class Continent :
             self.infos[id] = KinderState( \
                 STATES[id]['name'], \
                 STATES[id]['population'], \
+                STATES[id]['population_per_px'], \
                 STATES[id]['vegetable_production'], \
                 STATES[id]['obesity_rate'], \
                 STATES[id]['importations'], \
@@ -46,7 +47,7 @@ class Continent :
     
     def update_and_draw(self, events) :
         self.handle_input(events)
-        self.infection.update(self.status_grid)
+        self.infection.update(self.status_grid, self.infos)
         self.infection.draw(self.screen, self.state_grid, self.status_grid, self.ui.menu_open)
         self.ui.draw(self.screen, self.infos)
     
