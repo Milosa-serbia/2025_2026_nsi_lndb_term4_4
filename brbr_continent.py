@@ -20,7 +20,7 @@ class Continent :
             self.infos[id] = KinderState( \
                 STATES[id]['name'], \
                 STATES[id]['population'], \
-                STATES[id]['population_per_px'], \
+                round(STATES[id]['population'] / len(np.argwhere(self.state_grid == id)), 3), \
                 STATES[id]['vegetable_production'], \
                 STATES[id]['obesity_rate'], \
                 STATES[id]['importations'], \
