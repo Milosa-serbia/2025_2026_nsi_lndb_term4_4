@@ -11,7 +11,7 @@ class Infection :
 
         # Timing et probabilitées
         self.time_last_infection = 0
-        self.time_between_infections = 100 # ms
+        self.time_between_infections = 750 # ms
         self.contact_infect_probability = 2 / 15
         self.air_transmission_is_active = True
         self.air_infect_probability = 1 / 100
@@ -155,8 +155,10 @@ class Infection :
     def update_infos(self, status_grid, infos) :
         flat = status_grid.ravel()
         counts = np.bincount(flat, minlength=256)
-        for id, state in infos.items():
+        for id, state in infos.items() :
             state.alive_population = counts[id] * infos[id].population_per_px
+            state.vegetable_production = (state.initial_vegetable_production / state.population) * state.alive_population
+            state.food_ressources = state.food_ressources + state.vegetable_production - (state.alive_population * (1 + state.obesity_rate))
 
 
     def update(self, status_grid, infos) :

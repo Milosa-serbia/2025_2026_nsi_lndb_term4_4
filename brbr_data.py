@@ -4,9 +4,9 @@ class KinderState :
         self.population = population
         self.alive_population = population
         self.population_per_px = population_per_px
-        self.dead_or_infected_population = 0
-        self.open_frontiere = True
+        self.open_border = True
         self.lockdown = False
+        self.initial_vegetable_production = vegetable_production
         self.vegetable_production = vegetable_production
         self.food_ressources = 0
         self.obesity_rate = obesity_rate
@@ -432,7 +432,7 @@ STATES = {
     
     100 : {
         'name' : None,
-        'population' : 0,    
+        'population' : 1,    
         'vegetable_production' : 0,
         'obesity_rate' : 0,
         'importations' : {},
@@ -441,7 +441,7 @@ STATES = {
         
     255 : {
         'name' : None,
-        'population' : 0,    
+        'population' : 1,    
         'vegetable_production' : 0,
         'obesity_rate' : 0,
         'importations' : {},
