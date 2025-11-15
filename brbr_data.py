@@ -136,10 +136,14 @@ STATES = {
     114 : {
         'name' : 'Nebraska',
         'population' : 1973000,
-        'vegetable_production' : 29000000,
+        'vegetable_production' : 30000000,
         'obesity_rate' : 0.34,
         'importations' : {},
+<<<<<<< Updated upstream
         'exportations' : {103 : 10000000},
+=======
+        'exportations' : {103 : 0.34, 139 : 0.291, 140 : 0.228},
+>>>>>>> Stashed changes
     },
 
     115 : {
@@ -148,7 +152,11 @@ STATES = {
         'vegetable_production' : 63000000,
         'obesity_rate' : 0.353,
         'importations' : {},
+<<<<<<< Updated upstream
         'exportations' : {116 : 2100000},
+=======
+        'exportations' : {116 : 0.034, 134 : 0.039, 135 : 0.155, 137 : 0.094, 141 : 0.18, 142 : 0.387},
+>>>>>>> Stashed changes
     },
 
     116 : {
@@ -163,19 +171,27 @@ STATES = {
     117 : {
         'name' : 'Texas',
         'population' : 31290000,
-        'vegetable_production' : 60000000,
+        'vegetable_production' : 70000000,
         'obesity_rate' : 0.358,
         'importations' : {},
+<<<<<<< Updated upstream
         'exportations' : {103 : 7000000, 105 : 3500000},
+=======
+        'exportations' : {103 : 0.1, 105 : 0.05, 144 : 0.051, 146 : 0.11},
+>>>>>>> Stashed changes
     },
 
     118 : {
         'name' : 'Minnesota',
         'population' : 5787000,
-        'vegetable_production' : 35000000,
+        'vegetable_production' : 40000000,
         'obesity_rate' : 0.307,
         'importations' : {},
+<<<<<<< Updated upstream
         'exportations' : {120 : 4000000, 121 : 1500000},
+=======
+        'exportations' : {120 : 0.1, 121 : 0.0375},
+>>>>>>> Stashed changes
     },
 
     119 : {
@@ -184,7 +200,11 @@ STATES = {
         'vegetable_production' : 33470000,
         'obesity_rate' : 0.365,
         'importations' : {},
+<<<<<<< Updated upstream
         'exportations' : {101 : 2500000, 102 : 4400000, 122 : 4500000},
+=======
+        'exportations' : {101 : 0.075, 102 : 0.135, 122 : 0.135},
+>>>>>>> Stashed changes
     },
 
     120 : {
@@ -229,7 +249,11 @@ STATES = {
         'vegetable_production' : 30000000,
         'obesity_rate' : 0.323,
         'importations' : {},
+<<<<<<< Updated upstream
         'exportations' : {127 : 6000000, 106 : 1000000, 123 : 1500000, 126 : 3000000},
+=======
+        'exportations' : {127 : 0.2, 106 : 0.034, 123 : 0.05, 126 : 0.1},
+>>>>>>> Stashed changes
     },
 
     125 : {
@@ -238,7 +262,7 @@ STATES = {
         'vegetable_production' : 50000000,
         'obesity_rate' : 0.324,
         'importations' : {},
-        'exportations' : {},
+        'exportations' : {132 : 0.43, 133 : 0.162},
     },
 
     126 : {
@@ -265,7 +289,11 @@ STATES = {
         'vegetable_production' : 36000000,
         'obesity_rate' : 0.368,
         'importations' : {},
+<<<<<<< Updated upstream
         'exportations' : {109 : 9000000, 110 : 2000000, 111 : 1300000},
+=======
+        'exportations' : {109 : 0.25, 110 : 0.056, 111 : 0.037, 138 : 0.14},
+>>>>>>> Stashed changes
     },
 
     129 : {
@@ -274,7 +302,11 @@ STATES = {
         'vegetable_production' : 10000000,
         'obesity_rate' : 0.366,
         'importations' : {},
+<<<<<<< Updated upstream
         'exportations' : {130 : 2000000},
+=======
+        'exportations' : {130 : 0.2},
+>>>>>>> Stashed changes
     },
 
     130 : { 
@@ -337,7 +369,11 @@ STATES = {
         'vegetable_production' : 23760000,
         'obesity_rate' : 0.336,
         'importations' : {},
+<<<<<<< Updated upstream
         'exportations' : {107 : 500000, 108 : 4000000},
+=======
+        'exportations' : {107 : 0.022, 108 : 0.17},
+>>>>>>> Stashed changes
     },
 
     137 : {
@@ -397,7 +433,7 @@ STATES = {
     143 : {
         'name' : 'Vermont',
         'population' : 650000,
-        'vegetable_production' : 200000,
+        'vegetable_production' : 2000000,
         'obesity_rate' : 0.263,
         'importations' : {},
         'exportations' : {},
@@ -415,7 +451,7 @@ STATES = {
     145 : {
         'name' : 'New Hampshire',
         'population' : 1390000,
-        'vegetable_production' : 1000000,
+        'vegetable_production' : 2000000,
         'obesity_rate' : 0.299,
         'importations' : {},
         'exportations' : {},
