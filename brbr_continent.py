@@ -36,19 +36,43 @@ class Continent :
         
         for event in events :
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 :
+                # si le menu n'est pas ouvert
                 if not self.ui.menu_open :
                     self.ui.px_id = self.state_grid[int(y), int(x)]
                     if self.ui.px_id not in self.infection.invalid_statues_for_contamination :   
                         self.ui.menu_open = True
+                    
+                # si le menu est ouvert        
                 else :
-                    if not self.ui.menu_rect.collidepoint(x, y) :
-                        self.ui.menu_open = False
+                    if self.ui.menu2_open : # menu 1 et 2 ouverts
+                        if not self.ui.menu2_rect.collidepoint(x, y) :
+                            if not self.ui.menu_rect.collidepoint(x, y) :
+                                self.ui.menu2_open = False
+                                self.ui.menu_open = False
+                            else :
+                                self.ui.menu2_open = False
+                    else : # uniquement menu 1 ouvert
+                        if not self.ui.menu_rect.collidepoint(x, y) :
+                            self.ui.menu_open = False
+                    
+    
+    def update_infos(self) :
+        flat = self.status_grid.ravel()
+        counts = np.bincount(flat, minlength=256)
+        for id, state in self.infos.items() :
+            state.alive_population = counts[id] * self.infos[id].population_per_px
+            state.vegetable_production = (state.initial_vegetable_production / state.population) * state.alive_population
+            state.food_ressources = state.food_ressources + state.vegetable_production - (state.alive_population * (1 + state.obesity_rate))
+            
     
     
     def update_and_draw(self, events) :
         self.handle_input(events)
-        self.infection.update(self.status_grid, self.infos)
+        if self.ui.menu_open :
+            self.ui.handle_input(events)
+        self.infection.update(self.status_grid)
         self.infection.draw(self.screen, self.state_grid, self.status_grid, self.ui.menu_open)
+        self.update_infos()
         self.ui.draw(self.screen, self.infos)
     
     

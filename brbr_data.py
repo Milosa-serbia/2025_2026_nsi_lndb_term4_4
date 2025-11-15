@@ -22,9 +22,9 @@ STATES = {
         'vegetable_production' : 8000000,
         'obesity_rate' : 0.28,
         'importations' : {},
-        'exportations' : {},
+        'exportations' : {134 : 100},
     },
-    
+
     102 : {
         'name' : 'Oregon',
         'population' : 4291090,
@@ -139,7 +139,7 @@ STATES = {
         'vegetable_production' : 29000000,
         'obesity_rate' : 0.34,
         'importations' : {},
-        'exportations' : {'Californie' : 10000000},
+        'exportations' : {103 : 10000000},
     },
 
     115 : {
@@ -148,7 +148,7 @@ STATES = {
         'vegetable_production' : 63000000,
         'obesity_rate' : 0.353,
         'importations' : {},
-        'exportations' : {'Oklahoma' : 2100000},
+        'exportations' : {116 : 2100000},
     },
 
     116 : {
@@ -166,7 +166,7 @@ STATES = {
         'vegetable_production' : 60000000,
         'obesity_rate' : 0.358,
         'importations' : {},
-        'exportations' : {'Californie' : 7000000, 'Nevada' : 3500000},
+        'exportations' : {103 : 7000000, 105 : 3500000},
     },
 
     118 : {
@@ -175,7 +175,7 @@ STATES = {
         'vegetable_production' : 35000000,
         'obesity_rate' : 0.307,
         'importations' : {},
-        'exportations' : {'Missouri' : 4000000, 'Arkansas' : 1500000},
+        'exportations' : {120 : 4000000, 121 : 1500000},
     },
 
     119 : {
@@ -184,7 +184,7 @@ STATES = {
         'vegetable_production' : 33470000,
         'obesity_rate' : 0.365,
         'importations' : {},
-        'exportations' : {'Washington' : 2500000, 'Oregon' : 4400000, 'Louisiane' : 4500000},
+        'exportations' : {101 : 2500000, 102 : 4400000, 122 : 4500000},
     },
 
     120 : {
@@ -229,7 +229,7 @@ STATES = {
         'vegetable_production' : 30000000,
         'obesity_rate' : 0.323,
         'importations' : {},
-        'exportations' : {'Michigan' : 6000000, 'Montana' : 1000000, 'Maine' : 1500000, 'Mississippi' : 3000000},
+        'exportations' : {127 : 6000000, 106 : 1000000, 123 : 1500000, 126 : 3000000},
     },
 
     125 : {
@@ -265,7 +265,7 @@ STATES = {
         'vegetable_production' : 36000000,
         'obesity_rate' : 0.368,
         'importations' : {},
-        'exportations' : {'Arizona' : 9000000, 'Colorado' : 2000000, 'Nouveau-Mexique' : 1300000},
+        'exportations' : {109 : 9000000, 110 : 2000000, 111 : 1300000},
     },
 
     129 : {
@@ -274,7 +274,7 @@ STATES = {
         'vegetable_production' : 10000000,
         'obesity_rate' : 0.366,
         'importations' : {},
-        'exportations' : {'Tennessee' : 2000000},
+        'exportations' : {130 : 2000000},
     },
 
     130 : { 
@@ -285,7 +285,7 @@ STATES = {
         'importations' : {},
         'exportations' : {},
     },
-
+    # Reprendre le travail à partir d'ici.
     131 : {
         'name' : 'Alabama',
         'population' : 5080000,
@@ -294,7 +294,7 @@ STATES = {
         'importations' : {},
         'exportations' : {},
     },
-# Reprendre le travail à partir d'ici.
+
     132 : {
         'name' : 'Floride',
         'population' : 23370000,
@@ -337,7 +337,7 @@ STATES = {
         'vegetable_production' : 23760000,
         'obesity_rate' : 0.336,
         'importations' : {},
-        'exportations' : {'Wyoming' : 500000, 'Utah' : 4000000},
+        'exportations' : {107 : 500000, 108 : 4000000},
     },
 
     137 : {
@@ -377,7 +377,7 @@ STATES = {
     },
 
     141 : {
-        'name' : 'New Jersey & Delaware',
+        'name' : 'N.Jersey & Delaware',
         'population' : 10020000,
         'vegetable_production' : 2400000,
         'obesity_rate' : 0.365,
@@ -422,14 +422,14 @@ STATES = {
     },
 
     146 : {
-        'name' : 'Massachusetts & Rhode Island',
+        'name' : 'Massach. & R.Island',
         'population' : 7650000,
         'vegetable_production' : 2500000,
         'obesity_rate' : 0.28,
         'importations' : {},
         'exportations' : {},
     },
-    
+
     100 : {
         'name' : None,
         'population' : 1,    
@@ -438,7 +438,7 @@ STATES = {
         'importations' : {},
         'exportations' : {},
     },
-        
+
     255 : {
         'name' : None,
         'population' : 1,    

@@ -11,7 +11,7 @@ class Infection :
 
         # Timing et probabilitées
         self.time_last_infection = 0
-        self.time_between_infections = 750 # ms
+        self.time_between_infections = 100 # ms
         self.contact_infect_probability = 2 / 15
         self.air_transmission_is_active = True
         self.air_infect_probability = 1 / 100
@@ -151,23 +151,13 @@ class Infection :
             ys, xs = np.transpose(px_to_kill) # on est obliger grace a np.transpose de redecouper [(y, x), (y, x)...] en deux tableau [y, y, y...], [x, x, x...] car c'est comme ca que numpy geres les positions (a l'etape d'apres)
             status_grid[ys, xs] = 2  # on passe la valeur des pixels morts a 2 dans le tableau numpy qui stock l'etat de chaque pixel
         
-            
-    def update_infos(self, status_grid, infos) :
-        flat = status_grid.ravel()
-        counts = np.bincount(flat, minlength=256)
-        for id, state in infos.items() :
-            state.alive_population = counts[id] * infos[id].population_per_px
-            state.vegetable_production = (state.initial_vegetable_production / state.population) * state.alive_population
-            state.food_ressources = state.food_ressources + state.vegetable_production - (state.alive_population * (1 + state.obesity_rate))
 
-
-    def update(self, status_grid, infos) :
+    def update(self, status_grid) :
         current_time = pygame.time.get_ticks()
         if current_time - self.time_last_infection >= self.time_between_infections :
             self.time_last_infection = current_time
             self.update_infected_number(status_grid)
             self.update_dead_number(status_grid)
-            self.update_infos(status_grid, infos)
 
 
     # ===== AFFICHAGE =====
