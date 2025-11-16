@@ -48,15 +48,15 @@ class Button:
 
 
 class UI :
-    def __init__(self) :
+    def __init__(self, infos, closed_border_states, lockdowned_states) :
         self.px_id = None
         # attributs du menu
         self.menu_open = False
         self.back_menu_rect = pygame.rect.Rect(15, 15, 710, 820)
         self.menu_rect = pygame.rect.Rect(20, 20, 700, 810)
         self.decoration_rect1 = pygame.rect.Rect(35, 90, 660, 80)
-        self.decoration_rect2 = pygame.rect.Rect(35, 190, 660, 80)
-        self.decoration_rect3 = pygame.rect.Rect(35, 290, 660, 150)
+        self.decoration_rect2 = pygame.rect.Rect(35, 190, 660, 120)
+        self.decoration_rect3 = pygame.rect.Rect(35, 330, 660, 150)
         self.font = pygame.font.Font(None, 32)
         self.title_font =pygame.font.Font(None, 50)
         # attribus du menu 2
@@ -64,10 +64,36 @@ class UI :
         self.back_menu2_rect = pygame.rect.Rect(740, 15, 410, 520)
         self.menu2_rect = pygame.rect.Rect(745, 20, 400, 510)
         # boutons du menu
-        self.exportation_button1 = Button(225, 355, 220, 35, self.font, self.open_menu2)
-        self.exportation_button2 = Button(225, 395, 220, 35, self.font, self.open_menu2)
-        self.exportation_button3 = Button(470, 355, 220, 35, self.font, self.open_menu2)
-        self.exportation_button4 = Button(470, 395, 220, 35, self.font, self.open_menu2)
+        self.exportation_button1 = Button(225, 395, 220, 35, self.font, self.open_menu2)
+        self.exportation_button2 = Button(225, 435, 220, 35, self.font, self.open_menu2)
+        self.exportation_button3 = Button(470, 395, 220, 35, self.font, self.open_menu2)
+        self.exportation_button4 = Button(470, 435, 220, 35, self.font, self.open_menu2)
+        self.border_button = Button(
+            225, 495, 220, 35, self.font,
+            lambda: self.change_border_statue(infos, closed_border_states)
+        )
+        self.lockdown_button = Button(
+            260, 535, 220, 35, self.font,
+            lambda: self.change_lockdown_statue(infos, lockdowned_states)
+        )
+
+
+    def change_border_statue(self, infos, closed_border_states) :
+        if self.px_id in closed_border_states :
+            closed_border_states.remove(self.px_id)
+            infos[self.px_id].open_border = True
+        else :
+            closed_border_states.append(self.px_id)
+            infos[self.px_id].open_border = False
+
+
+    def change_lockdown_statue(self, infos, lockdowned_states) :
+        if self.px_id in lockdowned_states :
+            lockdowned_states.remove(self.px_id)
+            infos[self.px_id].lockdown = False
+        else :
+            lockdowned_states.append(self.px_id)
+            infos[self.px_id].lockdown = True
 
 
     def open_menu2(self) :
@@ -84,6 +110,8 @@ class UI :
                 self.exportation_button2.handle_event(event)
                 self.exportation_button3.handle_event(event)
                 self.exportation_button4.handle_event(event)
+                self.border_button.handle_event(event)
+                self.lockdown_button.handle_event(event)
     
     
     def draw(self, screen, infos) :
@@ -99,26 +127,28 @@ class UI :
             
             # textes du menu
             state_name = self.title_font.render('// ' + str(id_infos.name) + ' :', True, (0, 0, 0)) 
-            alive_pop = self.font.render('- alive population : ' + str(int(id_infos.alive_population)), True, (0, 0, 0)) 
+            alive_pop = self.font.render('- Alive population : ' + str(int(id_infos.alive_population)), True, (0, 0, 0)) 
             # px_pop = self.font.render('- px population : ' + str(id_infos.population_per_px), True, (0, 0, 0)) 
-            dead_pop = self.font.render('- dead/infected population : ' + str(int(id_infos.population - id_infos.alive_population)), True, (0, 0, 0)) 
-            food_prod = self.font.render('- vegetable production : ' + str(int(id_infos.vegetable_production)), True, (0, 0, 0)) 
-            food_ressources = self.font.render('- food ressources : ' + str(int(id_infos.food_ressources)), True, (0, 0, 0)) 
-            importations = self.font.render('- importations :  ', True, (0, 0, 0)) 
-            exportations = self.font.render('- exportations :  ', True, (0, 0, 0))
-            border = self.font.render('- border statu :  ', True, (0, 0, 0))
-            lockdown = self.font.render('- lockdown statu :  ', True, (0, 0, 0))
+            dead_pop = self.font.render('- Dead/infected population : ' + str(int(id_infos.population - id_infos.alive_population)), True, (0, 0, 0)) 
+            obesity_rate = self.font.render('- Obesity rate : ' + str(id_infos.obesity_rate), True, (0, 0, 0)) 
+            food_prod = self.font.render('- Vegetable production : ' + str(int(id_infos.vegetable_production)), True, (0, 0, 0)) 
+            food_ressources = self.font.render('- Extra food ressources : ' + str(int(id_infos.food_ressources)), True, (0, 0, 0)) 
+            importations = self.font.render('- Importations :  ', True, (0, 0, 0)) 
+            exportations = self.font.render('- Exportations :  ', True, (0, 0, 0))
+            border = self.font.render('- Open borders :  ', True, (0, 0, 0))
+            lockdown = self.font.render('- Lockdown active :  ', True, (0, 0, 0))
             
             # affichage des textes
             screen.blit(state_name, (70, 40))
             screen.blit(alive_pop, (40, 100))
             screen.blit(dead_pop, (40, 140))
-            screen.blit(food_prod, (40, 200))
-            screen.blit(food_ressources, (40, 240))
-            screen.blit(importations, (40, 300))
-            screen.blit(exportations, (40, 380))
-            screen.blit(border, (40, 460))
-            screen.blit(lockdown, (40, 500))
+            screen.blit(obesity_rate, (40, 200))
+            screen.blit(food_prod, (40, 240))
+            screen.blit(food_ressources, (40, 280))
+            screen.blit(importations, (40, 340))
+            screen.blit(exportations, (40, 420))
+            screen.blit(border, (40, 500))
+            screen.blit(lockdown, (40, 540))
             
             # dessin des boutons
             export_texts = []
@@ -132,6 +162,8 @@ class UI :
             self.exportation_button2.draw(screen, export_texts[1])
             self.exportation_button3.draw(screen, export_texts[2])
             self.exportation_button4.draw(screen, export_texts[3])
+            self.border_button.draw(screen, str(id_infos.open_border))
+            self.lockdown_button.draw(screen, str(id_infos.lockdown))
             
             if self.menu2_open :
                 #  dessin du background du menu 2

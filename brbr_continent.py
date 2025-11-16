@@ -12,9 +12,14 @@ class Continent :
         self.status_grid = np.load('dessin.npy')
         self.state_grid = self.status_grid.copy()
         
+        # Temps entre les updates des infos et de l'infection
+        self.time_last_update = 0
+        self.time_between_updates = 100 # ms
+        
         # Premier pixel infecté au centre
         self.status_grid[self.height // 2, self.width // 2] = 1
         
+        # Infos des états
         self.infos = {}
         for id in STATES.keys() :
             self.infos[id] = KinderState( \
@@ -26,9 +31,13 @@ class Continent :
                 STATES[id]['importations'], \
                 STATES[id]['exportations'] \
                     )
+            
+        self.lockdowned_state = []
+        self.close_border_state = []
         
+        # Instance de l'infection et de l'UI
         self.infection = Infection()
-        self.ui = UI()
+        self.ui = UI(self.infos, self.close_border_state, self.lockdowned_state)
 
 
     def handle_input(self, events) :
@@ -63,6 +72,9 @@ class Continent :
             state.alive_population = counts[id] * self.infos[id].population_per_px
             state.vegetable_production = (state.initial_vegetable_production / state.population) * state.alive_population
             state.food_ressources = state.food_ressources + state.vegetable_production - (state.alive_population * (1 + state.obesity_rate))
+            for export_id, export_part in state.exportations.items() :
+                state.food_ressources -= state.vegetable_production * export_part
+                self.infos[export_id].food_ressources += state.vegetable_production * export_part
             
     
     
@@ -70,9 +82,12 @@ class Continent :
         self.handle_input(events)
         if self.ui.menu_open :
             self.ui.handle_input(events)
-        self.infection.update(self.status_grid)
+        current_time = pygame.time.get_ticks()
+        if current_time - self.time_last_update >= self.time_between_updates :
+            self.time_last_update = current_time
+            self.infection.update(self.status_grid, self.close_border_state, self.lockdowned_state)
+            self.update_infos()
         self.infection.draw(self.screen, self.state_grid, self.status_grid, self.ui.menu_open)
-        self.update_infos()
         self.ui.draw(self.screen, self.infos)
     
     

@@ -9,9 +9,7 @@ class Infection :
         self.screen = pygame.display.get_surface()
         self.width, self.height = self.screen.get_size()
 
-        # Timing et probabilitées
-        self.time_last_infection = 0
-        self.time_between_infections = 100 # ms
+        # Probabilitées
         self.contact_infect_probability = 2 / 15
         self.air_transmission_is_active = True
         self.air_infect_probability = 1 / 100
@@ -20,6 +18,7 @@ class Infection :
 
         # le statut des pixels invalides pour la containation (mer, deja mort, deja infectes...)
         self.invalid_statues_for_contamination = [1, 2, 100, 255] 
+        self.invalid_statues_for_contamination_behind_border = [1, 2, 100, 255] 
 
         # On cree un generateur d'aleatoire avec numpy
         self.rng = np.random.default_rng()
@@ -37,7 +36,7 @@ class Infection :
 
 
     # ===== Voisins des pixels infectés pouvant etre infecté =====
-    def neighbor_count(self, infected_positions, status_grid) :
+    def neighbor_count(self, infected_positions, status_grid, closed_border_states, lockdowned_states) :
         """
         Renvoie une liste [(y, x), ...] des candidats, doublons conservés.
         Règles:
@@ -59,7 +58,8 @@ class Infection :
         candidates_ys = [] # y de tous les candidats vont etre stockés
         candidates_xs = [] # x de tous les candidats vont etre stockés
 
-        invalid_statues = np.array(self.invalid_statues_for_contamination, dtype=np.uint8)
+        invalid_statues = np.array(self.invalid_statues_for_contamination + lockdowned_states, dtype=np.uint8)
+        invalid_statues_behind_border = np.array(self.invalid_statues_for_contamination + closed_border_states, dtype=np.uint8)
 
         for dy, dx in directions :
             # 1) voisins directs "safe" -> candidats
@@ -82,7 +82,7 @@ class Infection :
 
                     neighbors_values = status_grid[neigh_ys, neigh_xs]
                     
-                    safe_neighbors_values = ~np.isin(neighbors_values, invalid_statues)
+                    safe_neighbors_values = ~np.isin(neighbors_values, invalid_statues_behind_border)
                     candidates_ys.append(neigh_ys[safe_neighbors_values])
                     candidates_xs.append(neigh_xs[safe_neighbors_values])
 
@@ -97,10 +97,10 @@ class Infection :
 
 
     # ===== Transmission par contact =====
-    def contact_transmission(self, status_grid) :
+    def contact_transmission(self, status_grid, closed_border_states, lockdowned_states) :
         # Compute number of infected neighbors for every pixel
         infected_positions = np.argwhere(status_grid == 1) # stockage des coords infectés -> sous forme [(y, x), (y, x)...]
-        neighbors_candidates = self.neighbor_count(infected_positions, status_grid) # On stock dans une liste les positions des voisins des infectés candidats a l'infection en cours : deja infectés ou morts -> sous forme [(y, x), (y, x)...]
+        neighbors_candidates = self.neighbor_count(infected_positions, status_grid, closed_border_states, lockdowned_states) # On stock dans une liste les positions des voisins des infectés candidats a l'infection en cours : deja infectés ou morts -> sous forme [(y, x), (y, x)...]
         neighbors_candidates = np.asarray(neighbors_candidates, dtype=np.int32) # On transforme notre liste en object numpy -> sous forme [(y, x), (y, x)...]
 
         if np.any(neighbors_candidates):
@@ -134,8 +134,8 @@ class Infection :
 
 
     # ===== Mise a jour des mort / infectés =====
-    def update_infected_number(self, status_grid) :
-        self.contact_transmission(status_grid)
+    def update_infected_number(self, status_grid, closed_border_states, lockdowned_states) :
+        self.contact_transmission(status_grid, closed_border_states, lockdowned_states)
         self.air_transmission(status_grid)
 
 
@@ -152,12 +152,9 @@ class Infection :
             status_grid[ys, xs] = 2  # on passe la valeur des pixels morts a 2 dans le tableau numpy qui stock l'etat de chaque pixel
         
 
-    def update(self, status_grid) :
-        current_time = pygame.time.get_ticks()
-        if current_time - self.time_last_infection >= self.time_between_infections :
-            self.time_last_infection = current_time
-            self.update_infected_number(status_grid)
-            self.update_dead_number(status_grid)
+    def update(self, status_grid, closed_border_states, lockdowned_states) :
+        self.update_infected_number(status_grid, closed_border_states, lockdowned_states)
+        self.update_dead_number(status_grid)
 
 
     # ===== AFFICHAGE =====
