@@ -1,5 +1,6 @@
 class KinderState :
-    def __init__(self, name, population, population_per_px, vegetable_production, obesity_rate, importations, exportations) :
+    def __init__(self, ui_pos, name, population, population_per_px, vegetable_production, obesity_rate, importations, exportations) :
+        self.ui_pos = ui_pos
         self.name = name
         self.population = population
         self.alive_population = population
@@ -17,6 +18,7 @@ class KinderState :
 
 STATES = {
     100 : {
+        'ui_pos' : (),
         'name' : None,
         'population' : 1,
         'vegetable_production' : 0,
@@ -25,6 +27,7 @@ STATES = {
         'exportations' : {},
     },
     101 : {
+        'ui_pos' : (130, 100),
         'name' : 'Washington',
         'population' : 8115100,
         'vegetable_production' : 13060139,
@@ -33,6 +36,7 @@ STATES = {
         'exportations' : { 132 : 0.140106, 133 : 0.055076, 143 : 0.009472 },
     },
     102 : {
+        'ui_pos' : (130, 200),
         'name' : 'Oregon',
         'population' : 4291090,
         'vegetable_production' : 2748443,
@@ -41,6 +45,7 @@ STATES = {
         'exportations' : { 146 : 0.294830 },
     },
     103 : {
+        'ui_pos' : (140, 400),
         'name' : 'Californie',
         'population' : 39431000,
         'vegetable_production' : 40375750,
@@ -49,6 +54,7 @@ STATES = {
         'exportations' : {},
     },
     104 : {
+        'ui_pos' : (275, 200),
         'name' : 'Idaho',
         'population' : 1967000,
         'vegetable_production' : 620535,
@@ -57,6 +63,7 @@ STATES = {
         'exportations' : {},
     },
     105 : {
+        'ui_pos' : (230, 330),
         'name' : 'Nevada',
         'population' : 3265000,
         'vegetable_production' : 3994128,
@@ -65,6 +72,7 @@ STATES = {
         'exportations' : {},
     },
     106 : {
+        'ui_pos' : (400, 100),
         'name' : 'Montana',
         'population' : 1153000,
         'vegetable_production' : 1017380,
@@ -73,6 +81,7 @@ STATES = {
         'exportations' : {},
     },
     107 : {
+        'ui_pos' : (440, 220),
         'name' : 'Wyoming',
         'population' : 584000,
         'vegetable_production' : 381644,
@@ -81,6 +90,7 @@ STATES = {
         'exportations' : { 121 : 0.255052 },
     },
     108 : {
+        'ui_pos' : (350, 330),
         'name' : 'Utah',
         'population' : 3427000,
         'vegetable_production' : 4298150,
@@ -89,6 +99,7 @@ STATES = {
         'exportations' : { 130 : 0.011098, 142 : 0.054016 },
     },
     109 : {
+        'ui_pos' : (350, 480),
         'name' : 'Arizona',
         'population' : 7600000,
         'vegetable_production' : 10524284,
@@ -97,6 +108,7 @@ STATES = {
         'exportations' : { 108 : 0.008456, 135 : 0.014740, 136 : 0.031523 },
     },
     110 : {
+        'ui_pos' : (500, 330),
         'name' : 'Colorado',
         'population' : 6023000,
         'vegetable_production' : 13343881,
@@ -105,6 +117,7 @@ STATES = {
         'exportations' : { 103 : 0.194355, 104 : 0.081860, 107 : 0.164163 },
     },
     111 : {
+        'ui_pos' : (480, 470),
         'name' : 'Nouveau-Mexique',
         'population' : 2110000,
         'vegetable_production' : 2761990,
@@ -113,6 +126,7 @@ STATES = {
         'exportations' : {},
     },
     112 : {
+        'ui_pos' : (620, 80),
         'name' : 'Dakota du Nord',
         'population' : 783000,
         'vegetable_production' : 521086,
@@ -121,6 +135,7 @@ STATES = {
         'exportations' : {},
     },
     113 : {
+        'ui_pos' : (620, 175),
         'name' : 'Dakota du Sud',
         'population' : 919000,
         'vegetable_production' : 1329643,
@@ -129,6 +144,7 @@ STATES = {
         'exportations' : { 115 : 0.079371 },
     },
     114 : {
+        'ui_pos' : (630, 260),
         'name' : 'Nebraska',
         'population' : 1973000,
         'vegetable_production' : 2305674,
@@ -137,6 +153,7 @@ STATES = {
         'exportations' : {},
     },
     115 : {
+        'ui_pos' : (675, 350),
         'name' : 'Kansas',
         'population' : 2943000,
         'vegetable_production' : 1990939,
@@ -145,6 +162,7 @@ STATES = {
         'exportations' : { 106 : 0.233168 },
     },
     116 : {
+        'ui_pos' : (700, 440),
         'name' : 'Oklahoma',
         'population' : 4060000,
         'vegetable_production' : 5455425,
@@ -153,6 +171,7 @@ STATES = {
         'exportations' : {},
     },
     117 : {
+        'ui_pos' : (650, 570),
         'name' : 'Texas',
         'population' : 31290000,
         'vegetable_production' : 46593176,
@@ -161,6 +180,7 @@ STATES = {
         'exportations' : { 128 : 0.013013, 135 : 0.065377, 139 : 0.009635 },
     },
     118 : {
+        'ui_pos' : (770, 130),
         'name' : 'Minnesota',
         'population' : 5787000,
         'vegetable_production' : 8926318,
@@ -169,6 +189,7 @@ STATES = {
         'exportations' : { 133 : 0.191971 },
     },
     119 : {
+        'ui_pos' : (790, 250),
         'name' : 'Iowa',
         'population' : 3200000,
         'vegetable_production' : 4368000,
@@ -177,6 +198,7 @@ STATES = {
         'exportations' : {},
     },
     120 : {
+        'ui_pos' : (820, 355),
         'name' : 'Missouri',
         'population' : 6217000,
         'vegetable_production' : 8330780,
@@ -185,6 +207,7 @@ STATES = {
         'exportations' : {},
     },
     121 : {
+        'ui_pos' : (830, 465),
         'name' : 'Arkansas',
         'population' : 3080000,
         'vegetable_production' : 7553201,
@@ -193,6 +216,7 @@ STATES = {
         'exportations' : { 103 : 0.233676, 143 : 0.149234, 144 : 0.073773 },
     },
     122 : {
+        'ui_pos' : (820, 580),
         'name' : 'Louisiane',
         'population' : 4540000,
         'vegetable_production' : 6963958,
@@ -201,6 +225,7 @@ STATES = {
         'exportations' : { 114 : 0.048557, 115 : 0.051131 },
     },
     123 : {
+        'ui_pos' : (1420, 130),
         'name' : 'Maine',
         'population' : 1380000,
         'vegetable_production' : 903900,
@@ -209,6 +234,7 @@ STATES = {
         'exportations' : {},
     },
     124 : {
+        'ui_pos' : (890, 170),
         'name' : 'Wisconsin',
         'population' : 5890000,
         'vegetable_production' : 8946426,
@@ -217,6 +243,7 @@ STATES = {
         'exportations' : { 107 : 0.128985 },
     },
     125 : {
+        'ui_pos' : (905, 300),
         'name' : 'Illinois',
         'population' : 12710000,
         'vegetable_production' : 29997641,
@@ -225,6 +252,7 @@ STATES = {
         'exportations' : { 102 : 0.248226, 103 : 0.155377, 104 : 0.000686, 141 : 0.068816 },
     },
     126 : {
+        'ui_pos' : (890, 515),
         'name' : 'Mississippi',
         'population' : 2940000,
         'vegetable_production' : 4748732,
@@ -233,6 +261,7 @@ STATES = {
         'exportations' : { 131 : 0.176021, 136 : 0.034029 },
     },
     127 : {
+        'ui_pos' : (1015, 195),
         'name' : 'Michigan',
         'population' : 10077000,
         'vegetable_production' : 20242630,
@@ -241,6 +270,7 @@ STATES = {
         'exportations' : { 112 : 0.256683, 143 : 0.070277 },
     },
     128 : {
+        'ui_pos' : (980, 310),
         'name' : 'Indiana',
         'population' : 6890000,
         'vegetable_production' : 9841614,
@@ -249,6 +279,7 @@ STATES = {
         'exportations' : { 125 : 0.103887 },
     },
     129 : {
+        'ui_pos' : (1020, 380),
         'name' : 'Kentucky',
         'population' : 4530000,
         'vegetable_production' : 6507648,
@@ -257,6 +288,7 @@ STATES = {
         'exportations' : { 108 : 0.046076, 110 : 0.002004, 133 : 0.126571 },
     },
     130 : {
+        'ui_pos' : (990, 440),
         'name' : 'Tennessee',
         'population' : 7190000,
         'vegetable_production' : 8164781,
@@ -265,6 +297,7 @@ STATES = {
         'exportations' : {},
     },
     131 : {
+        'ui_pos' : (965, 530),
         'name' : 'Alabama',
         'population' : 5080000,
         'vegetable_production' : 6225324,
@@ -273,6 +306,7 @@ STATES = {
         'exportations' : {},
     },
     132 : {
+        'ui_pos' : (1090, 680),
         'name' : 'Floride',
         'population' : 23370000,
         'vegetable_production' : 28177274,
@@ -281,6 +315,7 @@ STATES = {
         'exportations' : {},
     },
     133 : {
+        'ui_pos' : (1070, 300),
         'name' : 'Ohio',
         'population' : 11880000,
         'vegetable_production' : 23596686,
@@ -289,6 +324,7 @@ STATES = {
         'exportations' : { 115 : 0.293141, 116 : 0.003493, 141 : 0.159187 },
     },
     134 : {
+        'ui_pos' : (1120, 350),
         'name' : 'Virginie-Occidentale',
         'population' : 1760000,
         'vegetable_production' : 3563842,
@@ -297,6 +333,7 @@ STATES = {
         'exportations' : { 105 : 0.042248, 107 : 0.084440, 118 : 0.098458, 138 : 0.087911 },
     },
     135 : {
+        'ui_pos' : (1175, 380),
         'name' : 'Virginie',
         'population' : 8870000,
         'vegetable_production' : 8524901,
@@ -305,6 +342,7 @@ STATES = {
         'exportations' : {},
     },
     136 : {
+        'ui_pos' : (1160, 450),
         'name' : 'Caroline du Nord',
         'population' : 11046000,
         'vegetable_production' : 14264105,
@@ -313,6 +351,7 @@ STATES = {
         'exportations' : {},
     },
     137 : {
+        'ui_pos' : (1120, 505),
         'name' : 'Caroline du Sud',
         'population' : 5420000,
         'vegetable_production' : 7807027,
@@ -321,6 +360,7 @@ STATES = {
         'exportations' : { 129 : 0.054437 },
     },
     138 : {
+        'ui_pos' : (1050, 530),
         'name' : 'Géorgie',
         'population' : 11180000,
         'vegetable_production' : 16913695,
@@ -329,6 +369,7 @@ STATES = {
         'exportations' : { 104 : 0.049976, 115 : 0.080820 },
     },
     139 : {
+        'ui_pos' : (1200, 280),
         'name' : 'Pennsylvanie',
         'population' : 13080000,
         'vegetable_production' : 19157023,
@@ -337,6 +378,7 @@ STATES = {
         'exportations' : { 103 : 0.103536, 130 : 0.022044 },
     },
     140 : {
+        'ui_pos' : (1220, 330),
         'name' : 'Maryland',
         'population' : 6230000,
         'vegetable_production' : 8161300,
@@ -345,6 +387,7 @@ STATES = {
         'exportations' : {},
     },
     141 : {
+        'ui_pos' : (1277, 293),
         'name' : 'N.Jersey & Delaware',
         'population' : 10020000,
         'vegetable_production' : 7856711,
@@ -353,6 +396,7 @@ STATES = {
         'exportations' : {},
     },
     142 : {
+        'ui_pos' : (1270, 220),
         'name' : 'New York',
         'population' : 19870000,
         'vegetable_production' : 45986790,
@@ -361,6 +405,7 @@ STATES = {
         'exportations' : { 107 : 0.333935, 123 : 0.125396 },
     },
     143 : {
+        'ui_pos' : (1320, 195),
         'name' : 'Vermont',
         'population' : 650000,
         'vegetable_production' : 410474,
@@ -369,6 +414,7 @@ STATES = {
         'exportations' : {},
     },
     144 : {
+        'ui_pos' : (1320, 268),
         'name' : 'Connecticut',
         'population' : 3640000,
         'vegetable_production' : 4145658,
@@ -377,6 +423,7 @@ STATES = {
         'exportations' : {},
     },
     145 : {
+        'ui_pos' : (1350, 215),
         'name' : 'New Hampshire',
         'population' : 1390000,
         'vegetable_production' : 3276380,
@@ -385,6 +432,7 @@ STATES = {
         'exportations' : { 126 : 0.108631, 130 : 0.340270 },
     },
     146 : {
+        'ui_pos' : (1360, 255),
         'name' : 'Massach. & R.Island',
         'population' : 7650000,
         'vegetable_production' : 9430948,
@@ -393,6 +441,7 @@ STATES = {
         'exportations' : { 105 : 0.006082, 129 : 0.041556 },
     },
     255 : {
+        'ui_pos' : (),
         'name' : None,
         'population' : 1,
         'vegetable_production' : 0,

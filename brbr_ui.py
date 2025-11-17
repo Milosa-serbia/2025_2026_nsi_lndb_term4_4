@@ -29,7 +29,7 @@ class Button:
 
         # petite animation de "pulse" quand survolé
         t = pygame.time.get_ticks() / 200.0
-        if hovered:
+        if hovered :
             pulse = 4 + 2 * math.sin(t)   # taille qui respire un peu
         else:
             pulse = 0
@@ -50,6 +50,8 @@ class Button:
 class UI :
     def __init__(self, infos, closed_border_states, lockdowned_states) :
         self.px_id = None
+        self.closed_border_states = closed_border_states
+        self.lockdowned_states = lockdowned_states
         # attributs du menu
         self.menu_open = False
         self.back_menu_rect = pygame.rect.Rect(15, 15, 710, 820)
@@ -70,11 +72,11 @@ class UI :
         self.exportation_button4 = Button(470, 435, 220, 35, self.font, self.open_menu2)
         self.border_button = Button(
             225, 495, 220, 35, self.font,
-            lambda: self.change_border_statue(infos, closed_border_states)
+            lambda: self.change_border_statue(infos, self.closed_border_states)
         )
         self.lockdown_button = Button(
             260, 535, 220, 35, self.font,
-            lambda: self.change_lockdown_statue(infos, lockdowned_states)
+            lambda: self.change_lockdown_statue(infos, self.lockdowned_states)
         )
 
 
@@ -115,6 +117,10 @@ class UI :
     
     
     def draw(self, screen, infos) :
+        
+        for id in self.closed_border_states :
+            pygame.draw.rect(screen, (0, 255, 0), (infos[id].ui_pos[0], infos[id].ui_pos[1], 20, 20))
+        
         if self.menu_open :
             id_infos = infos[self.px_id]
             
@@ -169,6 +175,8 @@ class UI :
                 #  dessin du background du menu 2
                 pygame.draw.rect(screen, (90, 90, 90), self.back_menu2_rect)
                 pygame.draw.rect(screen, (240, 240, 240), self.menu2_rect)
+                
+    
             
             
             

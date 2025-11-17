@@ -14,7 +14,7 @@ class Continent :
         
         # Temps entre les updates des infos et de l'infection
         self.time_last_update = 0
-        self.time_between_updates = 100 # ms
+        self.time_between_updates = 1000 # ms
         
         # Premier pixel infecté au centre
         self.status_grid[self.height // 2, self.width // 2] = 1
@@ -23,6 +23,7 @@ class Continent :
         self.infos = {}
         for id in STATES.keys() :
             self.infos[id] = KinderState( \
+                STATES[id]['ui_pos'], \
                 STATES[id]['name'], \
                 STATES[id]['population'], \
                 round(STATES[id]['population'] / len(np.argwhere(self.state_grid == id)), 5), \
