@@ -78,7 +78,14 @@ class UI :
             260, 535, 220, 35, self.font,
             lambda: self.change_lockdown_statue(infos, self.lockdowned_states)
         )
-
+        # images
+        self.lockdown_image = pygame.image.load("Enter.png").convert_alpha()
+        self.lockdown_image = pygame.transform.scale(self.lockdown_image, (30, 30))
+        self.locked_border_image = pygame.image.load("Locked.png").convert_alpha()
+        self.locked_border_image = pygame.transform.scale(self.locked_border_image, (30, 30))
+        self.locked_border_and_lockdown_image = pygame.image.load("Locked.png").convert_alpha()
+        self.locked_border_and_lockdown_image = pygame.transform.scale(self.locked_border_and_lockdown_image, (30, 30))
+        
 
     def change_border_statue(self, infos, closed_border_states) :
         if self.px_id in closed_border_states :
@@ -119,7 +126,9 @@ class UI :
     def draw(self, screen, infos) :
         
         for id in self.closed_border_states :
-            pygame.draw.rect(screen, (0, 255, 0), (infos[id].ui_pos[0], infos[id].ui_pos[1], 20, 20))
+            screen.blit(self.locked_border_image, (infos[id].ui_pos[0] - 5, infos[id].ui_pos[1] - 5))
+        for id in self.lockdowned_states :
+            screen.blit(self.lockdown_image, (infos[id].ui_pos[0] - 5, infos[id].ui_pos[1] - 5))
         
         if self.menu_open :
             id_infos = infos[self.px_id]

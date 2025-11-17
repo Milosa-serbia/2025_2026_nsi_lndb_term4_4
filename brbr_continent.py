@@ -14,7 +14,7 @@ class Continent :
         
         # Temps entre les updates des infos et de l'infection
         self.time_last_update = 0
-        self.time_between_updates = 1000 # ms
+        self.time_between_updates = 10 # ms
         
         # Premier pixel infecté au centre
         self.status_grid[self.height // 2, self.width // 2] = 1
