@@ -5,7 +5,7 @@ class KinderState :
         self.population = population
         self.alive_population = population
         self.population_per_px = population_per_px
-        self.open_border = True
+        self.closed_border = False
         self.lockdown = False
         self.initial_vegetable_production = vegetable_production
         self.vegetable_production = vegetable_production

@@ -13,7 +13,7 @@ class Infection :
         self.contact_infect_probability = 2 / 15
         self.air_transmission_is_active = True
         self.air_infect_probability = 1 / 100
-        self.air_jump_radius = 300
+        self.air_jump_radius = 150
         self.death_probability = 1 / 15
 
         # le statut des pixels invalides pour la containation (mer, deja mort, deja infectes...)
@@ -36,7 +36,7 @@ class Infection :
 
 
     # ===== Voisins des pixels infectés pouvant etre infecté =====
-    def neighbor_count(self, infected_positions, status_grid, closed_border_states, lockdowned_states) :
+    def neighbor_count(self, infected_positions, status_grid, closed_border_states) :
         """
         Renvoie une liste [(y, x), ...] des candidats, doublons conservés.
         Règles:
@@ -58,7 +58,7 @@ class Infection :
         candidates_ys = [] # y de tous les candidats vont etre stockés
         candidates_xs = [] # x de tous les candidats vont etre stockés
 
-        invalid_statues = np.array(self.invalid_statues_for_contamination + lockdowned_states, dtype=np.uint8)
+        invalid_statues = np.array(self.invalid_statues_for_contamination, dtype=np.uint8)
         invalid_statues_behind_border = np.array(self.invalid_statues_for_contamination + closed_border_states, dtype=np.uint8)
 
         for dy, dx in directions :
@@ -97,13 +97,13 @@ class Infection :
 
 
     # ===== Transmission par contact =====
-    def contact_transmission(self, status_grid, closed_border_states, lockdowned_states) :
+    def contact_transmission(self, status_grid, closed_border_states) :
         # Compute number of infected neighbors for every pixel
         infected_positions = np.argwhere(status_grid == 1) # stockage des coords infectés -> sous forme [(y, x), (y, x)...]
-        neighbors_candidates = self.neighbor_count(infected_positions, status_grid, closed_border_states, lockdowned_states) # On stock dans une liste les positions des voisins des infectés candidats a l'infection en cours : deja infectés ou morts -> sous forme [(y, x), (y, x)...]
+        neighbors_candidates = self.neighbor_count(infected_positions, status_grid, closed_border_states) # On stock dans une liste les positions des voisins des infectés candidats a l'infection en cours : deja infectés ou morts -> sous forme [(y, x), (y, x)...]
         neighbors_candidates = np.asarray(neighbors_candidates, dtype=np.int32) # On transforme notre liste en object numpy -> sous forme [(y, x), (y, x)...]
 
-        if np.any(neighbors_candidates):
+        if np.any(neighbors_candidates) :
             random_selection = self.rng.random(size=len(neighbors_candidates), dtype=np.float32) # on donne a chaque position de pixel candidat a l'infection un nombre aleatoire entre 0 et 1 stocké dans le tableau random_selection
             px_to_infect = neighbors_candidates[(random_selection < self.contact_infect_probability)] # on stock dans le tableau px_to_infect les positions des pixels candidats a l'infection qui ont eu un nombre inferieur a la proba d'infection par contact -> sous forme [(y, x), (y, x)...]
             
@@ -112,7 +112,7 @@ class Infection :
 
 
     # ===== Transmission par air =====
-    def air_transmission(self, status_grid) :
+    def air_transmission(self, status_grid, lockdowned_states) :
         if self.air_transmission_is_active :
 
             if self.rng.random(dtype=np.float32) < self.air_infect_probability :
@@ -123,20 +123,20 @@ class Infection :
                     infected_ref_y, infected_ref_x = infected_positions[self.rng.integers(0, len(infected_positions))]
                     
                     # Si la 1ere contamination n'a pas marche on en refait une (jusqu'a 16 essais)
-                    for _ in range(16) :
+                    while True :
                         additional_y = self.rng.integers(-self.air_jump_radius, self.air_jump_radius + 1) # distance sur l'axe des ordonnées du pixel infecté de reference
                         additional_x = self.rng.integers(-self.air_jump_radius, self.air_jump_radius + 1) # distance sur l'axe des abscisses du pixel infecté de reference
                         air_contamination_y, air_contamination_x = infected_ref_y + additional_y, infected_ref_x + additional_x # calcul de la position du nouveau foyer de contamination -> coordonnées renvoyées sous forme y, x
                         if (0 <= air_contamination_y < self.height) and (0 <= air_contamination_x < self.width) : # on verifie que le nouveau foyer n'apparaisse pas hors de la fenetre
-                            if status_grid[air_contamination_y, air_contamination_x] not in self.invalid_statues_for_contamination : 
+                            if status_grid[air_contamination_y, air_contamination_x] not in self.invalid_statues_for_contamination + lockdowned_states: 
                                 status_grid[air_contamination_y, air_contamination_x] = 1
                                 break
 
 
     # ===== Mise a jour des mort / infectés =====
     def update_infected_number(self, status_grid, closed_border_states, lockdowned_states) :
-        self.contact_transmission(status_grid, closed_border_states, lockdowned_states)
-        self.air_transmission(status_grid)
+        self.contact_transmission(status_grid, closed_border_states)
+        self.air_transmission(status_grid, lockdowned_states)
 
 
     def update_dead_number(self, status_grid) :
@@ -148,7 +148,7 @@ class Infection :
             random_selection = self.rng.random(size=len(infected_px_coords), dtype=np.float32) # on donne a chaque position de pixel infecté un nombre aleatoire entre 0 et 1 stocké dans le tableau random_selection
             px_to_kill = infected_px_coords[(random_selection < self.death_probability)] # on stock dans le tableau px_to_kill les positions des pixels infectés qui ont eu un nombre inferieur a la proba de mort -> sous forme [(y, x), (y, x)...]
             
-            ys, xs = np.transpose(px_to_kill) # on est obliger grace a np.transpose de redecouper [(y, x), (y, x)...] en deux tableau [y, y, y...], [x, x, x...] car c'est comme ca que numpy geres les positions (a l'etape d'apres)
+            ys, xs = np.transpose(px_to_kill) # on est obligé grace a np.transpose de redecouper [(y, x), (y, x)...] en deux tableau [y, y, y...], [x, x, x...] car c'est comme ca que numpy geres les positions (a l'etape d'apres)
             status_grid[ys, xs] = 2  # on passe la valeur des pixels morts a 2 dans le tableau numpy qui stock l'etat de chaque pixel
         
 

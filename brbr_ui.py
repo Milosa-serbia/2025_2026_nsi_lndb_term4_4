@@ -71,29 +71,30 @@ class UI :
         self.exportation_button3 = Button(470, 395, 220, 35, self.font, self.open_menu2)
         self.exportation_button4 = Button(470, 435, 220, 35, self.font, self.open_menu2)
         self.border_button = Button(
-            225, 495, 220, 35, self.font,
+            420, 495, 220, 35, self.font,
             lambda: self.change_border_statue(infos, self.closed_border_states)
         )
         self.lockdown_button = Button(
-            260, 535, 220, 35, self.font,
+            420, 535, 220, 35, self.font,
             lambda: self.change_lockdown_statue(infos, self.lockdowned_states)
         )
         # images
         self.lockdown_image = pygame.image.load("Enter.png").convert_alpha()
         self.lockdown_image = pygame.transform.scale(self.lockdown_image, (30, 30))
-        self.locked_border_image = pygame.image.load("Locked.png").convert_alpha()
-        self.locked_border_image = pygame.transform.scale(self.locked_border_image, (30, 30))
-        self.locked_border_and_lockdown_image = pygame.image.load("Locked.png").convert_alpha()
-        self.locked_border_and_lockdown_image = pygame.transform.scale(self.locked_border_and_lockdown_image, (30, 30))
+        self.closed_border_image = pygame.image.load("Locked.png").convert_alpha()
+        self.closed_border_image = pygame.transform.scale(self.closed_border_image, (30, 30))
+        self.closed_border_and_lockdown_image = pygame.image.load("Power.png").convert_alpha()
+        self.closed_border_and_lockdown_image = pygame.transform.scale(self.closed_border_and_lockdown_image, (30, 30))
         
 
     def change_border_statue(self, infos, closed_border_states) :
         if self.px_id in closed_border_states :
             closed_border_states.remove(self.px_id)
-            infos[self.px_id].open_border = True
+            infos[self.px_id].closed_border = False
         else :
-            closed_border_states.append(self.px_id)
-            infos[self.px_id].open_border = False
+            if len(closed_border_states) < 4 :
+                closed_border_states.append(self.px_id)
+                infos[self.px_id].closed_border = True
 
 
     def change_lockdown_statue(self, infos, lockdowned_states) :
@@ -101,8 +102,9 @@ class UI :
             lockdowned_states.remove(self.px_id)
             infos[self.px_id].lockdown = False
         else :
-            lockdowned_states.append(self.px_id)
-            infos[self.px_id].lockdown = True
+            if len(lockdowned_states) < 4 :
+                lockdowned_states.append(self.px_id)
+                infos[self.px_id].lockdown = True
 
 
     def open_menu2(self) :
@@ -125,10 +127,15 @@ class UI :
     
     def draw(self, screen, infos) :
         
-        for id in self.closed_border_states :
-            screen.blit(self.locked_border_image, (infos[id].ui_pos[0] - 5, infos[id].ui_pos[1] - 5))
+        closed_border_blits = self.closed_border_states.copy()
         for id in self.lockdowned_states :
-            screen.blit(self.lockdown_image, (infos[id].ui_pos[0] - 5, infos[id].ui_pos[1] - 5))
+            if id not in closed_border_blits :
+                screen.blit(self.lockdown_image, (infos[id].ui_pos[0] - 5, infos[id].ui_pos[1] - 5))
+            else :
+                closed_border_blits.remove(id)
+                screen.blit(self.closed_border_and_lockdown_image, (infos[id].ui_pos[0] - 5, infos[id].ui_pos[1] - 5))
+        for id in closed_border_blits :
+            screen.blit(self.closed_border_image, (infos[id].ui_pos[0] - 5, infos[id].ui_pos[1] - 5))
         
         if self.menu_open :
             id_infos = infos[self.px_id]
@@ -150,8 +157,8 @@ class UI :
             food_ressources = self.font.render('- Extra food ressources : ' + str(int(id_infos.food_ressources)), True, (0, 0, 0)) 
             importations = self.font.render('- Importations :  ', True, (0, 0, 0)) 
             exportations = self.font.render('- Exportations :  ', True, (0, 0, 0))
-            border = self.font.render('- Open borders :  ', True, (0, 0, 0))
-            lockdown = self.font.render('- Lockdown active :  ', True, (0, 0, 0))
+            border = self.font.render('- Closed borders (max : 4 states):  ', True, (0, 0, 0))
+            lockdown = self.font.render('- Lockdown active (max : 4 states):  ', True, (0, 0, 0))
             
             # affichage des textes
             screen.blit(state_name, (70, 40))
@@ -177,7 +184,7 @@ class UI :
             self.exportation_button2.draw(screen, export_texts[1])
             self.exportation_button3.draw(screen, export_texts[2])
             self.exportation_button4.draw(screen, export_texts[3])
-            self.border_button.draw(screen, str(id_infos.open_border))
+            self.border_button.draw(screen, str(id_infos.closed_border))
             self.lockdown_button.draw(screen, str(id_infos.lockdown))
             
             if self.menu2_open :
