@@ -12,7 +12,7 @@ class Infection :
         # Probabilitées
         self.contact_infect_probability = 2 / 15
         self.air_transmission_is_active = True
-        self.air_infect_probability = 1 / 100
+        self.air_infect_probability = 1 / 50
         self.air_jump_radius = 150
         self.death_probability = 1 / 15
 
