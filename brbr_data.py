@@ -59,7 +59,7 @@ STATES = {
         'ui_pos' : (275, 200),
         'name' : 'Idaho',
         'population' : 1967000,
-        'vegetable_production' : 620535,
+        'vegetable_production' : 1720535,
         'obesity_rate' : 0.311,
         'importations' : [],
         'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
@@ -221,7 +221,7 @@ STATES = {
         'ui_pos' : (820, 580),
         'name' : 'Louisiane',
         'population' : 4540000,
-        'vegetable_production' : 6963958,
+        'vegetable_production' : 5663958,
         'obesity_rate' : 0.381,
         'importations' : [],
         'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
