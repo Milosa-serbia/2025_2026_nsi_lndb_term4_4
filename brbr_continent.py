@@ -12,9 +12,12 @@ class Continent :
         self.status_grid = np.load('dessin.npy')
         self.state_grid = self.status_grid.copy()
         
+        # progression du vaccin
+        self.vaccine_progression = 0
+        
         # Temps entre les updates des infos et de l'infection
         self.time_last_update = 0
-        self.time_between_updates = 500 # ms
+        self.time_between_updates = 10 # ms
         
         # Premier pixel infecté au centre
         self.status_grid[self.height // 2, self.width // 2] = 1
@@ -134,16 +137,18 @@ class Continent :
 
 
     def update_and_draw(self, events) :
-        prev_menu_open = self.ui.menu_open
-        self.handle_input(events) # on gere les input hors menu
-        if self.ui.menu_open and prev_menu_open :
-            self.ui.handle_input(events) # on gere les input dans les menu
-        current_time = pygame.time.get_ticks()
-        if current_time - self.time_last_update >= self.time_between_updates : # on fait une update de l'infection et des etats a intervals de temps reguliers
-            self.time_last_update = current_time
-            self.infection.update(self.status_grid, self.close_border_state, self.lockdowned_state) # update de l'infection
-            self.update_infos() # update des infos des etats
-        self.infection.draw(self.screen, self.state_grid, self.status_grid, self.ui.menu_open) # on affiche la simulation 
-        self.ui.draw(self.screen, self.infos) # on affiche : textes, menus, icones
+        if self.vaccine_progression < 100 :
+            self.vaccine_progression += 0.125
+            prev_menu_open = self.ui.menu_open
+            self.handle_input(events) # on gere les input hors menu
+            if self.ui.menu_open and prev_menu_open :
+                self.ui.handle_input(events) # on gere les input dans les menu
+            current_time = pygame.time.get_ticks()
+            if current_time - self.time_last_update >= self.time_between_updates : # on fait une update de l'infection et des etats a intervals de temps reguliers
+                self.time_last_update = current_time
+                self.infection.update(self.status_grid, self.close_border_state, self.lockdowned_state) # update de l'infection
+                self.update_infos() # update des infos des etats
+            self.infection.draw(self.screen, self.state_grid, self.status_grid, self.ui.menu_open) # on affiche la simulation 
+            self.ui.draw(self.screen, self.infos, self.vaccine_progression) # on affiche : textes, menus, icones
     
     

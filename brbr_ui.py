@@ -121,14 +121,14 @@ class UI :
         x1, y1 = 755, 30
         x2, y2 = 1005, 30
         x3, y3 = 1275, 30
-        for id in range(101, 124):
+        for id in range(101, 124) :
             self.buttons_menu2.append(
                 Menu2Button(
                     x1, y1, 225, 27, self.font, infos[id].name,
                     on_click=lambda id=id: self.change_exportation_id(infos, id)))
             y1 += 29
 
-        for id in range(124, 147):
+        for id in range(124, 147) :
             self.buttons_menu2.append(
                 Menu2Button(
                     x2, y2, 225, 27, self.font, infos[id].name,
@@ -139,7 +139,7 @@ class UI :
                     865, 710, 260, 40, self.font, 'None',
                     on_click=lambda: self.change_exportation_id(infos, 0)))
 
-        for percent in range(0, 110, 10):
+        for percent in range(0, 110, 10) :
             self.buttons_menu2.append(
                 Menu2Button(
                     x3, y3, 150, 35, self.font, f'{percent} %',
@@ -153,6 +153,7 @@ class UI :
         self.closed_border_image = pygame.transform.scale(self.closed_border_image, (30, 30))
         self.closed_border_and_lockdown_image = pygame.image.load("Power.png").convert_alpha()
         self.closed_border_and_lockdown_image = pygame.transform.scale(self.closed_border_and_lockdown_image, (30, 30))
+        self.scientist_image = pygame.image.load("Scientist.png").convert_alpha()
         
 
     def change_border_statue(self, infos, closed_border_states) :
@@ -211,8 +212,9 @@ class UI :
                         button.handle_event(event)
     
     
-    def draw(self, screen, infos) :
+    def draw(self, screen, infos, vaccine_progression) :
         
+        # icones de confinement / frontieres fermées
         closed_border_blits = self.closed_border_states.copy()
         for id in self.lockdowned_states :
             if id not in closed_border_blits :
@@ -223,6 +225,12 @@ class UI :
         for id in closed_border_blits :
             screen.blit(self.closed_border_image, (infos[id].ui_pos[0] - 5, infos[id].ui_pos[1] - 5))
         
+        # barre de progression du vaccin
+        screen.blit(self.scientist_image, (1075, 15))
+        pygame.draw.rect(screen, (220, 220, 200), (1150, 25, 280, 38))
+        pygame.draw.rect(screen, (52, 168, 83), (1150, 25, vaccine_progression * 2.8, 38))
+        
+        # les menus
         if self.menu_open :
             id_infos = infos[self.px_id]
             
