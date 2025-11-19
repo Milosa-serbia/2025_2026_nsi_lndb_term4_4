@@ -14,7 +14,7 @@ class Continent :
         
         # Temps entre les updates des infos et de l'infection
         self.time_last_update = 0
-        self.time_between_updates = 10 # ms
+        self.time_between_updates = 500 # ms
         
         # Premier pixel infecté au centre
         self.status_grid[self.height // 2, self.width // 2] = 1
@@ -69,26 +69,78 @@ class Continent :
     def update_infos(self) :
         flat = self.status_grid.ravel()
         counts = np.bincount(flat, minlength=256)
+
+        # ===== 1) Mise à jour interne de chaque état (population, prod, stock) =====
+        for id, state in self.infos.items() :  # on update les infos pour chaque état
+            # population vivante
+            state.alive_population = counts[id] * state.population_per_px
+
+            # production de nourriture en fonction des vivants
+            state.vegetable_production = (
+                state.initial_vegetable_production / state.population
+            ) * state.alive_population
+
+            # lockdown : production divisée par 2
+            if state.lockdown :
+                state.vegetable_production *= 0.5
+
+            # mise à jour du stock de nourriture (production - consommation)
+            state.food_ressources += state.vegetable_production - (
+                state.alive_population * (1 + state.obesity_rate)
+            )
+
+            # on empêche les réserves de tomber en dessous de 0
+            if state.food_ressources < 0 :
+                state.food_ressources = 0
+
+        # ===== 2) Gestion des exportations =====
         for id, state in self.infos.items() :
-            state.alive_population = counts[id] * self.infos[id].population_per_px
-            state.vegetable_production = (state.initial_vegetable_production / state.population) * state.alive_population
-            state.food_ressources = state.food_ressources + state.vegetable_production - (state.alive_population * (1 + state.obesity_rate))
-            for export_id, export_part in state.exportations.items() :
-                state.food_ressources -= state.vegetable_production * export_part
-                self.infos[export_id].food_ressources += state.vegetable_production * export_part
-            
-    
+            # pour chaque couple [id_destination, pourcentage]
+            for export_id, export_part in state.exportations :
+                # si l'id est 0 alors pas d'exportation configurée
+                if export_id == 0 or export_part <= 0 :
+                    continue
+
+                dest = self.infos[export_id]
+
+                # si les frontières du destinataire sont fermées il ne reçoit rien
+                if dest.closed_border :
+                    continue
+
+                # quantité que l'état voudrait exporter pendant cette update
+                wanted = state.vegetable_production * export_part
+                if wanted <= 0 :
+                    continue
+
+                # on ne peut pas exporter plus que ce qu'on a en stock
+                available = state.food_ressources
+                if available <= 0 :
+                    break  # plus rien à exporter pour cet état
+
+                sent = min(wanted, available)
+
+                # on retire du stock de l'exportateur
+                state.food_ressources -= sent
+                # on ajoute au stock du destinataire
+                dest.food_ressources += sent
+
+        # ===== 3) sécurité finale qui empeche les reserves de nourritures negatives =====
+        for state in self.infos.values() :
+            if state.food_ressources < 0 :
+                state.food_ressources = 0
+
     
     def update_and_draw(self, events) :
-        self.handle_input(events)
-        if self.ui.menu_open :
-            self.ui.handle_input(events)
+        prev_menu_open = self.ui.menu_open
+        self.handle_input(events) # on gere les input hors menu
+        if self.ui.menu_open and prev_menu_open :
+            self.ui.handle_input(events) # on gere les input dans les menu
         current_time = pygame.time.get_ticks()
-        if current_time - self.time_last_update >= self.time_between_updates :
+        if current_time - self.time_last_update >= self.time_between_updates : # on fait une update de l'infection et des etats a intervals de temps reguliers
             self.time_last_update = current_time
-            self.infection.update(self.status_grid, self.close_border_state, self.lockdowned_state)
-            self.update_infos()
-        self.infection.draw(self.screen, self.state_grid, self.status_grid, self.ui.menu_open)
-        self.ui.draw(self.screen, self.infos)
+            self.infection.update(self.status_grid, self.close_border_state, self.lockdowned_state) # update de l'infection
+            self.update_infos() # update des infos des etats
+        self.infection.draw(self.screen, self.state_grid, self.status_grid, self.ui.menu_open) # on affiche la simulation 
+        self.ui.draw(self.screen, self.infos) # on affiche : textes, menus, icones
     
     

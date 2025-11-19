@@ -23,8 +23,8 @@ STATES = {
         'population' : 1,
         'vegetable_production' : 0,
         'obesity_rate' : 0,
-        'importations' : {},
-        'exportations' : {},
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     101 : {
         'ui_pos' : (130, 100),
@@ -32,8 +32,8 @@ STATES = {
         'population' : 8115100,
         'vegetable_production' : 13060139,
         'obesity_rate' : 0.28,
-        'importations' : {},
-        'exportations' : { 132 : 0.140106, 133 : 0.055076, 143 : 0.009472 },
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     102 : {
         'ui_pos' : (130, 200),
@@ -41,8 +41,8 @@ STATES = {
         'population' : 4291090,
         'vegetable_production' : 2748443,
         'obesity_rate' : 0.281,
-        'importations' : {},
-        'exportations' : { 146 : 0.294830 },
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     103 : {
         'ui_pos' : (140, 400),
@@ -50,8 +50,8 @@ STATES = {
         'population' : 39431000,
         'vegetable_production' : 40375750,
         'obesity_rate' : 0.303,
-        'importations' : {},
-        'exportations' : {},
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     104 : {
         'ui_pos' : (275, 200),
@@ -59,8 +59,8 @@ STATES = {
         'population' : 1967000,
         'vegetable_production' : 620535,
         'obesity_rate' : 0.311,
-        'importations' : {},
-        'exportations' : {},
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     105 : {
         'ui_pos' : (230, 330),
@@ -68,8 +68,8 @@ STATES = {
         'population' : 3265000,
         'vegetable_production' : 3994128,
         'obesity_rate' : 0.287,
-        'importations' : {},
-        'exportations' : {},
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     106 : {
         'ui_pos' : (400, 100),
@@ -77,8 +77,8 @@ STATES = {
         'population' : 1153000,
         'vegetable_production' : 1017380,
         'obesity_rate' : 0.285,
-        'importations' : {},
-        'exportations' : {},
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     107 : {
         'ui_pos' : (440, 220),
@@ -86,8 +86,8 @@ STATES = {
         'population' : 584000,
         'vegetable_production' : 381644,
         'obesity_rate' : 0.307,
-        'importations' : {},
-        'exportations' : { 121 : 0.255052 },
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     108 : {
         'ui_pos' : (350, 330),
@@ -95,8 +95,8 @@ STATES = {
         'population' : 3427000,
         'vegetable_production' : 4298150,
         'obesity_rate' : 0.286,
-        'importations' : {},
-        'exportations' : { 130 : 0.011098, 142 : 0.054016 },
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     109 : {
         'ui_pos' : (350, 480),
@@ -104,8 +104,8 @@ STATES = {
         'population' : 7600000,
         'vegetable_production' : 10524284,
         'obesity_rate' : 0.309,
-        'importations' : {},
-        'exportations' : { 108 : 0.008456, 135 : 0.014740, 136 : 0.031523 },
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     110 : {
         'ui_pos' : (500, 330),
@@ -113,8 +113,8 @@ STATES = {
         'population' : 6023000,
         'vegetable_production' : 13343881,
         'obesity_rate' : 0.242,
-        'importations' : {},
-        'exportations' : { 103 : 0.194355, 104 : 0.081860, 107 : 0.164163 },
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     111 : {
         'ui_pos' : (480, 470),
@@ -122,8 +122,8 @@ STATES = {
         'population' : 2110000,
         'vegetable_production' : 2761990,
         'obesity_rate' : 0.309,
-        'importations' : {},
-        'exportations' : {},
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     112 : {
         'ui_pos' : (620, 80),
@@ -131,8 +131,8 @@ STATES = {
         'population' : 783000,
         'vegetable_production' : 521086,
         'obesity_rate' : 0.331,
-        'importations' : {},
-        'exportations' : {},
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     113 : {
         'ui_pos' : (620, 175),
@@ -140,8 +140,8 @@ STATES = {
         'population' : 919000,
         'vegetable_production' : 1329643,
         'obesity_rate' : 0.332,
-        'importations' : {},
-        'exportations' : { 115 : 0.079371 },
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     114 : {
         'ui_pos' : (630, 260),
@@ -149,8 +149,8 @@ STATES = {
         'population' : 1973000,
         'vegetable_production' : 2305674,
         'obesity_rate' : 0.34,
-        'importations' : {},
-        'exportations' : {},
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     115 : {
         'ui_pos' : (675, 350),
@@ -158,8 +158,8 @@ STATES = {
         'population' : 2943000,
         'vegetable_production' : 1990939,
         'obesity_rate' : 0.353,
-        'importations' : {},
-        'exportations' : { 106 : 0.233168 },
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     116 : {
         'ui_pos' : (700, 440),
@@ -167,8 +167,8 @@ STATES = {
         'population' : 4060000,
         'vegetable_production' : 5455425,
         'obesity_rate' : 0.364,
-        'importations' : {},
-        'exportations' : {},
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     117 : {
         'ui_pos' : (650, 570),
@@ -176,8 +176,8 @@ STATES = {
         'population' : 31290000,
         'vegetable_production' : 46593176,
         'obesity_rate' : 0.358,
-        'importations' : {},
-        'exportations' : { 128 : 0.013013, 135 : 0.065377, 139 : 0.009635 },
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     118 : {
         'ui_pos' : (770, 130),
@@ -185,8 +185,8 @@ STATES = {
         'population' : 5787000,
         'vegetable_production' : 8926318,
         'obesity_rate' : 0.307,
-        'importations' : {},
-        'exportations' : { 133 : 0.191971 },
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     119 : {
         'ui_pos' : (790, 250),
@@ -194,8 +194,8 @@ STATES = {
         'population' : 3200000,
         'vegetable_production' : 4368000,
         'obesity_rate' : 0.365,
-        'importations' : {},
-        'exportations' : {},
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     120 : {
         'ui_pos' : (820, 355),
@@ -203,8 +203,8 @@ STATES = {
         'population' : 6217000,
         'vegetable_production' : 8330780,
         'obesity_rate' : 0.34,
-        'importations' : {},
-        'exportations' : {},
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     121 : {
         'ui_pos' : (830, 465),
@@ -212,8 +212,8 @@ STATES = {
         'population' : 3080000,
         'vegetable_production' : 7553201,
         'obesity_rate' : 0.364,
-        'importations' : {},
-        'exportations' : { 103 : 0.233676, 143 : 0.149234, 144 : 0.073773 },
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     122 : {
         'ui_pos' : (820, 580),
@@ -221,8 +221,8 @@ STATES = {
         'population' : 4540000,
         'vegetable_production' : 6963958,
         'obesity_rate' : 0.381,
-        'importations' : {},
-        'exportations' : { 114 : 0.048557, 115 : 0.051131 },
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     123 : {
         'ui_pos' : (1420, 130),
@@ -230,8 +230,8 @@ STATES = {
         'population' : 1380000,
         'vegetable_production' : 903900,
         'obesity_rate' : 0.31,
-        'importations' : {},
-        'exportations' : {},
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     124 : {
         'ui_pos' : (890, 170),
@@ -239,8 +239,8 @@ STATES = {
         'population' : 5890000,
         'vegetable_production' : 8946426,
         'obesity_rate' : 0.323,
-        'importations' : {},
-        'exportations' : { 107 : 0.128985 },
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     125 : {
         'ui_pos' : (905, 300),
@@ -248,8 +248,8 @@ STATES = {
         'population' : 12710000,
         'vegetable_production' : 29997641,
         'obesity_rate' : 0.324,
-        'importations' : {},
-        'exportations' : { 102 : 0.248226, 103 : 0.155377, 104 : 0.000686, 141 : 0.068816 },
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     126 : {
         'ui_pos' : (890, 515),
@@ -257,8 +257,8 @@ STATES = {
         'population' : 2940000,
         'vegetable_production' : 4748732,
         'obesity_rate' : 0.397,
-        'importations' : {},
-        'exportations' : { 131 : 0.176021, 136 : 0.034029 },
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     127 : {
         'ui_pos' : (1015, 195),
@@ -266,8 +266,8 @@ STATES = {
         'population' : 10077000,
         'vegetable_production' : 20242630,
         'obesity_rate' : 0.352,
-        'importations' : {},
-        'exportations' : { 112 : 0.256683, 143 : 0.070277 },
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     128 : {
         'ui_pos' : (980, 310),
@@ -275,8 +275,8 @@ STATES = {
         'population' : 6890000,
         'vegetable_production' : 9841614,
         'obesity_rate' : 0.368,
-        'importations' : {},
-        'exportations' : { 125 : 0.103887 },
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     129 : {
         'ui_pos' : (1020, 380),
@@ -284,8 +284,8 @@ STATES = {
         'population' : 4530000,
         'vegetable_production' : 6507648,
         'obesity_rate' : 0.366,
-        'importations' : {},
-        'exportations' : { 108 : 0.046076, 110 : 0.002004, 133 : 0.126571 },
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     130 : {
         'ui_pos' : (990, 440),
@@ -293,8 +293,8 @@ STATES = {
         'population' : 7190000,
         'vegetable_production' : 8164781,
         'obesity_rate' : 0.356,
-        'importations' : {},
-        'exportations' : {},
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     131 : {
         'ui_pos' : (965, 530),
@@ -302,8 +302,8 @@ STATES = {
         'population' : 5080000,
         'vegetable_production' : 6225324,
         'obesity_rate' : 0.39,
-        'importations' : {},
-        'exportations' : {},
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     132 : {
         'ui_pos' : (1090, 680),
@@ -311,8 +311,8 @@ STATES = {
         'population' : 23370000,
         'vegetable_production' : 28177274,
         'obesity_rate' : 0.284,
-        'importations' : {},
-        'exportations' : {},
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     133 : {
         'ui_pos' : (1070, 300),
@@ -320,8 +320,8 @@ STATES = {
         'population' : 11880000,
         'vegetable_production' : 23596686,
         'obesity_rate' : 0.355,
-        'importations' : {},
-        'exportations' : { 115 : 0.293141, 116 : 0.003493, 141 : 0.159187 },
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     134 : {
         'ui_pos' : (1120, 350),
@@ -329,8 +329,8 @@ STATES = {
         'population' : 1760000,
         'vegetable_production' : 3563842,
         'obesity_rate' : 0.391,
-        'importations' : {},
-        'exportations' : { 105 : 0.042248, 107 : 0.084440, 118 : 0.098458, 138 : 0.087911 },
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     135 : {
         'ui_pos' : (1175, 380),
@@ -338,8 +338,8 @@ STATES = {
         'population' : 8870000,
         'vegetable_production' : 8524901,
         'obesity_rate' : 0.322,
-        'importations' : {},
-        'exportations' : {},
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     136 : {
         'ui_pos' : (1160, 450),
@@ -347,8 +347,8 @@ STATES = {
         'population' : 11046000,
         'vegetable_production' : 14264105,
         'obesity_rate' : 0.336,
-        'importations' : {},
-        'exportations' : {},
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     137 : {
         'ui_pos' : (1120, 505),
@@ -356,8 +356,8 @@ STATES = {
         'population' : 5420000,
         'vegetable_production' : 7807027,
         'obesity_rate' : 0.362,
-        'importations' : {},
-        'exportations' : { 129 : 0.054437 },
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     138 : {
         'ui_pos' : (1050, 530),
@@ -365,8 +365,8 @@ STATES = {
         'population' : 11180000,
         'vegetable_production' : 16913695,
         'obesity_rate' : 0.343,
-        'importations' : {},
-        'exportations' : { 104 : 0.049976, 115 : 0.080820 },
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     139 : {
         'ui_pos' : (1200, 280),
@@ -374,8 +374,8 @@ STATES = {
         'population' : 13080000,
         'vegetable_production' : 19157023,
         'obesity_rate' : 0.315,
-        'importations' : {},
-        'exportations' : { 103 : 0.103536, 130 : 0.022044 },
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     140 : {
         'ui_pos' : (1220, 330),
@@ -383,8 +383,8 @@ STATES = {
         'population' : 6230000,
         'vegetable_production' : 8161300,
         'obesity_rate' : 0.31,
-        'importations' : {},
-        'exportations' : {},
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     141 : {
         'ui_pos' : (1277, 293),
@@ -392,8 +392,8 @@ STATES = {
         'population' : 10020000,
         'vegetable_production' : 7856711,
         'obesity_rate' : 0.365,
-        'importations' : {},
-        'exportations' : {},
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     142 : {
         'ui_pos' : (1270, 220),
@@ -401,8 +401,8 @@ STATES = {
         'population' : 19870000,
         'vegetable_production' : 45986790,
         'obesity_rate' : 0.263,
-        'importations' : {},
-        'exportations' : { 107 : 0.333935, 123 : 0.125396 },
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     143 : {
         'ui_pos' : (1320, 195),
@@ -410,8 +410,8 @@ STATES = {
         'population' : 650000,
         'vegetable_production' : 410474,
         'obesity_rate' : 0.263,
-        'importations' : {},
-        'exportations' : {},
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     144 : {
         'ui_pos' : (1320, 268),
@@ -419,8 +419,8 @@ STATES = {
         'population' : 3640000,
         'vegetable_production' : 4145658,
         'obesity_rate' : 0.292,
-        'importations' : {},
-        'exportations' : {},
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     145 : {
         'ui_pos' : (1350, 215),
@@ -428,8 +428,8 @@ STATES = {
         'population' : 1390000,
         'vegetable_production' : 3276380,
         'obesity_rate' : 0.299,
-        'importations' : {},
-        'exportations' : { 126 : 0.108631, 130 : 0.340270 },
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     146 : {
         'ui_pos' : (1360, 255),
@@ -437,8 +437,8 @@ STATES = {
         'population' : 7650000,
         'vegetable_production' : 9430948,
         'obesity_rate' : 0.28,
-        'importations' : {},
-        'exportations' : { 105 : 0.006082, 129 : 0.041556 },
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
     255 : {
         'ui_pos' : (),
@@ -446,7 +446,7 @@ STATES = {
         'population' : 1,
         'vegetable_production' : 0,
         'obesity_rate' : 0,
-        'importations' : {},
-        'exportations' : {},
+        'importations' : [],
+        'exportations' : [[0, 0], [0, 0], [0, 0], [0, 0]]
     },
 }

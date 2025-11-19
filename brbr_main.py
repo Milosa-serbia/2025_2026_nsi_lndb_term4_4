@@ -24,6 +24,6 @@ class Simulation :
             self.continent.update_and_draw(events)
             pygame.display.update()
 
-if __name__ == "__main__":
+if __name__ == "__main__" :
     sim = Simulation()
     sim.run()
