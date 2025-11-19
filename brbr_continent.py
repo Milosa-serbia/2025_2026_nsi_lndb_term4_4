@@ -19,8 +19,16 @@ class Continent :
         self.time_last_update = 0
         self.time_between_updates = 10 # ms
         
-        # Premier pixel infecté au centre
-        self.status_grid[self.height // 2, self.width // 2] = 1
+        # Premier pixel infecté aléatoire dans certains états
+        start_states = [107, 108, 110, 113, 114, 115, 116, 119, 120, 121, 124, 125, 126]
+        # on récupère tous les pixels qui appartiennent à ces états
+        mask = np.isin(self.state_grid, start_states)
+        ys, xs = np.where(mask)
+
+        # on choisit un pixel au hasard parmi ces positions
+        idx = np.random.randint(0, len(ys))
+        y0, x0 = ys[idx], xs[idx]
+        self.status_grid[y0, x0] = 1
         
         # Infos des états
         self.infos = {}
@@ -42,6 +50,18 @@ class Continent :
         # Instance de l'infection et de l'UI
         self.infection = Infection()
         self.ui = UI(self.infos, self.close_border_state, self.lockdowned_state)
+
+        # pré-calcul des pixels de chaque état pour éviter np.argwhere à chaque update quand on doit appliquer la selection des morts de la famine (ENORMEEE GAIN DE PERF)
+        self.state_pixels = {}
+        for state_id in range(101, 147):  # IDs des vrais états
+            coords = np.argwhere(self.state_grid == state_id)
+            if coords.size == 0:
+                ys = np.empty(0, dtype=int)
+                xs = np.empty(0, dtype=int)
+            else:
+                ys = coords[:, 0]
+                xs = coords[:, 1]
+            self.state_pixels[state_id] = (ys, xs)
 
 
     def handle_input(self, events) :
@@ -92,6 +112,9 @@ class Continent :
             if state.closed_border :
                 factor -= 1 / 3
 
+            if factor < 0:
+                factor = 0  # sécurité au cas où
+
             state.vegetable_production = base_production * factor
 
             # mise à jour du stock de nourriture (prod - conso)
@@ -107,7 +130,7 @@ class Continent :
         for id, state in self.infos.items() :
             # pour chaque couple [id_destination, pourcentage]
             for export_id, export_part in state.exportations :
-                # si l'id est 0 alors pas d'export defini
+                # si l'id est 0 alors pas d'export défini
                 if export_id == 0 or export_part <= 0 :
                     continue
 
@@ -135,16 +158,52 @@ class Continent :
             if state.food_ressources < 0 :
                 state.food_ressources = 0
 
+        # ===== 4) Famine optimisée : tuer des pixels quand food_ressources == 0 =====
+        for state_id, state in self.infos.items():
+            # on ne traite que les vrais états
+            if not (101 <= state_id <= 146):
+                continue
+
+            # si l'état a encore de la nourriture, rien ne se passe
+            if state.food_ressources > 0:
+                continue
+
+            ys_all, xs_all = self.state_pixels.get(state_id, (None, None))
+            if ys_all is None or ys_all.size == 0:
+                continue
+
+            # on regarde le statut de ces pixels dans status_grid
+            status_sub = self.status_grid[ys_all, xs_all]
+
+            # on ne tue que les pixels pas encore morts (status != 2)
+            alive_mask = (status_sub != 2)
+            if not np.any(alive_mask):
+                continue
+
+            ys_alive = ys_all[alive_mask]
+            xs_alive = xs_all[alive_mask]
+
+            # on tue jusqu'à 10 pixels
+            n_to_kill = min(10, ys_alive.size)
+
+            # choix aléatoire de n_to_kill indices parmi les pixels vivants
+            idx = self.infection.rng.integers(
+                0, ys_alive.size, size=n_to_kill, endpoint=False
+            )
+
+            self.status_grid[ys_alive[idx], xs_alive[idx]] = 2
+
+
 
     def update_and_draw(self, events) :
         if self.vaccine_progression < 100 :
-            self.vaccine_progression += 0.125
             prev_menu_open = self.ui.menu_open
             self.handle_input(events) # on gere les input hors menu
             if self.ui.menu_open and prev_menu_open :
                 self.ui.handle_input(events) # on gere les input dans les menu
             current_time = pygame.time.get_ticks()
             if current_time - self.time_last_update >= self.time_between_updates : # on fait une update de l'infection et des etats a intervals de temps reguliers
+                self.vaccine_progression += 0.115
                 self.time_last_update = current_time
                 self.infection.update(self.status_grid, self.close_border_state, self.lockdowned_state) # update de l'infection
                 self.update_infos() # update des infos des etats

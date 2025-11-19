@@ -1,3 +1,5 @@
+import random
+
 class KinderState :
     def __init__(self, ui_pos, name, population, population_per_px, vegetable_production, obesity_rate, importations, exportations) :
         self.ui_pos = ui_pos
@@ -9,7 +11,7 @@ class KinderState :
         self.lockdown = False
         self.initial_vegetable_production = vegetable_production
         self.vegetable_production = vegetable_production
-        self.food_ressources = 0
+        self.food_ressources = population * random.randint(30, 80)
         self.obesity_rate = obesity_rate
         self.importations = importations
         self.exportations = exportations

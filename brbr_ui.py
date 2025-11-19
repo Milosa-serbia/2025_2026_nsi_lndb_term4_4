@@ -177,12 +177,26 @@ class UI :
 
 
     def change_exportation_id(self, infos, new_export_id) :
-        infos[self.px_id].exportations[self.exportation_index][0] = new_export_id
-        infos[self.px_id].exportations[self.exportation_index][1] = 0
-        if new_export_id != 0 :
-            infos[new_export_id].importations.append(infos[self.px_id].name)
-        # else :
-            # infos[new_export_id].importations.remove(infos[self.px_id].name)
+        current_state = infos[self.px_id]
+
+        # 1) récupérer l'ancien id d'exportation avant de le modifier
+        old_export_id = current_state.exportations[self.exportation_index][0]
+
+        # 2) si on avait déjà une exportation vers un autre état on enlève ce state des importations de l'ancien destinataire
+        if old_export_id != 0:
+            try:
+                infos[old_export_id].importations.remove(current_state.name)
+            except ValueError:
+                # au cas où il n'y serait plus c'est plus secur
+                pass
+
+        # 3) on met le nouvel id et on reset le pourcentage
+        current_state.exportations[self.exportation_index][0] = new_export_id
+        current_state.exportations[self.exportation_index][1] = 0
+
+        # 4) si le nouvel id est un vrai état, on l'ajoute à ses importations
+        if new_export_id != 0:
+            infos[new_export_id].importations.append(current_state.name)
 
 
     def change_exportations_percent(self, infos, percent) :
