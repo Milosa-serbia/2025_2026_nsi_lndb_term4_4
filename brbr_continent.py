@@ -71,20 +71,27 @@ class Continent :
         counts = np.bincount(flat, minlength=256)
 
         # ===== 1) Mise à jour interne de chaque état (population, prod, stock) =====
-        for id, state in self.infos.items() :  # on update les infos pour chaque état
+        for id, state in self.infos.items() :  # pour tous les états
             # population vivante
             state.alive_population = counts[id] * state.population_per_px
 
-            # production de nourriture en fonction des vivants
-            state.vegetable_production = (
+            # production de base
+            base_production = (
                 state.initial_vegetable_production / state.population
             ) * state.alive_population
 
-            # lockdown : production divisée par 2
+            # multiplicateur de prod :
+            # - 1/3 si confinement
+            # - 1/3 si frontières fermées
+            factor = 1
             if state.lockdown :
-                state.vegetable_production *= 0.5
+                factor -= 1 / 3
+            if state.closed_border :
+                factor -= 1 / 3
 
-            # mise à jour du stock de nourriture (production - consommation)
+            state.vegetable_production = base_production * factor
+
+            # mise à jour du stock de nourriture (prod - conso)
             state.food_ressources += state.vegetable_production - (
                 state.alive_population * (1 + state.obesity_rate)
             )
@@ -97,17 +104,13 @@ class Continent :
         for id, state in self.infos.items() :
             # pour chaque couple [id_destination, pourcentage]
             for export_id, export_part in state.exportations :
-                # si l'id est 0 alors pas d'exportation configurée
+                # si l'id est 0 alors pas d'export defini
                 if export_id == 0 or export_part <= 0 :
                     continue
 
                 dest = self.infos[export_id]
 
-                # si les frontières du destinataire sont fermées il ne reçoit rien
-                if dest.closed_border :
-                    continue
-
-                # quantité que l'état voudrait exporter pendant cette update
+                # quantité que l'état voudrait exporter pendant ce update
                 wanted = state.vegetable_production * export_part
                 if wanted <= 0 :
                     continue
@@ -124,12 +127,12 @@ class Continent :
                 # on ajoute au stock du destinataire
                 dest.food_ressources += sent
 
-        # ===== 3) sécurité finale qui empeche les reserves de nourritures negatives =====
+        # ===== 3) sécurité finale =====
         for state in self.infos.values() :
             if state.food_ressources < 0 :
                 state.food_ressources = 0
 
-    
+
     def update_and_draw(self, events) :
         prev_menu_open = self.ui.menu_open
         self.handle_input(events) # on gere les input hors menu
