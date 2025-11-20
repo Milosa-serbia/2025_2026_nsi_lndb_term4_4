@@ -17,7 +17,7 @@ class Continent :
         
         # Temps entre les updates des infos et de l'infection
         self.time_last_update = 0
-        self.time_between_updates = 500 # ms
+        self.time_between_updates = 10 # ms
         
         # Premier pixel infecté aléatoire dans certains états
         start_states = [107, 108, 110, 113, 114, 115, 116, 119, 120, 121, 124, 125, 126]
@@ -194,8 +194,57 @@ class Continent :
             self.status_grid[ys_alive[idx], xs_alive[idx]] = 2
 
 
+    def end_game(self) :
+            # On ferme les menus si ouverts
+            self.ui.menu_open = False
+            if hasattr(self.ui, "menu2_open") :
+                self.ui.menu2_open = False
+
+            # ==== CALCUL DES SCORES ====
+            # population totale vivante (vrais états 101–146)
+            alive_total = int(sum(
+                st.alive_population
+                for sid, st in self.infos.items()
+                if 101 <= sid <= 146
+            ))
+
+            # population totale initiale
+            total_initial = sum(
+                STATES[id]['population']
+                for id in STATES.keys()
+                if 101 <= id <= 146
+            )
+
+            # score sur 100
+            score = int(round((alive_total / total_initial) * 100))
+
+            # ==== AFFICHAGE ====
+            self.infection.draw(self.screen, self.state_grid, self.status_grid, False)
+
+            # panneau centré
+            w, h = self.screen.get_size()
+            panel = pygame.Rect(w//2 - 350, h//2 - 150, 700, 300)
+
+            pygame.draw.rect(self.screen, (0,0,0), panel.inflate(20,20), border_radius=15)
+            pygame.draw.rect(self.screen, (240,240,240), panel, border_radius=15)
+
+            # texte
+            big_font = pygame.font.Font(None, 70)
+            font = pygame.font.Font(None, 50)
+
+            t1 = big_font.render("VACCIN TROUVÉ – FIN", True, (0,0,0))
+            t2 = font.render(f"Population totale en vie : {alive_total}", True, (0,0,0))
+            t3 = font.render(f"Score : {score} / 100", True, (0,0,0))
+
+            self.screen.blit(t1, t1.get_rect(center=(panel.centerx, panel.top + 70)))
+            self.screen.blit(t2, t2.get_rect(center=(panel.centerx, panel.top + 150)))
+            self.screen.blit(t3, t3.get_rect(center=(panel.centerx, panel.top + 210)))
+    
+        
+
 
     def update_and_draw(self, events) :
+        # ====================== JEU EN COURS ======================
         if self.vaccine_progression < 100 :
             prev_menu_open = self.ui.menu_open
             self.handle_input(events) # on gere les input hors menu
@@ -209,5 +258,10 @@ class Continent :
                 self.update_infos() # update des infos des etats
             self.infection.draw(self.screen, self.state_grid, self.status_grid, self.ui.menu_open) # on affiche la simulation 
             self.ui.draw(self.screen, self.infos, self.vaccine_progression) # on affiche : textes, menus, icones
-    
+            
+        # ====================== FIN DE PARTIE ======================
+        else :
+            self.end_game()
+
+
     
