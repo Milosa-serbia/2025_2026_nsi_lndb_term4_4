@@ -17,7 +17,7 @@ class Continent :
         
         # Temps entre les updates des infos et de l'infection
         self.time_last_update = 0
-        self.time_between_updates = 10 # ms
+        self.time_between_updates = 500 # ms
         
         # Premier pixel infecté aléatoire dans certains états
         start_states = [107, 108, 110, 113, 114, 115, 116, 119, 120, 121, 124, 125, 126]
