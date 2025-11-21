@@ -143,7 +143,7 @@ class Continent :
                 dest = self.infos[export_id]
 
                 # quantité que l'état voudrait exporter pendant ce update
-                wanted = state.base_production * export_part
+                wanted = state.initial_vegetable_production * export_part
                 if wanted <= 0 :
                     continue
 
