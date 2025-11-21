@@ -87,6 +87,12 @@ class Continent :
                     else : # uniquement menu 1 ouvert
                         if not self.ui.menu_rect.collidepoint(x, y) :
                             self.ui.menu_open = False
+
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 3 :
+                if self.ui.menu_open :
+                    self.ui.menu_open = False
+                if self.ui.menu2_open :
+                    self.ui.menu2_open = False
                     
     
     def update_infos(self) :
@@ -137,7 +143,7 @@ class Continent :
                 dest = self.infos[export_id]
 
                 # quantité que l'état voudrait exporter pendant ce update
-                wanted = state.vegetable_production * export_part
+                wanted = state.base_production * export_part
                 if wanted <= 0 :
                     continue
 
