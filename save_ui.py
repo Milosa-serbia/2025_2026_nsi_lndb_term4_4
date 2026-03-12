@@ -285,7 +285,7 @@ class PercentSelector:
 
             draw_rounded_rect(screen, bg, r, radius=4)
             draw_border_rect(screen, lerp_color(C_BORDER, C_ACCENT, self._hover_t[i]), r, width=1, radius=4)
-            surf = self.font.render(f'{p}', True, txt_c)
+            surf = self.font.render(f'{p}%', True, txt_c)
             screen.blit(surf, surf.get_rect(center=r.center))
 
 
@@ -524,9 +524,9 @@ class UI:
             draw_rounded_rect(screen, C_ACCENT, fill_rect, radius=7)
         draw_border_rect(screen, C_BORDER, bar_rect, width=1, radius=7)
 
-        # pourcentage — à l'intérieur du rect, aligné à droite
-        pct_surf = self.font_sm.render(f'{int(vaccine_progression)}%', True, C_WHITE)
-        screen.blit(pct_surf, pct_surf.get_rect(midright=(bar_rect.right - 6, bar_rect.centery)))
+        # pourcentage
+        pct_surf = self.font_sm.render(f'{int(vaccine_progression)}%', True, C_ACCENT)
+        screen.blit(pct_surf, (bx + 46 + bw - 56 + 6, by + 20))
 
     # ------------------------------------------------------------------
     def _draw_state_icons(self, screen, infos):
@@ -569,130 +569,84 @@ class UI:
         sub = self.font_sm.render(f'ID ÉTAT  ·  #{self.px_id}', True, C_TEXT_DIM)
         screen.blit(sub, (p.x + 18, p.y + 48))
 
-        # Layout constants — on exploite toute la hauteur du panneau (820px - 68 header = 752px dispo)
-        PAD   = 18   # marge horizontale
-        SEC   = 14   # espace avant chaque section header
-        AFTER = 10   # espace après chaque section header
-        ROW   = 24   # hauteur d'une ligne de stat
-        BTN_H = 36   # hauteur des boutons export / toggle
-
-        y = p.y + 78  # démarre juste sous le header
+        y = p.y + 84
 
         # ---- Section Population ----
-        y += SEC
-        y += draw_section_header(screen, self.font_sm, '  Population', p.x + PAD, y, p.width - PAD*2)
-        y += AFTER
+        y += draw_section_header(screen, self.font_sm, '  Population', p.x + 14, y, p.width - 28)
 
         total = id_infos.population
         alive = int(id_infos.alive_population)
         dead  = total - alive
         pct_alive = alive / total if total else 0
 
-        # barre pop (large, bien visible)
-        draw_progress_bar(screen, p.x + PAD, y, p.width - PAD*2, 12, alive, total, C_ACCENT2)
+        draw_progress_bar(screen, p.x + 14, y, p.width - 28, 10, alive, total, C_ACCENT2)
+        y += 16
+
+        draw_stat_row(screen, self.font_sm, 'Vivants :', f'{alive:,}', p.x + 14, y, C_ACCENT2)
         y += 20
+        draw_stat_row(screen, self.font_sm, 'Morts / infectés :', f'{dead:,}', p.x + 14, y, C_DANGER)
+        y += 20
+        pct_surf = self.font_sm.render(f'{pct_alive*100:.1f}% de la pop. initiale', True, C_TEXT_DIM)
+        screen.blit(pct_surf, (p.x + 14, y))
+        y += 30
 
-        # deux stats côte à côte
-        draw_stat_row(screen, self.font_sm, 'Vivants :', f'{alive:,}', p.x + PAD, y, C_ACCENT2)
-        draw_stat_row(screen, self.font_sm, 'Morts / inf. :', f'{dead:,}', p.x + PAD + 170, y, C_DANGER)
-        y += ROW
-        pct_surf = self.font_sm.render(f'{pct_alive*100:.1f}% de la population initiale survit', True, C_TEXT_DIM)
-        screen.blit(pct_surf, (p.x + PAD, y))
-        y += ROW + 4
+        # ---- Section Santé ----
+        y += draw_section_header(screen, self.font_sm, '  Santé & Ressources', p.x + 14, y, p.width - 28)
+        draw_stat_row(screen, self.font_sm, 'Taux d\'obésité :', f'{id_infos.obesity_rate*100:.1f}%', p.x + 14, y)
+        y += 22
+        draw_stat_row(screen, self.font_sm, 'Production végétale :', f'{int(id_infos.vegetable_production):,}', p.x + 14, y)
+        y += 22
 
-        # ---- Section Santé & Ressources ----
-        y += SEC
-        y += draw_section_header(screen, self.font_sm, '  Santé & Ressources', p.x + PAD, y, p.width - PAD*2)
-        y += AFTER
-
-        draw_stat_row(screen, self.font_sm, "Obésité :", f"{id_infos.obesity_rate*100:.1f}%", p.x + PAD, y)
-        draw_stat_row(screen, self.font_sm, 'Prod. végétale :', f'{int(id_infos.vegetable_production):,}', p.x + PAD + 130, y)
-        y += ROW + 4
-
-        # barre réserves alimentaires
+        # barre food ressources
         food_max = max(id_infos.population * 100, id_infos.food_ressources + 1)
         food_color = C_ACCENT2 if id_infos.food_ressources > id_infos.population * 20 else C_WARNING if id_infos.food_ressources > 0 else C_DANGER
-        draw_progress_bar(screen, p.x + PAD, y, p.width - PAD*2, 12, id_infos.food_ressources, food_max, food_color)
-        y += 20
-        draw_stat_row(screen, self.font_sm, 'Réserves alim. :', f'{int(id_infos.food_ressources):,}', p.x + PAD, y, food_color)
-        y += ROW + 4
+        draw_progress_bar(screen, p.x + 14, y, p.width - 28, 10, id_infos.food_ressources, food_max, food_color)
+        y += 14
+        draw_stat_row(screen, self.font_sm, 'Réserves alimentaires :', f'{int(id_infos.food_ressources):,}', p.x + 14, y, food_color)
+        y += 30
 
         # ---- Section Exportations ----
-        y += SEC
-        y += draw_section_header(screen, self.font_sm, '  Exportations (4 slots)', p.x + PAD, y, p.width - PAD*2)
-        y += AFTER
-
+        y += draw_section_header(screen, self.font_sm, '  Exportations (4 slots)', p.x + 14, y, p.width - 28)
         labels = ['Slot A', 'Slot B', 'Slot C', 'Slot D']
-        slot_w = (p.width - PAD*2 - 10) // 2  # largeur d'un slot
-        slot_x = [p.x + PAD, p.x + PAD + slot_w + 10]
-
         for i, btn in enumerate(self.exportation_buttons):
-            row_y = y + (i // 2) * (14 + BTN_H + 8)  # 2 lignes de 2 slots
-            col_x = slot_x[i % 2]
-
-            export_id   = id_infos.exportations[i][0]
+            export_id = id_infos.exportations[i][0]
             export_name = infos[export_id].name if export_id != 0 else ''
-            pct         = int(id_infos.exportations[i][1] * 100)
-
-            # label slot BIEN au-dessus du bouton
-            lbl_text = f'{labels[i]}  —  {pct}%' if export_id != 0 else labels[i]
-            lbl_surf = self.font_sm.render(lbl_text, True, C_TEXT_DIM)
-            screen.blit(lbl_surf, (col_x, row_y))
-
-            # bouton positionné SOUS le label
-            btn.rect.x = col_x
-            btn.rect.y = row_y + 16
-            btn.rect.width  = slot_w
-            btn.rect.height = BTN_H
+            pct = int(id_infos.exportations[i][1] * 100)
+            label_surf = self.font_sm.render(f'{labels[i]}  {pct}%' if export_id != 0 else labels[i], True, C_TEXT_DIM)
+            screen.blit(label_surf, (p.x + 14 + (163 if i % 2 else 0), btn.rect.y - 14))
             is_open = self.menu2_open and self.exportation_index == i
             btn.draw(screen, export_name, active=is_open)
+        y = self.exportation_buttons[2].rect.bottom + 20
 
-        # avance y après les 2 lignes de slots
-        y += 2 * (14 + BTN_H + 8) + 4
+        # ---- Section Mesures ----
+        y += draw_section_header(screen, self.font_sm, '  Mesures sanitaires', p.x + 14, y, p.width - 28)
 
-        # ---- Section Mesures sanitaires ----
-        y += SEC
-        y += draw_section_header(screen, self.font_sm, '  Mesures sanitaires', p.x + PAD, y, p.width - PAD*2)
-        y += AFTER
-
-        # Frontières
+        # label frontières
         cb_lbl = self.font_sm.render('Fermer les frontières', True, C_TEXT_DIM)
-        screen.blit(cb_lbl, (p.x + PAD, y))
-        y += 16
-        self.border_button.rect.x = p.x + PAD
+        screen.blit(cb_lbl, (p.x + 14, y))
+        y += 18
         self.border_button.rect.y = y
-        self.border_button.rect.width = p.width - PAD*2
-        self.border_button.rect.height = BTN_H
         self.border_button.draw(screen, id_infos.closed_border)
-        y += BTN_H + 12
+        y += 42
 
-        # Confinement
+        # label confinement
         ld_lbl = self.font_sm.render('Confinement', True, C_TEXT_DIM)
-        screen.blit(ld_lbl, (p.x + PAD, y))
-        y += 16
-        self.lockdown_button.rect.x = p.x + PAD
+        screen.blit(ld_lbl, (p.x + 14, y))
+        y += 18
         self.lockdown_button.rect.y = y
-        self.lockdown_button.rect.width = p.width - PAD*2
-        self.lockdown_button.rect.height = BTN_H
         self.lockdown_button.draw(screen, id_infos.lockdown)
-        y += BTN_H + 8
+        y += 50
 
         # ---- Section Importations ----
-        y += SEC
-        y += draw_section_header(screen, self.font_sm, '  Importations reçues', p.x + PAD, y, p.width - PAD*2)
-        y += AFTER
-
+        y += draw_section_header(screen, self.font_sm, '  Importations reçues', p.x + 14, y, p.width - 28)
         if id_infos.importations:
             for imp in id_infos.importations:
-                chip_rect = pygame.Rect(p.x + PAD, y, p.width - PAD*2, ROW - 2)
-                draw_rounded_rect(screen, C_SURFACE2, chip_rect, radius=4)
-                pygame.draw.line(screen, C_ACCENT2, chip_rect.topleft, chip_rect.bottomleft, 2)
                 chip_surf = self.font_sm.render(f'← {imp}', True, C_ACCENT2)
-                screen.blit(chip_surf, chip_surf.get_rect(midleft=(chip_rect.x + 10, chip_rect.centery)))
-                y += ROW + 4
+                screen.blit(chip_surf, (p.x + 18, y))
+                y += 20
         else:
             none_surf = self.font_sm.render('Aucune importation active', True, C_TEXT_DIM)
-            screen.blit(none_surf, (p.x + PAD, y))
+            screen.blit(none_surf, (p.x + 18, y))
 
     # ------------------------------------------------------------------
     def _draw_menu2(self, screen, infos):
@@ -737,7 +691,7 @@ class UI:
         y = self.state_scroll.rect.bottom + 16
 
         # pourcentage
-        lbl_pct = self.font_sm.render('POURCENTAGE DE PRODUCTION EXPORTÉ (%)', True, C_TEXT_DIM)
+        lbl_pct = self.font_sm.render('POURCENTAGE DE PRODUCTION EXPORTÉ', True, C_TEXT_DIM)
         screen.blit(lbl_pct, (p.x + 14, y))
         y += 20
 
@@ -746,7 +700,3 @@ class UI:
         self.percent_sel.btn_w = (p.width - 20 - (len(self.percent_sel.percents) - 1) * 4) // len(self.percent_sel.percents)
         current_pct = id_infos.exportations[self.exportation_index][1] if current_sel != 0 else None
         self.percent_sel.draw(screen, current_pct)
-    
-            
-            
-            
