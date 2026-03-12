@@ -511,7 +511,7 @@ class UI:
         screen.blit(self.scientist_image, (bx - 8, by - 2))
 
         # label
-        label_surf = self.font_sm.render('VACCIN EN COURS', True, C_TEXT_DIM)
+        label_surf = self.font_sm.render('VACCIN EN COURS :', True, C_TEXT_DIM)
         screen.blit(label_surf, (bx + 46, by + 2))
 
         # barre
@@ -526,7 +526,7 @@ class UI:
 
         # pourcentage — à l'intérieur du rect, aligné à droite
         pct_surf = self.font_sm.render(f'{int(vaccine_progression)}%', True, C_WHITE)
-        screen.blit(pct_surf, pct_surf.get_rect(midright=(bar_rect.right - 6, bar_rect.centery)))
+        screen.blit(pct_surf, pct_surf.get_rect(midright=(bar_rect.right - 140, by + 10)))
 
     # ------------------------------------------------------------------
     def _draw_state_icons(self, screen, infos):
@@ -680,7 +680,7 @@ class UI:
         # ---- Section Importations ----
         y += SEC
         y += draw_section_header(screen, self.font_sm, '  Importations reçues', p.x + PAD, y, p.width - PAD*2)
-        y += AFTER
+        y += AFTER - 5
 
         if id_infos.importations:
             for imp in id_infos.importations:

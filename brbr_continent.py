@@ -247,8 +247,6 @@ class Continent :
             self.screen.blit(t3, t3.get_rect(center=(panel.centerx, panel.top + 210)))
     
         
-
-
     def update_and_draw(self, events) :
         # ====================== JEU EN COURS ======================
         if self.vaccine_progression < 100 :
