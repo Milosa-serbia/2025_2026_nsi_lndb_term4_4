@@ -519,7 +519,7 @@ class UI:
         # --- Construction du texte ---
         name_text = state.name
         if state.is_starving:
-            status_text = '⚠ FAMINE — les habitants meurent de faim'
+            status_text = 'FAMINE — les habitants meurent de faim'
             status_color = C_DANGER
         else:
             status_text = None
@@ -752,7 +752,7 @@ class UI:
                 chip_rect = pygame.Rect(p.x + PAD, y, p.width - PAD*2, ROW - 2)
                 draw_rounded_rect(screen, C_SURFACE2, chip_rect, radius=4)
                 pygame.draw.line(screen, C_ACCENT2, chip_rect.topleft, chip_rect.bottomleft, 2)
-                chip_surf = self.font_sm.render(f'← {imp}', True, C_ACCENT2)
+                chip_surf = self.font_sm.render(f'- {imp}', True, C_ACCENT2)
                 screen.blit(chip_surf, chip_surf.get_rect(midleft=(chip_rect.x + 10, chip_rect.centery)))
                 y += ROW + 4
         else:
