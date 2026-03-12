@@ -15,6 +15,7 @@ class KinderState :
         self.obesity_rate = obesity_rate
         self.importations = importations
         self.exportations = exportations
+        self.is_starving = False
         
 
 

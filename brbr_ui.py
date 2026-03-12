@@ -480,7 +480,7 @@ class UI:
     # ------------------------------------------------------------------
     #  DESSIN
     # ------------------------------------------------------------------
-    def draw(self, screen, infos, vaccine_progression):
+    def draw(self, screen, infos, vaccine_progression, state_grid=None):
         # vignette de bords
         screen.blit(self._vignette, (0, 0))
 
@@ -490,12 +490,77 @@ class UI:
         # ---- Icônes d'état sur la carte ----
         self._draw_state_icons(screen, infos)
 
+        # ---- Tooltip hover (bas de l'écran) ----
+        if state_grid is not None and not self.menu_open:
+            self._draw_hover_tooltip(screen, infos, state_grid)
+
         # ---- Menu principal ----
         if self.menu_open and self.px_id is not None:
             self._draw_main_panel(screen, infos)
 
         if self.menu2_open and self.menu_open:
             self._draw_menu2(screen, infos)
+
+    # ------------------------------------------------------------------
+    def _draw_hover_tooltip(self, screen, infos, state_grid):
+        mx, my = pygame.mouse.get_pos()
+        sw, sh = screen.get_size()
+
+        # Sécurité : on reste dans les limites de la grille
+        if not (0 <= my < state_grid.shape[0] and 0 <= mx < state_grid.shape[1]):
+            return
+
+        state_id = state_grid[my, mx]
+        if not (101 <= state_id <= 146) or state_id not in infos:
+            return
+
+        state = infos[state_id]
+
+        # --- Construction du texte ---
+        name_text = state.name
+        if state.is_starving:
+            status_text = '⚠ FAMINE — les habitants meurent de faim'
+            status_color = C_DANGER
+        else:
+            status_text = None
+
+        # --- Dimensions du tooltip ---
+        name_surf = self.font_md.render(name_text, True, C_WHITE)
+        PAD_X, PAD_Y = 24, 10
+        tooltip_w = name_surf.get_width() + PAD_X * 2
+        tooltip_h = name_surf.get_height() + PAD_Y * 2
+
+        status_surf = None
+        if status_text:
+            status_surf = self.font_sm.render(status_text, True, status_color)
+            tooltip_w = max(tooltip_w, status_surf.get_width() + PAD_X * 2)
+            tooltip_h += status_surf.get_height() + 6
+
+        # --- Position : centré en bas, petite marge ---
+        MARGIN_BOTTOM = 14
+        tx = sw // 2 - tooltip_w // 2
+        ty = sh - tooltip_h - MARGIN_BOTTOM
+
+        tooltip_rect = pygame.Rect(tx, ty, tooltip_w, tooltip_h)
+
+        # --- Dessin du fond ---
+        draw_rounded_rect(screen, C_PANEL, tooltip_rect.inflate(0, 0), radius=10, alpha=220)
+        draw_border_rect(screen, C_BORDER, tooltip_rect, width=1, radius=10)
+
+        # Barre d'accentuation en haut si famine
+        if status_surf:
+            accent_top = pygame.Rect(tx, ty, tooltip_w, 3)
+            draw_rounded_rect(screen, C_DANGER, accent_top, radius=2)
+        else:
+            accent_top = pygame.Rect(tx, ty, tooltip_w, 3)
+            draw_rounded_rect(screen, C_ACCENT, accent_top, radius=2)
+
+        # --- Texte ---
+        cy = ty + PAD_Y
+        screen.blit(name_surf, name_surf.get_rect(centerx=tx + tooltip_w // 2, y=cy))
+        cy += name_surf.get_height() + 6
+        if status_surf:
+            screen.blit(status_surf, status_surf.get_rect(centerx=tx + tooltip_w // 2, y=cy))
 
     # ------------------------------------------------------------------
     def _draw_vaccine_bar(self, screen, vaccine_progression):
@@ -746,7 +811,6 @@ class UI:
         self.percent_sel.btn_w = (p.width - 20 - (len(self.percent_sel.percents) - 1) * 4) // len(self.percent_sel.percents)
         current_pct = id_infos.exportations[self.exportation_index][1] if current_sel != 0 else None
         self.percent_sel.draw(screen, current_pct)
-    
             
             
             

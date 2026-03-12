@@ -159,10 +159,11 @@ class Continent :
                 # on ajoute au stock du destinataire
                 dest.food_ressources += sent
 
-        # ===== 3) sécurité finale =====
+        # ===== 3) sécurité finale + mise à jour famine =====
         for state in self.infos.values() :
             if state.food_ressources < 0 :
                 state.food_ressources = 0
+            state.is_starving = (state.food_ressources == 0)
 
         # ===== 4) Famine optimisée : tuer des pixels quand food_ressources == 0 =====
         for state_id, state in self.infos.items():
@@ -261,11 +262,8 @@ class Continent :
                 self.infection.update(self.status_grid, self.close_border_state, self.lockdowned_state) # update de l'infection
                 self.update_infos() # update des infos des etats
             self.infection.draw(self.screen, self.state_grid, self.status_grid, self.ui.menu_open) # on affiche la simulation 
-            self.ui.draw(self.screen, self.infos, self.vaccine_progression) # on affiche : textes, menus, icones
+            self.ui.draw(self.screen, self.infos, self.vaccine_progression, self.state_grid) # on affiche : textes, menus, icones
             
         # ====================== FIN DE PARTIE ======================
         else :
             self.end_game()
-
-
-    
