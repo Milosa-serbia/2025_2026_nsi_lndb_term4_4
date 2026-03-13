@@ -21,7 +21,7 @@ C_WHITE       = (255, 255, 255)
 
 
 def draw_rounded_rect(surface, color, rect, radius=8, alpha=255):
-    """Dessine un rect arrondi avec transparence optionnelle."""
+    """Dessine un rectangle arrondi avec transparence optionnelle."""
     if alpha < 255:
         tmp = pygame.Surface((rect.width, rect.height), pygame.SRCALPHA)
         pygame.draw.rect(tmp, (*color, alpha), tmp.get_rect(), border_radius=radius)
@@ -34,8 +34,12 @@ def draw_border_rect(surface, color, rect, width=1, radius=8):
     pygame.draw.rect(surface, color, rect, width=width, border_radius=radius)
 
 
-def lerp_color(c1, c2, t):
-    return tuple(int(c1[i] + (c2[i] - c1[i]) * t) for i in range(3))
+def lerp_color(color_a, color_b, t):
+    """Interpole linéairement entre deux couleurs selon t (entre 0 et 1)."""
+    r = int(color_a[0] + (color_b[0] - color_a[0]) * t)
+    g = int(color_a[1] + (color_b[1] - color_a[1]) * t)
+    b = int(color_a[2] + (color_b[2] - color_a[2]) * t)
+    return (r, g, b)
 
 
 # ============================================================
@@ -46,7 +50,7 @@ class Button:
         self.rect = pygame.Rect(x, y, width, height)
         self.font = font
         self.on_click = on_click
-        self._hover_t = 0.0   # animation
+        self.hover_animation = 0.0  # valeur entre 0 et 1 pour l'animation de survol
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -55,34 +59,34 @@ class Button:
                     self.on_click()
 
     def draw(self, screen, text, active=False):
-        mx, my = pygame.mouse.get_pos()
-        hovered = self.rect.collidepoint(mx, my)
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        is_hovered = self.rect.collidepoint(mouse_x, mouse_y)
 
-        # animation douce
-        target = 1.0 if hovered else 0.0
-        self._hover_t += (target - self._hover_t) * 0.25
+        # animation douce vers 1.0 si survolé, vers 0.0 sinon
+        hover_target = 1.0 if is_hovered else 0.0
+        self.hover_animation += (hover_target - self.hover_animation) * 0.25
 
-        # couleurs interpolées
+        # couleurs selon l'état actif ou non
         if active:
-            bg = lerp_color(C_ACCENT, (80, 210, 255), self._hover_t)
-            border = C_ACCENT
-            txt_color = C_BG
+            bg_color = lerp_color(C_ACCENT, (80, 210, 255), self.hover_animation)
+            border_color = C_ACCENT
+            text_color = C_BG
         else:
-            bg = lerp_color(C_SURFACE2, C_SURFACE, self._hover_t)
-            border = lerp_color(C_BORDER, C_ACCENT, self._hover_t)
-            txt_color = lerp_color(C_TEXT_DIM, C_TEXT, self._hover_t)
+            bg_color = lerp_color(C_SURFACE2, C_SURFACE, self.hover_animation)
+            border_color = lerp_color(C_BORDER, C_ACCENT, self.hover_animation)
+            text_color = lerp_color(C_TEXT_DIM, C_TEXT, self.hover_animation)
 
-        # fond
-        draw_rounded_rect(screen, bg, self.rect, radius=6)
-        draw_border_rect(screen, border, self.rect, width=1, radius=6)
+        draw_rounded_rect(screen, bg_color, self.rect, radius=6)
+        draw_border_rect(screen, border_color, self.rect, width=1, radius=6)
 
-        # icône de chevron à droite (▾) pour les boutons d'export
+        # texte du bouton, aligné à gauche
         label_x = self.rect.x + 12
-        surf = self.font.render(text if text else '—', True, txt_color)
-        screen.blit(surf, surf.get_rect(midleft=(label_x, self.rect.centery)))
+        label_surf = self.font.render(text if text else '—', True, text_color)
+        screen.blit(label_surf, label_surf.get_rect(midleft=(label_x, self.rect.centery)))
 
-        # petite flèche droite
-        arrow_surf = self.font.render('›', True, lerp_color(C_TEXT_DIM, C_ACCENT, self._hover_t))
+        # petite flèche à droite
+        arrow_color = lerp_color(C_TEXT_DIM, C_ACCENT, self.hover_animation)
+        arrow_surf = self.font.render('›', True, arrow_color)
         screen.blit(arrow_surf, arrow_surf.get_rect(midright=(self.rect.right - 10, self.rect.centery)))
 
 
@@ -95,7 +99,7 @@ class Menu2Button:
         self.font = font
         self.text = text
         self.on_click = on_click
-        self._hover_t = 0.0
+        self.hover_animation = 0.0
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -104,24 +108,25 @@ class Menu2Button:
                     self.on_click()
 
     def draw(self, screen, selected=False):
-        mx, my = pygame.mouse.get_pos()
-        hovered = self.rect.collidepoint(mx, my)
-        target = 1.0 if (hovered or selected) else 0.0
-        self._hover_t += (target - self._hover_t) * 0.25
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        is_hovered = self.rect.collidepoint(mouse_x, mouse_y)
+
+        hover_target = 1.0 if (is_hovered or selected) else 0.0
+        self.hover_animation += (hover_target - self.hover_animation) * 0.25
 
         if selected:
-            bg = lerp_color(C_SURFACE2, C_ACCENT, 0.25)
-            txt_color = C_ACCENT
+            bg_color = lerp_color(C_SURFACE2, C_ACCENT, 0.25)
+            text_color = C_ACCENT
         else:
-            bg = lerp_color(C_SURFACE, C_SURFACE2, self._hover_t)
-            txt_color = lerp_color(C_TEXT_DIM, C_TEXT, self._hover_t)
+            bg_color = lerp_color(C_SURFACE, C_SURFACE2, self.hover_animation)
+            text_color = lerp_color(C_TEXT_DIM, C_TEXT, self.hover_animation)
 
-        draw_rounded_rect(screen, bg, self.rect, radius=4)
-        if hovered or selected:
+        draw_rounded_rect(screen, bg_color, self.rect, radius=4)
+        if is_hovered or selected:
             pygame.draw.line(screen, C_ACCENT, self.rect.topleft, self.rect.bottomleft, 2)
 
-        surf = self.font.render(self.text, True, txt_color)
-        screen.blit(surf, surf.get_rect(midleft=(self.rect.x + 10, self.rect.centery)))
+        label_surf = self.font.render(self.text, True, text_color)
+        screen.blit(label_surf, label_surf.get_rect(midleft=(self.rect.x + 10, self.rect.centery)))
 
 
 # ============================================================
@@ -132,7 +137,7 @@ class ToggleButton:
         self.rect = pygame.Rect(x, y, width, height)
         self.font = font
         self.on_click = on_click
-        self._hover_t = 0.0
+        self.hover_animation = 0.0
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -141,112 +146,136 @@ class ToggleButton:
                     self.on_click()
 
     def draw(self, screen, active):
-        mx, my = pygame.mouse.get_pos()
-        hovered = self.rect.collidepoint(mx, my)
-        target = 1.0 if hovered else 0.0
-        self._hover_t += (target - self._hover_t) * 0.25
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        is_hovered = self.rect.collidepoint(mouse_x, mouse_y)
+
+        hover_target = 1.0 if is_hovered else 0.0
+        self.hover_animation += (hover_target - self.hover_animation) * 0.25
 
         if active:
-            bg = lerp_color((30, 60, 40), (40, 90, 55), self._hover_t)
-            border = C_ACCENT2
+            bg_color = lerp_color((30, 60, 40), (40, 90, 55), self.hover_animation)
+            border_color = C_ACCENT2
             dot_color = C_ACCENT2
-            label = 'ACTIF'
-            txt_color = C_ACCENT2
+            label_text = 'ACTIF'
+            text_color = C_ACCENT2
         else:
-            bg = lerp_color(C_SURFACE, C_SURFACE2, self._hover_t)
-            border = lerp_color(C_BORDER, C_TEXT_DIM, self._hover_t)
+            bg_color = lerp_color(C_SURFACE, C_SURFACE2, self.hover_animation)
+            border_color = lerp_color(C_BORDER, C_TEXT_DIM, self.hover_animation)
             dot_color = C_TEXT_DIM
-            label = 'INACTIF'
-            txt_color = C_TEXT_DIM
+            label_text = 'INACTIF'
+            text_color = C_TEXT_DIM
 
-        draw_rounded_rect(screen, bg, self.rect, radius=6)
-        draw_border_rect(screen, border, self.rect, width=1, radius=6)
+        draw_rounded_rect(screen, bg_color, self.rect, radius=6)
+        draw_border_rect(screen, border_color, self.rect, width=1, radius=6)
 
-        # toggle pill
-        pill_w, pill_h = 36, 18
+        # dessin du toggle (pilule + point)
+        pill_width = 36
+        pill_height = 18
         pill_x = self.rect.x + 10
-        pill_y = self.rect.centery - pill_h // 2
-        pill_rect = pygame.Rect(pill_x, pill_y, pill_w, pill_h)
-        draw_rounded_rect(screen, bg, pill_rect, radius=9)
-        draw_border_rect(screen, border, pill_rect, width=1, radius=9)
-        dot_cx = pill_x + (pill_w - 10) if active else pill_x + 10
-        pygame.draw.circle(screen, dot_color, (dot_cx, pill_y + pill_h // 2), 7)
+        pill_y = self.rect.centery - pill_height // 2
+        pill_rect = pygame.Rect(pill_x, pill_y, pill_width, pill_height)
+        draw_rounded_rect(screen, bg_color, pill_rect, radius=9)
+        draw_border_rect(screen, border_color, pill_rect, width=1, radius=9)
 
-        txt = self.font.render(label, True, txt_color)
-        screen.blit(txt, txt.get_rect(midleft=(pill_x + pill_w + 8, self.rect.centery)))
+        # position du point : à droite si actif, à gauche sinon
+        if active:
+            dot_center_x = pill_x + (pill_width - 10)
+        else:
+            dot_center_x = pill_x + 10
+        dot_center_y = pill_y + pill_height // 2
+        pygame.draw.circle(screen, dot_color, (dot_center_x, dot_center_y), 7)
+
+        label_surf = self.font.render(label_text, True, text_color)
+        screen.blit(label_surf, label_surf.get_rect(midleft=(pill_x + pill_width + 8, self.rect.centery)))
 
 
 # ============================================================
-#  SCROLLABLE LIST PANEL (menu 2 — remplace les 3 colonnes)
+#  PANNEAU SCROLLABLE (menu 2 — liste des états destinataires)
 # ============================================================
 class ScrollablePanel:
     """Panneau avec liste scrollable pour choisir un état destinataire."""
+    PADDING_TOP = 5  # espace au-dessus du premier item
+
     def __init__(self, x, y, width, height, font, items, on_select):
         self.rect = pygame.Rect(x, y, width, height)
         self.font = font
-        self.items = items     # liste de (id, name)
+        self.items = items      # liste de tuples (id, nom)
         self.on_select = on_select
         self.scroll_y = 0
-        self.item_h = 30
-        self.max_scroll = max(0, len(items) * self.item_h - (height - 10))
-        self._hover_idx = -1
+        self.item_height = 30
+
+        # hauteur totale du contenu (items + padding haut et bas)
+        total_content_height = len(items) * self.item_height + self.PADDING_TOP * 2
+        # scroll max = ce qui dépasse la zone visible
+        self.max_scroll = max(0, total_content_height - height)
 
     def handle_event(self, event):
-        if event.type == pygame.MOUSEWHEEL and self.rect.collidepoint(pygame.mouse.get_pos()):
-            self.scroll_y = max(0, min(self.max_scroll, self.scroll_y - event.y * 20))
+        if event.type == pygame.MOUSEWHEEL:
+            if self.rect.collidepoint(pygame.mouse.get_pos()):
+                self.scroll_y = max(0, min(self.max_scroll, self.scroll_y - event.y * 20))
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            mx, my = event.pos
-            if self.rect.collidepoint(mx, my):
-                rel_y = my - self.rect.y + self.scroll_y - 5
-                idx = rel_y // self.item_h
-                if 0 <= idx < len(self.items):
-                    self.on_select(self.items[idx][0])
+            mouse_x, mouse_y = event.pos
+            if self.rect.collidepoint(mouse_x, mouse_y):
+                # position relative dans le contenu scrollé
+                relative_y = mouse_y - self.rect.y + self.scroll_y - self.PADDING_TOP
+                clicked_index = relative_y // self.item_height
+                if 0 <= clicked_index < len(self.items):
+                    self.on_select(self.items[clicked_index][0])
 
     def draw(self, screen, selected_id=None):
-        # fond
         draw_rounded_rect(screen, C_PANEL, self.rect, radius=8)
         draw_border_rect(screen, C_BORDER, self.rect, width=1, radius=8)
 
-        # clip
-        clip = screen.get_clip()
+        # on restreint le dessin à la zone du panneau (clipping)
+        old_clip = screen.get_clip()
         screen.set_clip(self.rect.inflate(-2, -2))
 
-        mx, my = pygame.mouse.get_pos()
-        for i, (sid, sname) in enumerate(self.items):
-            iy = self.rect.y + 5 + i * self.item_h - self.scroll_y
-            if iy + self.item_h < self.rect.y or iy > self.rect.bottom:
-                continue
-            item_rect = pygame.Rect(self.rect.x + 4, iy, self.rect.width - 8, self.item_h - 2)
-            hovered = item_rect.collidepoint(mx, my)
-            is_sel = (sid == selected_id)
+        mouse_x, mouse_y = pygame.mouse.get_pos()
 
-            if is_sel:
+        for index, (state_id, state_name) in enumerate(self.items):
+            # position verticale de l'item dans le panneau
+            item_y = self.rect.y + self.PADDING_TOP + index * self.item_height - self.scroll_y
+
+            # on saute les items hors de la zone visible
+            if item_y + self.item_height < self.rect.y:
+                continue
+            if item_y > self.rect.bottom:
+                continue
+
+            item_rect = pygame.Rect(self.rect.x + 4, item_y, self.rect.width - 8, self.item_height - 2)
+            is_hovered = item_rect.collidepoint(mouse_x, mouse_y)
+            is_selected = (state_id == selected_id)
+
+            if is_selected:
                 draw_rounded_rect(screen, lerp_color(C_SURFACE2, C_ACCENT, 0.2), item_rect, radius=4)
                 pygame.draw.line(screen, C_ACCENT, item_rect.topleft, item_rect.bottomleft, 2)
-                txt_c = C_ACCENT
-            elif hovered:
+                text_color = C_ACCENT
+            elif is_hovered:
                 draw_rounded_rect(screen, C_SURFACE2, item_rect, radius=4)
-                txt_c = C_TEXT
+                text_color = C_TEXT
             else:
-                txt_c = C_TEXT_DIM
+                text_color = C_TEXT_DIM
 
-            surf = self.font.render(sname, True, txt_c)
-            screen.blit(surf, surf.get_rect(midleft=(item_rect.x + 10, item_rect.centery)))
+            label_surf = self.font.render(state_name, True, text_color)
+            screen.blit(label_surf, label_surf.get_rect(midleft=(item_rect.x + 10, item_rect.centery)))
 
-        screen.set_clip(clip)
+        screen.set_clip(old_clip)
 
-        # scrollbar
-        total_h = len(self.items) * self.item_h
-        if total_h > self.rect.height:
-            bar_h = max(30, int(self.rect.height * self.rect.height / total_h))
-            bar_y = self.rect.y + int(self.scroll_y * (self.rect.height - bar_h) / self.max_scroll) if self.max_scroll > 0 else self.rect.y
-            bar_rect = pygame.Rect(self.rect.right - 6, bar_y, 4, bar_h)
-            draw_rounded_rect(screen, C_BORDER, bar_rect, radius=2)
+        # scrollbar verticale si le contenu dépasse
+        total_content_height = len(self.items) * self.item_height
+        if total_content_height > self.rect.height:
+            scrollbar_height = max(30, int(self.rect.height * self.rect.height / total_content_height))
+            if self.max_scroll > 0:
+                scrollbar_y = self.rect.y + int(self.scroll_y * (self.rect.height - scrollbar_height) / self.max_scroll)
+            else:
+                scrollbar_y = self.rect.y
+            scrollbar_rect = pygame.Rect(self.rect.right - 6, scrollbar_y, 4, scrollbar_height)
+            draw_rounded_rect(screen, C_BORDER, scrollbar_rect, radius=2)
 
 
 # ============================================================
-#  PERCENT SELECTOR (rangée de boutons %)
+#  SÉLECTEUR DE POURCENTAGE (rangée de boutons %)
 # ============================================================
 class PercentSelector:
     def __init__(self, x, y, width, font, on_select):
@@ -255,71 +284,74 @@ class PercentSelector:
         self.width = width
         self.font = font
         self.on_select = on_select
-        self.percents = list(range(0, 110, 10))
-        self.btn_w = (width - (len(self.percents) - 1) * 4) // len(self.percents)
-        self._hover_t = [0.0] * len(self.percents)
+        self.percent_values = list(range(0, 110, 10))
+        self.btn_w = (width - (len(self.percent_values) - 1) * 4) // len(self.percent_values)
+        self.hover_animations = [0.0] * len(self.percent_values)
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            for i, p in enumerate(self.percents):
-                r = pygame.Rect(self.x + i * (self.btn_w + 4), self.y, self.btn_w, 30)
-                if r.collidepoint(event.pos):
-                    self.on_select(p)
+            for index, percent in enumerate(self.percent_values):
+                btn_rect = pygame.Rect(self.x + index * (self.btn_w + 4), self.y, self.btn_w, 30)
+                if btn_rect.collidepoint(event.pos):
+                    self.on_select(percent)
 
-    def draw(self, screen, current_val):
-        mx, my = pygame.mouse.get_pos()
-        for i, p in enumerate(self.percents):
-            r = pygame.Rect(self.x + i * (self.btn_w + 4), self.y, self.btn_w, 30)
-            is_sel = (current_val is not None and int(current_val * 100) == p)
-            hovered = r.collidepoint(mx, my)
+    def draw(self, screen, current_value):
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        for index, percent in enumerate(self.percent_values):
+            btn_rect = pygame.Rect(self.x + index * (self.btn_w + 4), self.y, self.btn_w, 30)
+            is_selected = (current_value is not None and int(current_value * 100) == percent)
+            is_hovered = btn_rect.collidepoint(mouse_x, mouse_y)
 
-            target = 1.0 if (hovered or is_sel) else 0.0
-            self._hover_t[i] += (target - self._hover_t[i]) * 0.25
+            hover_target = 1.0 if (is_hovered or is_selected) else 0.0
+            self.hover_animations[index] += (hover_target - self.hover_animations[index]) * 0.25
 
-            if is_sel:
-                bg = C_ACCENT
-                txt_c = C_BG
+            if is_selected:
+                bg_color = C_ACCENT
+                text_color = C_BG
             else:
-                bg = lerp_color(C_SURFACE, C_SURFACE2, self._hover_t[i])
-                txt_c = lerp_color(C_TEXT_DIM, C_TEXT, self._hover_t[i])
+                bg_color = lerp_color(C_SURFACE, C_SURFACE2, self.hover_animations[index])
+                text_color = lerp_color(C_TEXT_DIM, C_TEXT, self.hover_animations[index])
 
-            draw_rounded_rect(screen, bg, r, radius=4)
-            draw_border_rect(screen, lerp_color(C_BORDER, C_ACCENT, self._hover_t[i]), r, width=1, radius=4)
-            surf = self.font.render(f'{p}', True, txt_c)
-            screen.blit(surf, surf.get_rect(center=r.center))
+            draw_rounded_rect(screen, bg_color, btn_rect, radius=4)
+            border_color = lerp_color(C_BORDER, C_ACCENT, self.hover_animations[index])
+            draw_border_rect(screen, border_color, btn_rect, width=1, radius=4)
+
+            label_surf = self.font.render(f'{percent}', True, text_color)
+            screen.blit(label_surf, label_surf.get_rect(center=btn_rect.center))
 
 
 # ============================================================
-#  HELPERS DESSIN UI
+#  FONCTIONS UTILITAIRES DE DESSIN
 # ============================================================
 def draw_label(screen, font, text, x, y, color=C_TEXT_DIM):
-    surf = font.render(text, True, color)
-    screen.blit(surf, (x, y))
-    return surf.get_height()
+    label_surf = font.render(text, True, color)
+    screen.blit(label_surf, (x, y))
+    return label_surf.get_height()
 
 
-def draw_stat_row(screen, font, label, value, x, y, value_color=C_TEXT):
-    lbl = font.render(label, True, C_TEXT_DIM)
-    val = font.render(str(value), True, value_color)
-    screen.blit(lbl, (x, y))
-    screen.blit(val, (x + lbl.get_width() + 6, y))
+def draw_stat_row(screen, font, label_text, value_text, x, y, value_color=C_TEXT):
+    label_surf = font.render(label_text, True, C_TEXT_DIM)
+    value_surf = font.render(str(value_text), True, value_color)
+    screen.blit(label_surf, (x, y))
+    screen.blit(value_surf, (x + label_surf.get_width() + 6, y))
 
 
-def draw_section_header(screen, font, text, x, y, w):
-    surf = font.render(text.upper(), True, C_ACCENT)
-    screen.blit(surf, (x, y))
-    pygame.draw.line(screen, C_BORDER, (x, y + surf.get_height() + 3), (x + w, y + surf.get_height() + 3), 1)
-    return surf.get_height() + 8
+def draw_section_header(screen, font, text, x, y, width):
+    header_surf = font.render(text.upper(), True, C_ACCENT)
+    screen.blit(header_surf, (x, y))
+    line_y = y + header_surf.get_height() + 3
+    pygame.draw.line(screen, C_BORDER, (x, line_y), (x + width, line_y), 1)
+    return header_surf.get_height() + 8
 
 
-def draw_progress_bar(screen, x, y, w, h, value, max_val, color_fill, bg_color=C_SURFACE):
-    bar_rect = pygame.Rect(x, y, w, h)
-    draw_rounded_rect(screen, bg_color, bar_rect, radius=h // 2)
-    fill = max(0, min(w, int(w * value / max_val)))
-    if fill > 0:
-        fill_rect = pygame.Rect(x, y, fill, h)
-        draw_rounded_rect(screen, color_fill, fill_rect, radius=h // 2)
-    draw_border_rect(screen, C_BORDER, bar_rect, width=1, radius=h // 2)
+def draw_progress_bar(screen, x, y, width, height, value, max_value, fill_color, bg_color=C_SURFACE):
+    bar_rect = pygame.Rect(x, y, width, height)
+    draw_rounded_rect(screen, bg_color, bar_rect, radius=height // 2)
+    fill_width = max(0, min(width, int(width * value / max_value)))
+    if fill_width > 0:
+        fill_rect = pygame.Rect(x, y, fill_width, height)
+        draw_rounded_rect(screen, fill_color, fill_rect, radius=height // 2)
+    draw_border_rect(screen, C_BORDER, bar_rect, width=1, radius=height // 2)
 
 
 # ============================================================
@@ -344,41 +376,45 @@ class UI:
         self.PANEL_H   = 820
         self.menu_rect = pygame.Rect(10, 15, self.PANEL_W, self.PANEL_H)
 
-        # Menu 2 (panneau droit — dropdown/liste)
+        # Menu 2 (panneau droit — choix d'exportation)
         self.menu2_open = False
         self.PANEL2_W   = 380
         self.menu2_rect = pygame.Rect(380, 15, self.PANEL2_W, self.PANEL_H)
         self.exportation_index = None
 
-        # Construire la liste des états pour le menu 2
-        self.state_list = [(0, '— Aucun —')] + [(id, infos[id].name) for id in range(101, 147)]
+        # Liste des états pour le menu 2 (id=0 pour "aucun")
+        self.state_list = [(0, '— Aucun —')] + [(state_id, infos[state_id].name) for state_id in range(101, 147)]
 
-        # Scrollable list dans le menu 2
+        # Panneau scrollable dans le menu 2
         self.state_scroll = ScrollablePanel(
-            self.menu2_rect.x + 10, self.menu2_rect.y + 90,
-            self.PANEL2_W - 20, 500,
+            self.menu2_rect.x + 10,
+            self.menu2_rect.y + 90,
+            self.PANEL2_W - 20,
+            500,
             self.font,
             self.state_list,
-            on_select=lambda sid: self.change_exportation_id(infos, sid)
+            on_select=lambda selected_id: self.change_exportation_id(infos, selected_id)
         )
 
-        # PercentSelector
+        # Sélecteur de pourcentage dans le menu 2
         self.percent_sel = PercentSelector(
-            self.menu2_rect.x + 10, self.menu2_rect.y + 620,
-            self.PANEL2_W - 20, self.font_sm,
-            on_select=lambda p: self.change_exportations_percent(infos, p)
+            self.menu2_rect.x + 10,
+            self.menu2_rect.y + 620,
+            self.PANEL2_W - 20,
+            self.font_sm,
+            on_select=lambda percent: self.change_exportations_percent(infos, percent)
         )
 
-        # Boutons d'export (4 slots)
-        bx = self.menu_rect.x + 14
+        # Boutons d'export (4 slots) dans le menu principal
+        slot_x = self.menu_rect.x + 14
         self.exportation_buttons = [
-            Button(bx,       self.menu_rect.y + 355, 155, 32, self.font, lambda i=0: self.open_menu2(i)),
-            Button(bx + 163, self.menu_rect.y + 355, 155, 32, self.font, lambda i=1: self.open_menu2(i)),
-            Button(bx,       self.menu_rect.y + 395, 155, 32, self.font, lambda i=2: self.open_menu2(i)),
-            Button(bx + 163, self.menu_rect.y + 395, 155, 32, self.font, lambda i=3: self.open_menu2(i)),
+            Button(slot_x,       self.menu_rect.y + 355, 155, 32, self.font, lambda i=0: self.open_menu2(i)),
+            Button(slot_x + 163, self.menu_rect.y + 355, 155, 32, self.font, lambda i=1: self.open_menu2(i)),
+            Button(slot_x,       self.menu_rect.y + 395, 155, 32, self.font, lambda i=2: self.open_menu2(i)),
+            Button(slot_x + 163, self.menu_rect.y + 395, 155, 32, self.font, lambda i=3: self.open_menu2(i)),
         ]
 
-        # Boutons toggle
+        # Boutons toggle (frontières / confinement)
         self.border_button = ToggleButton(
             self.menu_rect.x + 14, self.menu_rect.y + 460, 300, 34, self.font,
             lambda: self.change_border_statue(infos, self.closed_border_states)
@@ -388,7 +424,7 @@ class UI:
             lambda: self.change_lockdown_statue(infos, self.lockdowned_states)
         )
 
-        # Images
+        # Chargement des icônes
         self.lockdown_image = pygame.image.load("Enter.png").convert_alpha()
         self.lockdown_image = pygame.transform.scale(self.lockdown_image, (22, 22))
         self.closed_border_image = pygame.image.load("Locked.png").convert_alpha()
@@ -398,16 +434,17 @@ class UI:
         self.scientist_image = pygame.image.load("Scientist.png").convert_alpha()
         self.scientist_image = pygame.transform.scale(self.scientist_image, (48, 48))
 
-        # surface de vignette (overlay noir sur les bords)
+        # Surface de vignette (assombrissement des bords de l'écran)
         screen = pygame.display.get_surface()
-        self._vignette = self._make_vignette(screen.get_width(), screen.get_height())
+        self.vignette_surface = self._make_vignette(screen.get_width(), screen.get_height())
 
     # ------------------------------------------------------------------
-    def _make_vignette(self, w, h):
-        surf = pygame.Surface((w, h), pygame.SRCALPHA)
+    def _make_vignette(self, screen_width, screen_height):
+        """Crée une surface noire transparente plus opaque sur les bords."""
+        surf = pygame.Surface((screen_width, screen_height), pygame.SRCALPHA)
         for i in range(60):
             alpha = int(120 * (1 - i / 60) ** 2)
-            pygame.draw.rect(surf, (0, 0, 0, alpha), (i, i, w - 2*i, h - 2*i), 1)
+            pygame.draw.rect(surf, (0, 0, 0, alpha), (i, i, screen_width - 2*i, screen_height - 2*i), 1)
         return surf
 
     # ------------------------------------------------------------------
@@ -436,13 +473,19 @@ class UI:
             return
         current_state = infos[self.px_id]
         old_export_id = current_state.exportations[self.exportation_index][0]
+
+        # on retire l'ancienne importation chez l'ancien destinataire
         if old_export_id != 0:
             try:
                 infos[old_export_id].importations.remove(current_state.name)
             except ValueError:
                 pass
+
+        # on met à jour l'exportation (destination + reset du pourcentage)
         current_state.exportations[self.exportation_index][0] = new_export_id
         current_state.exportations[self.exportation_index][1] = 0
+
+        # on enregistre la nouvelle importation chez le nouveau destinataire
         if new_export_id != 0:
             infos[new_export_id].importations.append(current_state.name)
 
@@ -461,7 +504,7 @@ class UI:
             self.exportation_index = exportation_index
 
     # ------------------------------------------------------------------
-    #  INPUT
+    #  GESTION DES INPUTS
     # ------------------------------------------------------------------
     def handle_input(self, events):
         for event in events:
@@ -478,23 +521,16 @@ class UI:
                     self.state_scroll.handle_event(event)
 
     # ------------------------------------------------------------------
-    #  DESSIN
+    #  DESSIN PRINCIPAL
     # ------------------------------------------------------------------
     def draw(self, screen, infos, vaccine_progression, state_grid=None):
-        # vignette de bords
-        screen.blit(self._vignette, (0, 0))
-
-        # ---- Barre vaccin (haut droite) ----
+        screen.blit(self.vignette_surface, (0, 0))
         self._draw_vaccine_bar(screen, vaccine_progression)
-
-        # ---- Icônes d'état sur la carte ----
         self._draw_state_icons(screen, infos)
 
-        # ---- Tooltip hover (bas de l'écran) ----
         if state_grid is not None and not self.menu_open:
             self._draw_hover_tooltip(screen, infos, state_grid)
 
-        # ---- Menu principal ----
         if self.menu_open and self.px_id is not None:
             self._draw_main_panel(screen, infos)
 
@@ -503,314 +539,330 @@ class UI:
 
     # ------------------------------------------------------------------
     def _draw_hover_tooltip(self, screen, infos, state_grid):
-        mx, my = pygame.mouse.get_pos()
-        sw, sh = screen.get_size()
+        """Affiche un tooltip en bas de l'écran quand on survole un état."""
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        screen_width, screen_height = screen.get_size()
 
-        # Sécurité : on reste dans les limites de la grille
-        if not (0 <= my < state_grid.shape[0] and 0 <= mx < state_grid.shape[1]):
+        if not (0 <= mouse_y < state_grid.shape[0] and 0 <= mouse_x < state_grid.shape[1]):
             return
 
-        state_id = state_grid[my, mx]
+        state_id = state_grid[mouse_y, mouse_x]
         if not (101 <= state_id <= 146) or state_id not in infos:
             return
 
-        state = infos[state_id]
+        hovered_state = infos[state_id]
 
-        # --- Construction du texte ---
-        name_text = state.name
-        if state.is_starving:
+        name_text = hovered_state.name
+        if hovered_state.is_starving:
             status_text = 'FAMINE — les habitants meurent de faim'
             status_color = C_DANGER
         else:
             status_text = None
 
-        # --- Dimensions du tooltip ---
+        # calcul des dimensions du tooltip
         name_surf = self.font_md.render(name_text, True, C_WHITE)
-        PAD_X, PAD_Y = 24, 10
-        tooltip_w = name_surf.get_width() + PAD_X * 2
-        tooltip_h = name_surf.get_height() + PAD_Y * 2
+        padding_x = 24
+        padding_y = 10
+        tooltip_width = name_surf.get_width() + padding_x * 2
+        tooltip_height = name_surf.get_height() + padding_y * 2
 
         status_surf = None
         if status_text:
             status_surf = self.font_sm.render(status_text, True, status_color)
-            tooltip_w = max(tooltip_w, status_surf.get_width() + PAD_X * 2)
-            tooltip_h += status_surf.get_height() + 6
+            tooltip_width = max(tooltip_width, status_surf.get_width() + padding_x * 2)
+            tooltip_height += status_surf.get_height() + 6
 
-        # --- Position : centré en bas, petite marge ---
-        MARGIN_BOTTOM = 14
-        tx = sw // 2 - tooltip_w // 2
-        ty = sh - tooltip_h - MARGIN_BOTTOM
+        # position centrée en bas de l'écran
+        margin_bottom = 14
+        tooltip_x = screen_width // 2 - tooltip_width // 2
+        tooltip_y = screen_height - tooltip_height - margin_bottom
+        tooltip_rect = pygame.Rect(tooltip_x, tooltip_y, tooltip_width, tooltip_height)
 
-        tooltip_rect = pygame.Rect(tx, ty, tooltip_w, tooltip_h)
-
-        # --- Dessin du fond ---
-        draw_rounded_rect(screen, C_PANEL, tooltip_rect.inflate(0, 0), radius=10, alpha=220)
+        draw_rounded_rect(screen, C_PANEL, tooltip_rect, radius=10, alpha=220)
         draw_border_rect(screen, C_BORDER, tooltip_rect, width=1, radius=10)
 
-        # Barre d'accentuation en haut si famine
+        # barre colorée en haut du tooltip
+        accent_bar = pygame.Rect(tooltip_x, tooltip_y, tooltip_width, 3)
         if status_surf:
-            accent_top = pygame.Rect(tx, ty, tooltip_w, 3)
-            draw_rounded_rect(screen, C_DANGER, accent_top, radius=2)
+            draw_rounded_rect(screen, C_DANGER, accent_bar, radius=2)
         else:
-            accent_top = pygame.Rect(tx, ty, tooltip_w, 3)
-            draw_rounded_rect(screen, C_ACCENT, accent_top, radius=2)
+            draw_rounded_rect(screen, C_ACCENT, accent_bar, radius=2)
 
-        # --- Texte ---
-        cy = ty + PAD_Y
-        screen.blit(name_surf, name_surf.get_rect(centerx=tx + tooltip_w // 2, y=cy))
-        cy += name_surf.get_height() + 6
+        # texte
+        current_y = tooltip_y + padding_y
+        screen.blit(name_surf, name_surf.get_rect(centerx=tooltip_x + tooltip_width // 2, y=current_y))
+        current_y += name_surf.get_height() + 6
         if status_surf:
-            screen.blit(status_surf, status_surf.get_rect(centerx=tx + tooltip_w // 2, y=cy))
+            screen.blit(status_surf, status_surf.get_rect(centerx=tooltip_x + tooltip_width // 2, y=current_y))
 
     # ------------------------------------------------------------------
     def _draw_vaccine_bar(self, screen, vaccine_progression):
-        bx, by = 1050, 14
-        bw, bh = 380, 46
+        """Affiche la barre de progression du vaccin en haut à droite."""
+        bar_x = 1050
+        bar_y = 14
+        bar_width = 380
+        bar_height = 46
 
-        # fond du panneau vaccin
-        panel = pygame.Rect(bx - 10, by - 4, bw + 20, bh + 8)
-        draw_rounded_rect(screen, C_PANEL, panel, radius=10, alpha=210)
-        draw_border_rect(screen, C_BORDER, panel, width=1, radius=10)
+        # fond du panneau
+        panel_rect = pygame.Rect(bar_x - 10, bar_y - 4, bar_width + 20, bar_height + 8)
+        draw_rounded_rect(screen, C_PANEL, panel_rect, radius=10, alpha=210)
+        draw_border_rect(screen, C_BORDER, panel_rect, width=1, radius=10)
 
-        # icône
-        screen.blit(self.scientist_image, (bx - 8, by - 2))
+        # icône du scientifique
+        screen.blit(self.scientist_image, (bar_x - 8, bar_y - 2))
 
         # label
         label_surf = self.font_sm.render('VACCIN EN COURS :', True, C_TEXT_DIM)
-        screen.blit(label_surf, (bx + 46, by + 2))
+        screen.blit(label_surf, (bar_x + 46, bar_y + 2))
 
-        # barre
-        bar_rect = pygame.Rect(bx + 46, by + 20, bw - 56, 14)
-        draw_rounded_rect(screen, C_SURFACE, bar_rect, radius=7)
-        fill_w = int((bw - 56) * vaccine_progression / 100)
-        if fill_w > 0:
-            # gradient simulé par deux rects
-            fill_rect = pygame.Rect(bx + 46, by + 20, fill_w, 14)
+        # barre de progression
+        progress_rect = pygame.Rect(bar_x + 46, bar_y + 20, bar_width - 56, 14)
+        draw_rounded_rect(screen, C_SURFACE, progress_rect, radius=7)
+        fill_width = int((bar_width - 56) * vaccine_progression / 100)
+        if fill_width > 0:
+            fill_rect = pygame.Rect(bar_x + 46, bar_y + 20, fill_width, 14)
             draw_rounded_rect(screen, C_ACCENT, fill_rect, radius=7)
-        draw_border_rect(screen, C_BORDER, bar_rect, width=1, radius=7)
+        draw_border_rect(screen, C_BORDER, progress_rect, width=1, radius=7)
 
-        # pourcentage — à l'intérieur du rect, aligné à droite
+        # pourcentage affiché dans la barre
         pct_surf = self.font_sm.render(f'{int(vaccine_progression)}%', True, C_WHITE)
-        screen.blit(pct_surf, pct_surf.get_rect(midright=(bar_rect.right - 140, by + 10)))
+        screen.blit(pct_surf, pct_surf.get_rect(midright=(progress_rect.right - 140, bar_y + 10)))
 
     # ------------------------------------------------------------------
     def _draw_state_icons(self, screen, infos):
-        cb_copy = self.closed_border_states.copy()
-        for id_ in self.lockdowned_states:
-            pos = infos[id_].ui_pos
-            if not pos:
+        """Affiche les icônes de confinement / frontières fermées sur la carte."""
+        # on travaille sur une copie pour ne pas modifier la liste originale
+        remaining_closed_borders = self.closed_border_states.copy()
+
+        for state_id in self.lockdowned_states:
+            icon_pos = infos[state_id].ui_pos
+            if not icon_pos:
                 continue
-            if id_ not in cb_copy:
-                screen.blit(self.lockdown_image, (pos[0] - 4, pos[1] - 4))
+            if state_id not in remaining_closed_borders:
+                # seulement en confinement
+                screen.blit(self.lockdown_image, (icon_pos[0] - 4, icon_pos[1] - 4))
             else:
-                cb_copy.remove(id_)
-                screen.blit(self.closed_border_and_lockdown_image, (pos[0] - 4, pos[1] - 4))
-        for id_ in cb_copy:
-            pos = infos[id_].ui_pos
-            if pos:
-                screen.blit(self.closed_border_image, (pos[0] - 4, pos[1] - 4))
+                # confinement ET frontières fermées
+                remaining_closed_borders.remove(state_id)
+                screen.blit(self.closed_border_and_lockdown_image, (icon_pos[0] - 4, icon_pos[1] - 4))
+
+        for state_id in remaining_closed_borders:
+            icon_pos = infos[state_id].ui_pos
+            if icon_pos:
+                screen.blit(self.closed_border_image, (icon_pos[0] - 4, icon_pos[1] - 4))
 
     # ------------------------------------------------------------------
     def _draw_main_panel(self, screen, infos):
-        id_infos = infos[self.px_id]
-        p = self.menu_rect
+        """Dessine le panneau principal (menu 1) avec les infos de l'état sélectionné."""
+        state_infos = infos[self.px_id]
+        panel = self.menu_rect
 
-        # ombre + fond
-        shadow = p.inflate(8, 8).move(4, 4)
-        draw_rounded_rect(screen, (0, 0, 0), shadow, radius=14, alpha=120)
-        draw_rounded_rect(screen, C_PANEL, p, radius=12, alpha=245)
-        draw_border_rect(screen, C_BORDER, p, width=1, radius=12)
+        # ombre et fond
+        shadow_rect = panel.inflate(8, 8).move(4, 4)
+        draw_rounded_rect(screen, (0, 0, 0), shadow_rect, radius=14, alpha=120)
+        draw_rounded_rect(screen, C_PANEL, panel, radius=12, alpha=245)
+        draw_border_rect(screen, C_BORDER, panel, width=1, radius=12)
 
-        # ---- En-tête ----
-        header_rect = pygame.Rect(p.x, p.y, p.width, 68)
+        # en-tête coloré
+        header_rect = pygame.Rect(panel.x, panel.y, panel.width, 68)
         draw_rounded_rect(screen, C_SURFACE2, header_rect, radius=12)
-        pygame.draw.rect(screen, C_SURFACE2, pygame.Rect(p.x, p.y + 40, p.width, 28))
-
-        accent_bar = pygame.Rect(p.x, p.y, 4, 68)
+        pygame.draw.rect(screen, C_SURFACE2, pygame.Rect(panel.x, panel.y + 40, panel.width, 28))
+        accent_bar = pygame.Rect(panel.x, panel.y, 4, 68)
         draw_rounded_rect(screen, C_ACCENT, accent_bar, radius=2)
 
-        title = self.font_lg.render(id_infos.name, True, C_WHITE)
-        screen.blit(title, (p.x + 18, p.y + 12))
-        sub = self.font_sm.render(f'ID ÉTAT  ·  #{self.px_id}', True, C_TEXT_DIM)
-        screen.blit(sub, (p.x + 18, p.y + 48))
+        title_surf = self.font_lg.render(state_infos.name, True, C_WHITE)
+        screen.blit(title_surf, (panel.x + 18, panel.y + 12))
+        state_id_surf = self.font_sm.render(f'ID ÉTAT  ·  #{self.px_id}', True, C_TEXT_DIM)
+        screen.blit(state_id_surf, (panel.x + 18, panel.y + 48))
 
-        # Layout constants — on exploite toute la hauteur du panneau (820px - 68 header = 752px dispo)
-        PAD   = 18   # marge horizontale
-        SEC   = 14   # espace avant chaque section header
-        AFTER = 10   # espace après chaque section header
-        ROW   = 24   # hauteur d'une ligne de stat
-        BTN_H = 36   # hauteur des boutons export / toggle
+        # constantes de mise en page
+        MARGIN_H   = 18   # marge horizontale
+        SEC_BEFORE = 14   # espace avant un titre de section
+        SEC_AFTER  = 10   # espace après un titre de section
+        ROW_HEIGHT = 24   # hauteur d'une ligne de stat
+        BTN_HEIGHT = 36   # hauteur des boutons
 
-        y = p.y + 78  # démarre juste sous le header
+        current_y = panel.y + 78
 
         # ---- Section Population ----
-        y += SEC
-        y += draw_section_header(screen, self.font_sm, '  Population', p.x + PAD, y, p.width - PAD*2)
-        y += AFTER
+        current_y += SEC_BEFORE
+        current_y += draw_section_header(screen, self.font_sm, '  Population', panel.x + MARGIN_H, current_y, panel.width - MARGIN_H*2)
+        current_y += SEC_AFTER
 
-        total = id_infos.population
-        alive = int(id_infos.alive_population)
-        dead  = total - alive
-        pct_alive = alive / total if total else 0
+        total_population = state_infos.population
+        alive_population = int(state_infos.alive_population)
+        dead_population = total_population - alive_population
+        pct_alive = alive_population / total_population if total_population else 0
 
-        # barre pop (large, bien visible)
-        draw_progress_bar(screen, p.x + PAD, y, p.width - PAD*2, 12, alive, total, C_ACCENT2)
-        y += 20
+        draw_progress_bar(screen, panel.x + MARGIN_H, current_y, panel.width - MARGIN_H*2, 12, alive_population, total_population, C_ACCENT2)
+        current_y += 20
 
-        # deux stats côte à côte
-        draw_stat_row(screen, self.font_sm, 'Vivants :', f'{alive:,}', p.x + PAD, y, C_ACCENT2)
-        draw_stat_row(screen, self.font_sm, 'Morts / inf. :', f'{dead:,}', p.x + PAD + 170, y, C_DANGER)
-        y += ROW
+        draw_stat_row(screen, self.font_sm, 'Vivants :', f'{alive_population:,}', panel.x + MARGIN_H, current_y, C_ACCENT2)
+        draw_stat_row(screen, self.font_sm, 'Morts / inf. :', f'{dead_population:,}', panel.x + MARGIN_H + 170, current_y, C_DANGER)
+        current_y += ROW_HEIGHT
+
         pct_surf = self.font_sm.render(f'{pct_alive*100:.1f}% de la population initiale survit', True, C_TEXT_DIM)
-        screen.blit(pct_surf, (p.x + PAD, y))
-        y += ROW + 4
+        screen.blit(pct_surf, (panel.x + MARGIN_H, current_y))
+        current_y += ROW_HEIGHT + 4
 
         # ---- Section Santé & Ressources ----
-        y += SEC
-        y += draw_section_header(screen, self.font_sm, '  Santé & Ressources', p.x + PAD, y, p.width - PAD*2)
-        y += AFTER
+        current_y += SEC_BEFORE
+        current_y += draw_section_header(screen, self.font_sm, '  Santé & Ressources', panel.x + MARGIN_H, current_y, panel.width - MARGIN_H*2)
+        current_y += SEC_AFTER
 
-        draw_stat_row(screen, self.font_sm, "Obésité :", f"{id_infos.obesity_rate*100:.1f}%", p.x + PAD, y)
-        draw_stat_row(screen, self.font_sm, 'Prod. végétale :', f'{int(id_infos.vegetable_production):,}', p.x + PAD + 130, y)
-        y += ROW + 4
+        draw_stat_row(screen, self.font_sm, "Obésité :", f"{state_infos.obesity_rate*100:.1f}%", panel.x + MARGIN_H, current_y)
+        draw_stat_row(screen, self.font_sm, 'Prod. végétale :', f'{int(state_infos.vegetable_production):,}', panel.x + MARGIN_H + 130, current_y)
+        current_y += ROW_HEIGHT + 4
 
         # barre réserves alimentaires
-        food_max = max(id_infos.population * 100, id_infos.food_ressources + 1)
-        food_color = C_ACCENT2 if id_infos.food_ressources > id_infos.population * 20 else C_WARNING if id_infos.food_ressources > 0 else C_DANGER
-        draw_progress_bar(screen, p.x + PAD, y, p.width - PAD*2, 12, id_infos.food_ressources, food_max, food_color)
-        y += 20
-        draw_stat_row(screen, self.font_sm, 'Réserves alim. :', f'{int(id_infos.food_ressources):,}', p.x + PAD, y, food_color)
-        y += ROW + 4
+        food_max = max(state_infos.population * 100, state_infos.food_ressources + 1)
+        if state_infos.food_ressources > state_infos.population * 20:
+            food_bar_color = C_ACCENT2
+        elif state_infos.food_ressources > 0:
+            food_bar_color = C_WARNING
+        else:
+            food_bar_color = C_DANGER
+        draw_progress_bar(screen, panel.x + MARGIN_H, current_y, panel.width - MARGIN_H*2, 12, state_infos.food_ressources, food_max, food_bar_color)
+        current_y += 20
+
+        draw_stat_row(screen, self.font_sm, 'Réserves alim. :', f'{int(state_infos.food_ressources):,}', panel.x + MARGIN_H, current_y, food_bar_color)
+        current_y += ROW_HEIGHT + 4
 
         # ---- Section Exportations ----
-        y += SEC
-        y += draw_section_header(screen, self.font_sm, '  Exportations (4 slots)', p.x + PAD, y, p.width - PAD*2)
-        y += AFTER
+        current_y += SEC_BEFORE
+        current_y += draw_section_header(screen, self.font_sm, '  Exportations (4 slots)', panel.x + MARGIN_H, current_y, panel.width - MARGIN_H*2)
+        current_y += SEC_AFTER
 
-        labels = ['Slot A', 'Slot B', 'Slot C', 'Slot D']
-        slot_w = (p.width - PAD*2 - 10) // 2  # largeur d'un slot
-        slot_x = [p.x + PAD, p.x + PAD + slot_w + 10]
+        slot_labels = ['Slot A', 'Slot B', 'Slot C', 'Slot D']
+        slot_width = (panel.width - MARGIN_H*2 - 10) // 2
+        slot_positions_x = [panel.x + MARGIN_H, panel.x + MARGIN_H + slot_width + 10]
 
-        for i, btn in enumerate(self.exportation_buttons):
-            row_y = y + (i // 2) * (14 + BTN_H + 8)  # 2 lignes de 2 slots
-            col_x = slot_x[i % 2]
+        for slot_index, export_btn in enumerate(self.exportation_buttons):
+            # 2 colonnes, 2 lignes → ligne = slot_index // 2, colonne = slot_index % 2
+            row_y = current_y + (slot_index // 2) * (14 + BTN_HEIGHT + 8)
+            col_x = slot_positions_x[slot_index % 2]
 
-            export_id   = id_infos.exportations[i][0]
-            export_name = infos[export_id].name if export_id != 0 else ''
-            pct         = int(id_infos.exportations[i][1] * 100)
+            export_destination_id = state_infos.exportations[slot_index][0]
+            export_destination_name = infos[export_destination_id].name if export_destination_id != 0 else ''
+            export_percent = int(state_infos.exportations[slot_index][1] * 100)
 
-            # label slot BIEN au-dessus du bouton
-            lbl_text = f'{labels[i]}  —  {pct}%' if export_id != 0 else labels[i]
-            lbl_surf = self.font_sm.render(lbl_text, True, C_TEXT_DIM)
-            screen.blit(lbl_surf, (col_x, row_y))
+            # label du slot au-dessus du bouton
+            if export_destination_id != 0:
+                slot_label_text = f'{slot_labels[slot_index]}  —  {export_percent}%'
+            else:
+                slot_label_text = slot_labels[slot_index]
+            slot_label_surf = self.font_sm.render(slot_label_text, True, C_TEXT_DIM)
+            screen.blit(slot_label_surf, (col_x, row_y))
 
-            # bouton positionné SOUS le label
-            btn.rect.x = col_x
-            btn.rect.y = row_y + 16
-            btn.rect.width  = slot_w
-            btn.rect.height = BTN_H
-            is_open = self.menu2_open and self.exportation_index == i
-            btn.draw(screen, export_name, active=is_open)
+            # bouton sous le label
+            export_btn.rect.x = col_x
+            export_btn.rect.y = row_y + 16
+            export_btn.rect.width = slot_width
+            export_btn.rect.height = BTN_HEIGHT
+            is_this_slot_open = self.menu2_open and self.exportation_index == slot_index
+            export_btn.draw(screen, export_destination_name, active=is_this_slot_open)
 
-        # avance y après les 2 lignes de slots
-        y += 2 * (14 + BTN_H + 8) + 4
+        current_y += 2 * (14 + BTN_HEIGHT + 8) + 4
 
         # ---- Section Mesures sanitaires ----
-        y += SEC
-        y += draw_section_header(screen, self.font_sm, '  Mesures sanitaires', p.x + PAD, y, p.width - PAD*2)
-        y += AFTER
+        current_y += SEC_BEFORE
+        current_y += draw_section_header(screen, self.font_sm, '  Mesures sanitaires', panel.x + MARGIN_H, current_y, panel.width - MARGIN_H*2)
+        current_y += SEC_AFTER
 
-        # Frontières
-        cb_lbl = self.font_sm.render('Fermer les frontières', True, C_TEXT_DIM)
-        screen.blit(cb_lbl, (p.x + PAD, y))
-        y += 16
-        self.border_button.rect.x = p.x + PAD
-        self.border_button.rect.y = y
-        self.border_button.rect.width = p.width - PAD*2
-        self.border_button.rect.height = BTN_H
-        self.border_button.draw(screen, id_infos.closed_border)
-        y += BTN_H + 12
+        # Bouton frontières
+        border_label_surf = self.font_sm.render('Fermer les frontières', True, C_TEXT_DIM)
+        screen.blit(border_label_surf, (panel.x + MARGIN_H, current_y))
+        current_y += 16
+        self.border_button.rect.x = panel.x + MARGIN_H
+        self.border_button.rect.y = current_y
+        self.border_button.rect.width = panel.width - MARGIN_H*2
+        self.border_button.rect.height = BTN_HEIGHT
+        self.border_button.draw(screen, state_infos.closed_border)
+        current_y += BTN_HEIGHT + 12
 
-        # Confinement
-        ld_lbl = self.font_sm.render('Confinement', True, C_TEXT_DIM)
-        screen.blit(ld_lbl, (p.x + PAD, y))
-        y += 16
-        self.lockdown_button.rect.x = p.x + PAD
-        self.lockdown_button.rect.y = y
-        self.lockdown_button.rect.width = p.width - PAD*2
-        self.lockdown_button.rect.height = BTN_H
-        self.lockdown_button.draw(screen, id_infos.lockdown)
-        y += BTN_H + 8
+        # Bouton confinement
+        lockdown_label_surf = self.font_sm.render('Confinement', True, C_TEXT_DIM)
+        screen.blit(lockdown_label_surf, (panel.x + MARGIN_H, current_y))
+        current_y += 16
+        self.lockdown_button.rect.x = panel.x + MARGIN_H
+        self.lockdown_button.rect.y = current_y
+        self.lockdown_button.rect.width = panel.width - MARGIN_H*2
+        self.lockdown_button.rect.height = BTN_HEIGHT
+        self.lockdown_button.draw(screen, state_infos.lockdown)
+        current_y += BTN_HEIGHT + 8
 
         # ---- Section Importations ----
-        y += SEC
-        y += draw_section_header(screen, self.font_sm, '  Importations reçues', p.x + PAD, y, p.width - PAD*2)
-        y += AFTER - 5
+        current_y += SEC_BEFORE
+        current_y += draw_section_header(screen, self.font_sm, '  Importations reçues', panel.x + MARGIN_H, current_y, panel.width - MARGIN_H*2)
+        current_y += SEC_AFTER - 5
 
-        if id_infos.importations:
-            for imp in id_infos.importations:
-                chip_rect = pygame.Rect(p.x + PAD, y, p.width - PAD*2, ROW - 2)
+        if state_infos.importations:
+            for import_name in state_infos.importations:
+                chip_rect = pygame.Rect(panel.x + MARGIN_H, current_y, panel.width - MARGIN_H*2, ROW_HEIGHT - 2)
                 draw_rounded_rect(screen, C_SURFACE2, chip_rect, radius=4)
                 pygame.draw.line(screen, C_ACCENT2, chip_rect.topleft, chip_rect.bottomleft, 2)
-                chip_surf = self.font_sm.render(f'- {imp}', True, C_ACCENT2)
+                chip_surf = self.font_sm.render(f'- {import_name}', True, C_ACCENT2)
                 screen.blit(chip_surf, chip_surf.get_rect(midleft=(chip_rect.x + 10, chip_rect.centery)))
-                y += ROW + 4
+                current_y += ROW_HEIGHT + 4
         else:
-            none_surf = self.font_sm.render('Aucune importation active', True, C_TEXT_DIM)
-            screen.blit(none_surf, (p.x + PAD, y))
+            no_import_surf = self.font_sm.render('Aucune importation active', True, C_TEXT_DIM)
+            screen.blit(no_import_surf, (panel.x + MARGIN_H, current_y))
 
     # ------------------------------------------------------------------
     def _draw_menu2(self, screen, infos):
+        """Dessine le menu 2 : choix de l'état destinataire d'une exportation."""
         if self.px_id is None or self.exportation_index is None:
             return
-        p = self.menu2_rect
-        id_infos = infos[self.px_id]
-        labels = ['Slot A', 'Slot B', 'Slot C', 'Slot D']
 
-        # fond
-        shadow = p.inflate(8, 8).move(4, 4)
-        draw_rounded_rect(screen, (0, 0, 0), shadow, radius=14, alpha=100)
-        draw_rounded_rect(screen, C_PANEL, p, radius=12, alpha=245)
-        draw_border_rect(screen, C_BORDER, p, width=1, radius=12)
+        panel = self.menu2_rect
+        state_infos = infos[self.px_id]
+        slot_labels = ['Slot A', 'Slot B', 'Slot C', 'Slot D']
+
+        # ombre et fond
+        shadow_rect = panel.inflate(8, 8).move(4, 4)
+        draw_rounded_rect(screen, (0, 0, 0), shadow_rect, radius=14, alpha=100)
+        draw_rounded_rect(screen, C_PANEL, panel, radius=12, alpha=245)
+        draw_border_rect(screen, C_BORDER, panel, width=1, radius=12)
 
         # en-tête
-        header_rect = pygame.Rect(p.x, p.y, p.width, 68)
+        header_rect = pygame.Rect(panel.x, panel.y, panel.width, 68)
         draw_rounded_rect(screen, C_SURFACE2, header_rect, radius=12)
-        pygame.draw.rect(screen, C_SURFACE2, pygame.Rect(p.x, p.y + 40, p.width, 28))
-        accent_bar = pygame.Rect(p.x, p.y, 4, 68)
+        pygame.draw.rect(screen, C_SURFACE2, pygame.Rect(panel.x, panel.y + 40, panel.width, 28))
+        accent_bar = pygame.Rect(panel.x, panel.y, 4, 68)
         draw_rounded_rect(screen, (99, 235, 167), accent_bar, radius=2)
 
-        title = self.font_lg.render(f'Exportation · {labels[self.exportation_index]}', True, C_WHITE)
-        screen.blit(title, (p.x + 16, p.y + 12))
-        sub = self.font_sm.render(f'Destination depuis {id_infos.name}', True, C_TEXT_DIM)
-        screen.blit(sub, (p.x + 16, p.y + 48))
+        title_surf = self.font_lg.render(f'Exportation · {slot_labels[self.exportation_index]}', True, C_WHITE)
+        screen.blit(title_surf, (panel.x + 16, panel.y + 12))
+        subtitle_surf = self.font_sm.render(f'Destination depuis {state_infos.name}', True, C_TEXT_DIM)
+        screen.blit(subtitle_surf, (panel.x + 16, panel.y + 48))
 
-        # Séparateur liste
-        y = p.y + 78
-        lbl_list = self.font_sm.render('ÉTAT DESTINATAIRE', True, C_TEXT_DIM)
-        screen.blit(lbl_list, (p.x + 14, y))
-        y += 20
+        # liste des états
+        current_y = panel.y + 78
+        list_label_surf = self.font_sm.render('ÉTAT DESTINATAIRE', True, C_TEXT_DIM)
+        screen.blit(list_label_surf, (panel.x + 14, current_y))
+        current_y += 20
 
-        # scrollable list
-        self.state_scroll.rect.y = y
-        self.state_scroll.rect.x = p.x + 10
-        self.state_scroll.rect.width = p.width - 20
+        self.state_scroll.rect.y = current_y
+        self.state_scroll.rect.x = panel.x + 10
+        self.state_scroll.rect.width = panel.width - 20
         self.state_scroll.rect.height = 480
-        current_sel = id_infos.exportations[self.exportation_index][0]
-        self.state_scroll.draw(screen, selected_id=current_sel)
 
-        y = self.state_scroll.rect.bottom + 16
+        current_selection_id = state_infos.exportations[self.exportation_index][0]
+        self.state_scroll.draw(screen, selected_id=current_selection_id)
 
-        # pourcentage
-        lbl_pct = self.font_sm.render('POURCENTAGE DE PRODUCTION EXPORTÉ (%)', True, C_TEXT_DIM)
-        screen.blit(lbl_pct, (p.x + 14, y))
-        y += 20
+        current_y = self.state_scroll.rect.bottom + 16
 
-        self.percent_sel.x = p.x + 10
-        self.percent_sel.y = y
-        self.percent_sel.btn_w = (p.width - 20 - (len(self.percent_sel.percents) - 1) * 4) // len(self.percent_sel.percents)
-        current_pct = id_infos.exportations[self.exportation_index][1] if current_sel != 0 else None
-        self.percent_sel.draw(screen, current_pct)
-            
-            
-            
+        # sélecteur de pourcentage
+        pct_label_surf = self.font_sm.render('POURCENTAGE DE PRODUCTION EXPORTÉ (%)', True, C_TEXT_DIM)
+        screen.blit(pct_label_surf, (panel.x + 14, current_y))
+        current_y += 20
+
+        self.percent_sel.x = panel.x + 10
+        self.percent_sel.y = current_y
+        self.percent_sel.btn_w = (panel.width - 20 - (len(self.percent_sel.percent_values) - 1) * 4) // len(self.percent_sel.percent_values)
+
+        if current_selection_id != 0:
+            current_percent = state_infos.exportations[self.exportation_index][1]
+        else:
+            current_percent = None
+        self.percent_sel.draw(screen, current_percent)
