@@ -382,8 +382,12 @@ class UI:
         self.menu2_rect = pygame.Rect(380, 15, self.PANEL2_W, self.PANEL_H)
         self.exportation_index = None
 
-        # Liste des états pour le menu 2 (id=0 pour "aucun")
-        self.state_list = [(0, '— Aucun —')] + [(state_id, infos[state_id].name) for state_id in range(101, 147)]
+        # Liste des états pour le menu 2 (id=0 pour "aucun"), triée alphabétiquement
+        sorted_states = sorted(
+            [(state_id, infos[state_id].name) for state_id in range(101, 147)],
+            key=lambda item: item[1]
+        )
+        self.state_list = [(0, '— Aucun —')] + sorted_states
 
         # Panneau scrollable dans le menu 2
         self.state_scroll = ScrollablePanel(
