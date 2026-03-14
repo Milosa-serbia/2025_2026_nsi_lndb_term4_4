@@ -161,6 +161,8 @@ class Infection :
     def draw(self, screen, state_grid, status_grid, menu_open) :
         rgb = self.palette[status_grid].copy()
         mouse_x, mouse_y = pygame.mouse.get_pos()
+        mouse_x = max(0, min(mouse_x, self.width - 1))
+        mouse_y = max(0, min(mouse_y, self.height - 1))
         
         if not menu_open :
             state_id = state_grid[mouse_y, mouse_x]
@@ -168,5 +170,3 @@ class Infection :
                 rgb[state_grid == state_id] = (rgb[state_grid == state_id] * 0.8).astype(np.uint8)
         rgb = np.transpose(rgb, (1, 0, 2))     
         pygame.surfarray.blit_array(screen, rgb)
-
-
