@@ -3,7 +3,7 @@ from brbr_infection import *
 from brbr_ui import *
 
 class Continent :
-    def __init__(self) :
+    def __init__(self, time_between_updates=500) :
         # Initialisation infos fenetre
         self.screen = pygame.display.get_surface()
         self.width, self.height = self.screen.get_size()
@@ -17,7 +17,7 @@ class Continent :
         
         # Temps entre les updates des infos et de l'infection
         self.time_last_update = 0
-        self.time_between_updates = 500 # ms
+        self.time_between_updates = time_between_updates
         
         # Premier pixel infecté aléatoire dans certains états
         start_states = [107, 108, 110, 113, 114, 115, 116, 119, 120, 121, 124, 125, 126]

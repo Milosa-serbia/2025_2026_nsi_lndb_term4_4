@@ -390,6 +390,8 @@ class MainMenu :
         self.font_sublabel = pygame.font.Font(None, 20)
         self.font_version  = pygame.font.Font(None, 20)
 
+        self._diff_rects = []  # rempli à chaque draw()
+
         # éléments de fond animés
         self.background_grid = BackgroundGrid(screen_width, screen_height)
         self.particles = []
@@ -420,6 +422,20 @@ class MainMenu :
             on_click=self.on_rules_clicked
         )
 
+        # Sélecteur de difficulté
+        # Chaque entrée : (label affiché, time_between_updates en ms, couleur accent)
+        self.difficulties = [
+            ('FACILE',    750, C_ACCENT2),
+            ('MOYEN',     500, C_WARNING),
+            ('DIFFICILE', 300, C_DANGER),
+        ]
+        self.selected_difficulty = 1  # index par défaut : Moyen
+        self.font_diff = pygame.font.Font(None, 22)
+
+    def get_time_between_updates(self) :
+        """Retourne le time_between_updates correspondant à la difficulté choisie."""
+        return self.difficulties[self.selected_difficulty][1]
+
     def on_play_clicked(self) :
         self.result = 'play'
 
@@ -434,6 +450,11 @@ class MainMenu :
             return
         self.btn_play.handle_event(event)
         self.btn_rules.handle_event(event)
+        # Clic sur un bouton de difficulté
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 :
+            for i, rect in enumerate(self._diff_rects) :
+                if rect.collidepoint(event.pos) :
+                    self.selected_difficulty = i
 
     def update(self) :
         if self.rules_page.is_open :
@@ -521,7 +542,7 @@ class MainMenu :
             self.button_center_x - 20,
             buttons_top_y - 16,
             self.button_width + 40,
-            MenuButton.BUTTON_HEIGHT * 2 + 12 + 32 + 8
+            MenuButton.BUTTON_HEIGHT * 2 + 12 + 32 + 8 + 22 + 32 + 18
         )
         draw_rounded_rect(screen, C_PANEL, panel_rect, radius=12, alpha=200)
         draw_border_rect(screen, C_BORDER, panel_rect, width=1, radius=12)
@@ -539,6 +560,39 @@ class MainMenu :
         rules_button_y = play_button_y + MenuButton.BUTTON_HEIGHT + 10
         self.btn_rules.update()
         self.btn_rules.draw(screen, self.font_label, self.font_sublabel, self.button_center_x, rules_button_y, self.button_width)
+
+        # ---- Sélecteur de difficulté ----
+        diff_label_surf = self.font_diff.render('DIFFICULTÉ', True, C_TEXT_DIM)
+        diff_label_y = rules_button_y + MenuButton.BUTTON_HEIGHT + 18
+        screen.blit(diff_label_surf, diff_label_surf.get_rect(centerx=center_x, y=diff_label_y))
+
+        diff_btn_w  = 118
+        diff_btn_h  = 32
+        diff_gap    = 8
+        total_diff_w = len(self.difficulties) * diff_btn_w + (len(self.difficulties) - 1) * diff_gap
+        diff_start_x = center_x - total_diff_w // 2
+        diff_btn_y   = diff_label_y + 22
+        self._diff_rects = []
+
+        for i, (dlabel, _, dcolor) in enumerate(self.difficulties) :
+            drect = pygame.Rect(diff_start_x + i * (diff_btn_w + diff_gap), diff_btn_y, diff_btn_w, diff_btn_h)
+            self._diff_rects.append(drect)
+            selected = (i == self.selected_difficulty)
+            mx, my = pygame.mouse.get_pos()
+            hovered = drect.collidepoint(mx, my)
+            if selected :
+                draw_rounded_rect(screen, dcolor, drect, radius=6, alpha=200)
+                draw_border_rect(screen, dcolor, drect, width=2, radius=6)
+                dlabel_surf = self.font_diff.render(dlabel, True, C_WHITE)
+            elif hovered :
+                draw_rounded_rect(screen, C_SURFACE2, drect, radius=6)
+                draw_border_rect(screen, dcolor, drect, width=1, radius=6)
+                dlabel_surf = self.font_diff.render(dlabel, True, dcolor)
+            else :
+                draw_rounded_rect(screen, C_SURFACE, drect, radius=6)
+                draw_border_rect(screen, C_BORDER, drect, width=1, radius=6)
+                dlabel_surf = self.font_diff.render(dlabel, True, C_TEXT_DIM)
+            screen.blit(dlabel_surf, dlabel_surf.get_rect(center=drect.center))
 
         # ---- Indicateur de version en bas de l'écran ----
         version_surf = self.font_version.render('v1.0  ·  USA MAP  ·  46 ÉTATS', True, C_TEXT_DIM)

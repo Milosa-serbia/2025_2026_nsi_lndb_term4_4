@@ -31,7 +31,7 @@ class Simulation :
 
                 # le joueur a cliqué sur "Jouer"  : on lance la simulation
                 if self.menu.is_done() :
-                    self.continent = Continent()
+                    self.continent = Continent(self.menu.get_time_between_updates())
 
             # ---- Phase jeu ----
             else :
