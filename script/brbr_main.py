@@ -7,7 +7,7 @@ class Simulation :
     def __init__(self) :
         pygame.init()
         self.screen = pygame.display.set_mode((1500, 850))
-        pygame.display.set_caption("Pathogen")
+        pygame.display.set_caption("Brbr Virus")
         self.clock = pygame.time.Clock()
         self.menu = MainMenu(1500, 850)
         self.continent = None  # créé seulement après validation du menu

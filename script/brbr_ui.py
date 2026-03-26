@@ -429,13 +429,13 @@ class UI:
         )
 
         # Chargement des icônes
-        self.lockdown_image = pygame.image.load("Enter.png").convert_alpha()
+        self.lockdown_image = pygame.image.load("graphics/Enter.png").convert_alpha()
         self.lockdown_image = pygame.transform.scale(self.lockdown_image, (22, 22))
-        self.closed_border_image = pygame.image.load("Locked.png").convert_alpha()
+        self.closed_border_image = pygame.image.load("graphics/Locked.png").convert_alpha()
         self.closed_border_image = pygame.transform.scale(self.closed_border_image, (22, 22))
-        self.closed_border_and_lockdown_image = pygame.image.load("Power.png").convert_alpha()
+        self.closed_border_and_lockdown_image = pygame.image.load("graphics/Power.png").convert_alpha()
         self.closed_border_and_lockdown_image = pygame.transform.scale(self.closed_border_and_lockdown_image, (22, 22))
-        self.scientist_image = pygame.image.load("Scientist.png").convert_alpha()
+        self.scientist_image = pygame.image.load("graphics/Scientist.png").convert_alpha()
         self.scientist_image = pygame.transform.scale(self.scientist_image, (48, 48))
 
         # Surface de vignette (assombrissement des bords de l'écran)

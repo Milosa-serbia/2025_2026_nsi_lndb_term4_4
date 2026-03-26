@@ -9,7 +9,7 @@ class Continent :
         self.width, self.height = self.screen.get_size()
         
         # Status_grid : 0 = safe, 1 = infected, 2 = dead, 255 = border , 100 = sea, 101:146 = states
-        self.status_grid = np.load('dessin.npy')
+        self.status_grid = np.load('graphics/dessin.npy')
         self.state_grid = self.status_grid.copy()
         
         # progression du vaccin
@@ -208,44 +208,182 @@ class Continent :
                 self.ui.menu2_open = False
 
             # ==== CALCUL DES SCORES ====
-            # population totale vivante (vrais états 101–146)
             alive_total = int(sum(
                 st.alive_population
                 for sid, st in self.infos.items()
                 if 101 <= sid <= 146
             ))
-
-            # population totale initiale
             total_initial = sum(
                 STATES[id]['population']
                 for id in STATES.keys()
                 if 101 <= id <= 146
             )
-
-            # score sur 100
+            dead_total = total_initial - alive_total
             score = int(round((alive_total / total_initial) * 100))
 
             # ==== AFFICHAGE ====
             self.infection.draw(self.screen, self.state_grid, self.status_grid, False)
 
-            # panneau centré
             w, h = self.screen.get_size()
-            panel = pygame.Rect(w//2 - 350, h//2 - 150, 700, 300)
 
-            pygame.draw.rect(self.screen, (0,0,0), panel.inflate(20,20), border_radius=15)
-            pygame.draw.rect(self.screen, (240,240,240), panel, border_radius=15)
+            # ---- Palette DA ----
+            C_BG        = (12,  14,  20)
+            C_PANEL     = (18,  22,  32)
+            C_SURFACE   = (26,  32,  46)
+            C_SURFACE2  = (32,  40,  58)
+            C_BORDER    = (48,  60,  90)
+            C_ACCENT    = (56, 189, 248)
+            C_GREEN     = (99, 235, 167)
+            C_DANGER    = (248,  82,  82)
+            C_WARNING   = (251, 189,  35)
+            C_TEXT      = (220, 228, 245)
+            C_TEXT_DIM  = (100, 115, 150)
 
-            # texte
-            big_font = pygame.font.Font(None, 70)
-            font = pygame.font.Font(None, 50)
+            # Couleur du score selon performance
+            if score >= 75 :
+                score_color = C_GREEN
+                verdict     = "EXCELLENTE GESTION"
+                verdict_col = C_GREEN
+            elif score >= 50 :
+                score_color = C_WARNING
+                verdict     = "GESTION CORRECTE"
+                verdict_col = C_WARNING
+            elif score >= 25 :
+                score_color = (255, 140, 50)
+                verdict     = "GESTION INSUFFISANTE"
+                verdict_col = (255, 140, 50)
+            else :
+                score_color = C_DANGER
+                verdict     = "ÉCHEC CRITIQUE"
+                verdict_col = C_DANGER
 
-            t1 = big_font.render("VACCIN TROUVÉ – FIN", True, (0,0,0))
-            t2 = font.render(f"Population totale en vie : {alive_total}", True, (0,0,0))
-            t3 = font.render(f"Score : {score} / 100", True, (0,0,0))
+            # ---- Overlay sombre sur toute la carte ----
+            overlay = pygame.Surface((w, h), pygame.SRCALPHA)
+            overlay.fill((8, 10, 16, 200))
+            self.screen.blit(overlay, (0, 0))
 
-            self.screen.blit(t1, t1.get_rect(center=(panel.centerx, panel.top + 70)))
-            self.screen.blit(t2, t2.get_rect(center=(panel.centerx, panel.top + 150)))
-            self.screen.blit(t3, t3.get_rect(center=(panel.centerx, panel.top + 210)))
+            # ---- Dimensions panneau principal ----
+            PW, PH = 640, 420
+            px = w // 2 - PW // 2
+            py = h // 2 - PH // 2
+
+            # Ombre portée
+            shadow = pygame.Surface((PW + 40, PH + 40), pygame.SRCALPHA)
+            pygame.draw.rect(shadow, (0, 0, 0, 120), shadow.get_rect(), border_radius=18)
+            self.screen.blit(shadow, (px - 20 + 6, py - 20 + 8))
+
+            # Fond du panneau
+            panel_surf = pygame.Surface((PW, PH), pygame.SRCALPHA)
+            pygame.draw.rect(panel_surf, (*C_PANEL, 252), panel_surf.get_rect(), border_radius=14)
+            self.screen.blit(panel_surf, (px, py))
+
+            # Bordure extérieure
+            pygame.draw.rect(self.screen, C_BORDER, pygame.Rect(px, py, PW, PH), width=1, border_radius=14)
+
+            # ---- En-tête ----
+            header_h = 72
+            header_surf = pygame.Surface((PW, header_h), pygame.SRCALPHA)
+            pygame.draw.rect(header_surf, (*C_SURFACE2, 255), header_surf.get_rect(), border_radius=14)
+            # masquer les coins inférieurs arrondis de l'en-tête
+            pygame.draw.rect(header_surf, (*C_SURFACE2, 255), pygame.Rect(0, header_h - 14, PW, 14))
+            self.screen.blit(header_surf, (px, py))
+
+            # Barre accent verticale à gauche de l'en-tête
+            pygame.draw.rect(self.screen, C_ACCENT, pygame.Rect(px, py, 4, header_h), border_radius=2)
+
+            # Séparateur bas en-tête
+            pygame.draw.line(self.screen, C_BORDER, (px, py + header_h), (px + PW, py + header_h), 1)
+
+            # Petits points décoratifs en haut à droite
+            for i in range(3) :
+                dot_x = px + PW - 20 - i * 14
+                pygame.draw.circle(self.screen, C_BORDER if i > 0 else C_ACCENT, (dot_x, py + header_h // 2), 4)
+
+            font_title  = pygame.font.SysFont('consolas', 22, bold=True)
+            font_sub    = pygame.font.SysFont('consolas', 14)
+            font_label  = pygame.font.SysFont('consolas', 13)
+            font_big    = pygame.font.SysFont('consolas', 52, bold=True)
+            font_med    = pygame.font.SysFont('consolas', 20, bold=True)
+            font_small  = pygame.font.SysFont('consolas', 15)
+
+            t_title = font_title.render("RAPPORT DE FIN DE SIMULATION", True, C_TEXT)
+            self.screen.blit(t_title, (px + 16, py + 14))
+            t_sub = font_sub.render("BRBR Virus  ·  VACCIN DÉCOUVERT  ·  SIMULATION TERMINÉE", True, C_TEXT_DIM)
+            self.screen.blit(t_sub, (px + 16, py + 44))
+
+            # ---- Score central ----
+            cy = py + header_h + 30
+            score_str = f"{score:02d}"
+            t_score = font_big.render(score_str, True, score_color)
+            t_slash = font_big.render(" / 100", True, C_TEXT_DIM)
+            total_w = t_score.get_width() + t_slash.get_width()
+            self.screen.blit(t_score, (px + PW // 2 - total_w // 2, cy))
+            self.screen.blit(t_slash, (px + PW // 2 - total_w // 2 + t_score.get_width(), cy))
+
+            t_verdict = font_med.render(verdict, True, verdict_col)
+            self.screen.blit(t_verdict, t_verdict.get_rect(centerx=px + PW // 2, top=cy + 68))
+
+            # ---- Barre de score ----
+            bar_y = cy + 110
+            bar_x = px + 32
+            bar_w = PW - 64
+            bar_h = 10
+            # fond barre
+            pygame.draw.rect(self.screen, C_SURFACE2, pygame.Rect(bar_x, bar_y, bar_w, bar_h), border_radius=5)
+            # remplissage
+            fill_w = int(bar_w * score / 100)
+            if fill_w > 0 :
+                pygame.draw.rect(self.screen, score_color, pygame.Rect(bar_x, bar_y, fill_w, bar_h), border_radius=5)
+            # marqueurs à 25, 50, 75
+            for pct in [25, 50, 75] :
+                mx = bar_x + int(bar_w * pct / 100)
+                pygame.draw.line(self.screen, C_BORDER, (mx, bar_y - 3), (mx, bar_y + bar_h + 3), 1)
+
+            # ---- Séparateur ----
+            sep_y = bar_y + 30
+            pygame.draw.line(self.screen, C_BORDER, (px + 24, sep_y), (px + PW - 24, sep_y), 1)
+
+            # ---- Stats en 2 colonnes ----
+            def draw_stat_block(label, value, val_color, col_x, row_y) :
+                lbl = font_label.render(label, True, C_TEXT_DIM)
+                val = font_small.render(value, True, val_color)
+                self.screen.blit(lbl, (col_x, row_y))
+                self.screen.blit(val, (col_x, row_y + 18))
+
+            stats_y = sep_y + 16
+            col1 = px + 40
+            col2 = px + PW // 2 + 20
+
+            draw_stat_block(
+                "POPULATION EN VIE",
+                f"{alive_total:,}".replace(",", " "),
+                C_GREEN,
+                col1, stats_y
+            )
+            draw_stat_block(
+                "VICTIMES DE L'ÉPIDÉMIE",
+                f"{dead_total:,}".replace(",", " "),
+                C_DANGER,
+                col2, stats_y
+            )
+
+            # Petit séparateur vertical entre les deux colonnes
+            pygame.draw.line(
+                self.screen, C_BORDER,
+                (px + PW // 2, stats_y - 4),
+                (px + PW // 2, stats_y + 46),
+                1
+            )
+
+            # ---- Pied de panneau ----
+            foot_y = py + PH - 44
+            pygame.draw.line(self.screen, C_BORDER, (px + 24, foot_y), (px + PW - 24, foot_y), 1)
+            pct_alive = alive_total / total_initial * 100
+            t_foot = font_label.render(
+                f"{pct_alive:.1f}% de la population initiale a survécu  ·  FERMER : ALT+F4",
+                True, C_TEXT_DIM
+            )
+            self.screen.blit(t_foot, t_foot.get_rect(centerx=px + PW // 2, top=foot_y + 12))
     
         
     def update_and_draw(self, events) :

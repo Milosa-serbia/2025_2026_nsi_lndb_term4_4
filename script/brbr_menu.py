@@ -375,7 +375,7 @@ class RulesPage :
 #  MENU PRINCIPAL
 # ============================================================
 class MainMenu :
-    GAME_TITLE    = "PATHOGEN"
+    GAME_TITLE    = "BRBR Virus"
     GAME_SUBTITLE = "PANDEMIC SIMULATION"
 
     def __init__(self, screen_width, screen_height) :
