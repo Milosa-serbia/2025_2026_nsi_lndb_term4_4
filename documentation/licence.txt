@@ -1,23 +1,35 @@
 LICENCE — BRBR Virus
-==================
+====================
 
 Copyright (c) 2026 — Équipe BRBR Virus (Trophées NSI)
 
-Ce projet a été développé dans le cadre du concours des Trophées NSI.
+Ce projet a été développé dans le cadre du concours des Trophées NSI (5e édition).
 
-UTILISATION AUTORISÉE
----------------------
-- Consultation du code à des fins éducatives et d'évaluation dans le cadre
-  du concours des Trophées NSI.
-- Exécution du programme à des fins de démonstration et de présentation.
+CODE SOURCE
+-----------
+Le code source de ce projet est placé sous licence libre GNU General Public
+License version 3 ou ultérieure (GPL v3+).
 
-RESTRICTIONS
-------------
-- Toute redistribution, commercialisation ou réutilisation du code source
-  en dehors du cadre scolaire et du concours est interdite sans accord
-  explicite des auteurs.
-- Le code source et le fichier graphics/dessin.npy (modèle de la carte des
-  Etats Unis) sont la propriété exclusive des auteurs.
+Vous êtes libre de :
+- Utiliser, étudier et modifier le code source.
+- Redistribuer des copies du code source original ou modifié.
+
+Sous les conditions suivantes :
+- Toute redistribution doit conserver cette licence et mentionner les auteurs
+  originaux.
+- Tout projet dérivé doit être distribué sous la même licence GPL v3+.
+
+Le texte complet de la licence GPL v3 est disponible à l'adresse suivante :
+https://www.gnu.org/licenses/gpl-3.0.fr.html
+
+DOCUMENTATION ET TEXTES
+------------------------
+La documentation et les textes de ce projet (fichiers .md) sont placés sous
+licence Creative Commons Attribution - Partage dans les Mêmes Conditions
+(CC BY-SA 4.0).
+
+Le texte complet de cette licence est disponible à l'adresse suivante :
+https://creativecommons.org/licenses/by-sa/4.0/deed.fr
 
 BIBLIOTHÈQUES TIERCES
 ---------------------
@@ -26,15 +38,16 @@ respectives :
 
 - Pygame — LGPL v2.1
   https://www.pygame.org/
-  
+
 - NumPy — BSD 3-Clause License
   https://numpy.org/
 
 DONNÉES
 -------
-Les données de population et de production agricole par État sont issues
-de sources publiques (United States Census Bureau, USDA) et sont utilisées
-à des fins purement fictives et éducatives dans le cadre de cette simulation.
+Les données de population et de production agricole par État sont issues de
+sources publiques (United States Census Bureau 2020, USDA, CDC) et sont
+utilisées à des fins purement fictives et éducatives dans le cadre de cette
+simulation.
 
 AVERTISSEMENT
 -------------

@@ -1,4 +1,2 @@
 pygame>=2.5.0
-pip install pygame
 numpy>=1.24.0
-pip install numpy
